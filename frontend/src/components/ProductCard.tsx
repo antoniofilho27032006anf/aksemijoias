@@ -1,5 +1,7 @@
 ﻿'use client'
 
+import Link from 'next/link'
+
 import { useCart } from '../contexts/CartContext'
 import { useFavorites } from '../contexts/FavoritesContext'
 
@@ -44,14 +46,18 @@ export function ProductCard({
         {isFavorite(id) ? '❤️' : '🤍'}
       </button>
 
-      <img
-        src={image}
-        alt={name}
-        className="h-72 w-full object-cover transition duration-500 group-hover:scale-105"
-      />
+      <Link href={`/product/${id}`} className="block overflow-hidden">
+        <img
+          src={image}
+          alt={name}
+          className="h-72 w-full object-cover transition duration-500 group-hover:scale-105"
+        />
+      </Link>
 
       <div className="p-6">
-        <h3 className="text-2xl font-semibold text-white">{name}</h3>
+        <Link href={`/product/${id}`} className="block">
+          <h3 className="text-2xl font-semibold text-white">{name}</h3>
+        </Link>
         <p className="mt-3 text-sm leading-6 text-zinc-400">{description}</p>
 
         <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
@@ -64,19 +70,27 @@ export function ProductCard({
           </span>
         </div>
 
-        <button
-          onClick={() =>
-            addToCart({
-              id,
-              name,
-              price,
-              image
-            })
-          }
-          className="mt-6 w-full rounded-full bg-gradient-to-r from-pink-500 via-fuchsia-500 to-violet-500 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-pink-500/20 transition hover:opacity-95"
-        >
-          Adicionar ao carrinho
-        </button>
+        <div className="mt-6 grid gap-3">
+          <button
+            onClick={() =>
+              addToCart({
+                id,
+                name,
+                price,
+                image
+              })
+            }
+            className="w-full rounded-full bg-gradient-to-r from-pink-500 via-fuchsia-500 to-violet-500 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-pink-500/20 transition hover:opacity-95"
+          >
+            Adicionar ao carrinho
+          </button>
+          <Link
+            href={`/product/${id}`}
+            className="inline-flex justify-center rounded-full border border-slate-200 bg-white/10 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/15"
+          >
+            Ver detalhes
+          </Link>
+        </div>
       </div>
     </div>
   )

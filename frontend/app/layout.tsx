@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import { AuthProvider } from '../src/contexts/AuthContext'
 import { FavoritesProvider } from '../src/contexts/FavoritesContext'
 import { CartProvider } from '../src/contexts/CartContext'
+import { Footer } from '../src/components/Footer'
 
 import './globals.css'
 
@@ -46,6 +47,8 @@ export default function RootLayout({
             <CartProvider>
 
               {children}
+
+              <Footer />
 
               <Toaster
                 richColors

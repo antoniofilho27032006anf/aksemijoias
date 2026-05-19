@@ -4,6 +4,8 @@ import { useState } from 'react'
 
 import { api } from '../services/api'
 
+import { toast } from 'sonner'
+
 export function CreateProductForm() {
 
   const [name, setName] = useState('')
@@ -13,6 +15,9 @@ export function CreateProductForm() {
 
   const [image, setImage] =
     useState<File | null>(null)
+
+  const [preview, setPreview] =
+    useState('')
 
   async function handleCreateProduct() {
 
@@ -40,24 +45,31 @@ export function CreateProductForm() {
         }
       )
 
-      alert('Produto criado com sucesso!')
+      toast.success(
+        'Produto criado com sucesso!'
+      )
 
       setName('')
       setDescription('')
       setPrice('')
       setStock('')
       setImage(null)
+      setPreview('')
 
     } catch (error) {
 
       console.log(error)
 
-      alert('Erro ao criar produto')
+      toast.error(
+        'Erro ao criar produto'
+      )
 
     }
+
   }
 
   return (
+
     <div className="rounded-[2rem] border border-white/10 bg-white/5 p-8">
 
       <div>
@@ -119,12 +131,31 @@ export function CreateProductForm() {
           onChange={(e) => {
 
             if (e.target.files) {
-              setImage(e.target.files[0])
+
+              const file =
+                e.target.files[0]
+
+              setImage(file)
+
+              setPreview(
+                URL.createObjectURL(file)
+              )
+
             }
 
           }}
           className="w-full rounded-2xl border border-white/10 bg-black/20 px-5 py-4 text-white outline-none"
         />
+
+        {preview && (
+
+          <img
+            src={preview}
+            alt="Preview"
+            className="h-72 w-full rounded-2xl object-cover"
+          />
+
+        )}
 
         <button
           onClick={handleCreateProduct}
@@ -136,5 +167,6 @@ export function CreateProductForm() {
       </div>
 
     </div>
+
   )
 }
