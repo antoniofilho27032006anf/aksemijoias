@@ -80,4 +80,41 @@ router.get(
   }
 )
 
+router.patch(
+  '/admin/orders/:id',
+  async (req, res) => {
+
+    try {
+
+      const { id } = req.params
+
+      const { status } = req.body
+
+      const order =
+        await prisma.order.update({
+
+          where: {
+            id
+          },
+
+          data: {
+            status
+          }
+
+        })
+
+      return res.json(order)
+
+    } catch (error) {
+
+      console.log(error)
+
+      return res.status(500).json({
+        error: 'Erro ao atualizar pedido'
+      })
+    }
+
+  }
+)
+
 export default router
