@@ -1,7 +1,7 @@
 import { Router } from 'express'
 
 import { prisma } from '../lib/prisma'
-import { mercadopago } from '../services/mercadoPago'
+import { payment } from '../services/mercadoPago'
 
 const router = Router()
 
@@ -22,6 +22,7 @@ router.post('/orders', async (req, res) => {
       })
 
     if (!user) {
+
       return res.status(404).json({
         error: 'Usuário não encontrado'
       })
@@ -42,6 +43,7 @@ router.post('/orders', async (req, res) => {
             })
 
           if (!product) {
+
             throw new Error(
               'Produto não encontrado'
             )
@@ -63,23 +65,27 @@ router.post('/orders', async (req, res) => {
       )
 
     const paymentData =
-      await mercadopago.payment.create({
+      await payment.create({
 
-        transaction_amount: total,
+        body: {
 
-        description:
-          'Pedido AKsemijoias',
+          transaction_amount: total,
 
-        payment_method_id: 'pix',
+          description:
+            'Pedido AKsemijoias',
 
-        payer: {
-          email: user.email
+          payment_method_id: 'pix',
+
+          payer: {
+            email: user.email
+          }
+
         }
 
       })
 
     const paymentId =
-      paymentData.body.id.toString()
+      paymentData.id?.toString()
 
     const order =
       await prisma.order.create({
@@ -113,13 +119,13 @@ router.post('/orders', async (req, res) => {
       pix: {
 
         qr_code:
-          paymentData.body
+          paymentData
             .point_of_interaction
             ?.transaction_data
             ?.qr_code,
 
         qr_code_base64:
-          paymentData.body
+          paymentData
             .point_of_interaction
             ?.transaction_data
             ?.qr_code_base64
@@ -141,28 +147,39 @@ router.post('/orders', async (req, res) => {
 
 router.get('/orders', async (req, res) => {
 
-  const orders =
-    await prisma.order.findMany({
+  try {
 
-      include: {
+    const orders =
+      await prisma.order.findMany({
 
-        user: true,
+        include: {
 
-        items: {
-          include: {
-            product: true
+          user: true,
+
+          items: {
+            include: {
+              product: true
+            }
           }
+
+        },
+
+        orderBy: {
+          createdAt: 'desc'
         }
 
-      },
+      })
 
-      orderBy: {
-        createdAt: 'desc'
-      }
+    return res.json(orders)
 
+  } catch (error) {
+
+    console.log(error)
+
+    return res.status(500).json({
+      error: 'Erro ao buscar pedidos'
     })
-
-  return res.json(orders)
+  }
 
 })
 
