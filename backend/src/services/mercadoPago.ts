@@ -1,8 +1,20 @@
-import mercadopago from 'mercadopago'
+import {
+  MercadoPagoConfig,
+  Payment
+} from 'mercadopago'
 
-mercadopago.configure({
-  access_token:
-    process.env.MERCADO_PAGO_ACCESS_TOKEN as string
-})
+const client =
+  new MercadoPagoConfig({
 
-export { mercadopago }
+    accessToken:
+      process.env
+        .MERCADO_PAGO_ACCESS_TOKEN as string
+
+  })
+
+const paymentClient =
+  new Payment(client)
+
+export {
+  paymentClient
+}
