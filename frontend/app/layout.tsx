@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import { AuthProvider } from '../src/contexts/AuthContext'
 import { FavoritesProvider } from '../src/contexts/FavoritesContext'
 import { CartProvider } from '../src/contexts/CartContext'
+import { ThemeProvider } from '../src/contexts/ThemeContext'
 import { Footer } from '../src/components/Footer'
 
 import './globals.css'
@@ -40,26 +41,17 @@ export default function RootLayout({
 
       <body>
 
-        <AuthProvider>
-
-          <FavoritesProvider>
-
-            <CartProvider>
-
-              {children}
-
-              <Footer />
-
-              <Toaster
-                richColors
-                position="top-right"
-              />
-
-            </CartProvider>
-
-          </FavoritesProvider>
-
-        </AuthProvider>
+        <ThemeProvider>
+      <AuthProvider>
+        <FavoritesProvider>
+          <CartProvider>
+            {children}
+            <Footer />
+            <Toaster richColors position="top-right" />
+          </CartProvider>
+        </FavoritesProvider>
+      </AuthProvider>
+    </ThemeProvider>
 
       </body>
 

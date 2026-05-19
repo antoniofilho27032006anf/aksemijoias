@@ -1,14 +1,15 @@
 ﻿'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 import { useCart } from '../contexts/CartContext'
-
-import { api } from '../services/api'
 
 import { Copy } from 'lucide-react'
 
 export function CartSidebar() {
+
+  const router = useRouter()
 
   const {
     cart,
@@ -30,54 +31,9 @@ export function CartSidebar() {
     0
   )
 
-  async function handleCheckout() {
-
-    try {
-
-      const user =
-        localStorage.getItem('@ak-user')
-
-      if (!user) {
-
-        alert('Faça login')
-
-        return
-      }
-
-      const parsedUser =
-        JSON.parse(user)
-
-      const response =
-        await api.post('/orders', {
-
-          userId: parsedUser.id,
-
-          items: cart.map(item => ({
-            productId: item.id,
-            quantity: item.quantity
-          }))
-
-        })
-
-      setPixQrCode(
-        response.data.pix.qr_code_base64
-      )
-
-      setPixCode(
-        response.data.pix.qr_code
-      )
-
-      alert('Pedido realizado!')
-
-      clearCart()
-
-    } catch (error) {
-
-      console.log(error)
-
-      alert('Erro ao finalizar pedido')
-
-    }
+  function handleCheckout() {
+    closeCart()
+    router.push('/checkout')
   }
 
   async function handleCopyPix() {

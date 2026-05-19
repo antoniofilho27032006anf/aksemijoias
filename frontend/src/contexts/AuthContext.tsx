@@ -11,9 +11,13 @@ import {
 import { api } from '../services/api'
 
 interface User {
+
   id: string
   name: string
   email: string
+  role: string
+  avatarUrl?: string
+
 }
 
 interface AuthContextData {
@@ -22,6 +26,17 @@ interface AuthContextData {
   signIn: (
     email: string,
     password: string
+  ) => Promise<void>
+
+  updateProfile: (data: {
+    name: string
+    email: string
+    avatarUrl?: string
+  }) => Promise<User>
+
+  changePassword: (
+    currentPassword: string,
+    newPassword: string
   ) => Promise<void>
 
   logout: () => void
@@ -100,6 +115,44 @@ export function AuthProvider({
     }
   }
 
+  async function updateProfile(data: {
+    name: string
+    email: string
+    avatarUrl?: string
+  }) {
+    if (!user) {
+      throw new Error('Usuário não autenticado')
+    }
+
+    const response = await api.patch(
+      `/users/${user.id}`,
+      data
+    )
+
+    const updatedUser = response.data
+    setUser(updatedUser)
+    localStorage.setItem('@ak-user', JSON.stringify(updatedUser))
+
+    return updatedUser
+  }
+
+  async function changePassword(
+    currentPassword: string,
+    newPassword: string
+  ) {
+    if (!user) {
+      throw new Error('Usuário não autenticado')
+    }
+
+    await api.patch(
+      `/users/${user.id}/password`,
+      {
+        currentPassword,
+        newPassword
+      }
+    )
+  }
+
   function logout() {
 
     localStorage.removeItem('@ak-token')
@@ -118,6 +171,8 @@ export function AuthProvider({
       value={{
         user,
         signIn,
+        updateProfile,
+        changePassword,
         logout
       }}
     >

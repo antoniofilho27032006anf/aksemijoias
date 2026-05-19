@@ -51,25 +51,21 @@ export function Navbar() {
           <Link href="/favorites" className="transition hover:text-white text-slate-200">
             Favoritas
           </Link>
+          <Link href="/checkout" className="transition hover:text-white text-slate-200">
+            Checkout
+          </Link>
           <Link href="/orders" className="transition hover:text-white text-slate-200">
             Meus pedidos
           </Link>
           <Link href="/search" className="transition hover:text-white text-slate-200">
             Buscar
           </Link>
+          {user ? (
+            <Link href="/account" className="transition hover:text-white text-slate-200">
+              Minha conta
+            </Link>
+          ) : null}
         </div>
-
-        <form onSubmit={handleSearch} className="hidden items-center gap-2 md:flex md:flex-1 md:justify-end">
-          <input
-            value={searchTerm}
-            onChange={(event) => setSearchTerm(event.target.value)}
-            placeholder="Buscar joias..."
-            className="min-w-[280px] rounded-full border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none placeholder:text-slate-400 focus:border-pink-300 focus:ring-2 focus:ring-pink-300/20"
-          />
-          <button className="rounded-full bg-gradient-to-r from-pink-500 via-fuchsia-500 to-violet-500 px-5 py-3 text-sm font-semibold text-white transition hover:opacity-95">
-            Buscar
-          </button>
-        </form>
 
         <div className="flex items-center gap-3">
           <button
@@ -117,9 +113,14 @@ export function Navbar() {
           <nav className="mt-5 flex flex-col gap-3 text-sm text-slate-200">
             <Link href="/" className="rounded-full px-4 py-3 transition hover:bg-white/5">Loja</Link>
             <Link href="/favorites" className="rounded-full px-4 py-3 transition hover:bg-white/5">Favoritas</Link>
+            <Link href="/checkout" className="rounded-full px-4 py-3 transition hover:bg-white/5">Checkout</Link>
             <Link href="/orders" className="rounded-full px-4 py-3 transition hover:bg-white/5">Meus pedidos</Link>
             <Link href="/search" className="rounded-full px-4 py-3 transition hover:bg-white/5">Buscar</Link>
-            <Link href="/login" className="rounded-full px-4 py-3 transition hover:bg-white/5">Login</Link>
+            {user ? (
+              <Link href="/account" className="rounded-full px-4 py-3 transition hover:bg-white/5">Minha conta</Link>
+            ) : (
+              <Link href="/login" className="rounded-full px-4 py-3 transition hover:bg-white/5">Login</Link>
+            )}
           </nav>
         </div>
       ) : null}
