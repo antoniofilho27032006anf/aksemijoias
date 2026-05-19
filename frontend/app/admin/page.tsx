@@ -31,6 +31,20 @@ export default function AdminPage() {
   const [products, setProducts] =
     useState<any[]>([])
 
+  const [editingProduct, setEditingProduct] =
+    useState<any | null>(null)
+
+  const [editForm, setEditForm] =
+    useState({
+
+      name: '',
+      description: '',
+      price: '',
+      stock: '',
+      image: ''
+
+    })
+
   useEffect(() => {
 
     const token =
@@ -178,6 +192,85 @@ export default function AdminPage() {
 
   }
 
+  function handleEditProduct(
+    product: any
+  ) {
+
+    setEditingProduct(product)
+
+    setEditForm({
+
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      stock: product.stock,
+      image: product.image
+
+    })
+
+  }
+
+  async function handleSaveEdit() {
+
+    try {
+
+      const response =
+        await api.put(
+
+          `/admin/products/${editingProduct.id}`,
+
+          {
+
+            name: editForm.name,
+
+            description:
+              editForm.description,
+
+            price:
+              Number(editForm.price),
+
+            stock:
+              Number(editForm.stock),
+
+            image:
+              editForm.image
+
+          }
+
+        )
+
+      setProducts((prevProducts) =>
+
+        prevProducts.map((product) => {
+
+          if (
+            product.id ===
+            editingProduct.id
+          ) {
+
+            return response.data
+          }
+
+          return product
+
+        })
+
+      )
+
+      setEditingProduct(null)
+
+      alert('Produto atualizado')
+
+    } catch (error) {
+
+      console.log(error)
+
+      alert('Erro ao editar produto')
+
+    }
+
+  }
+
   if (loading) {
     return null
   }
@@ -281,6 +374,103 @@ export default function AdminPage() {
 
         </div>
 
+        {editingProduct && (
+
+          <div className="mt-12 rounded-[2rem] border border-pink-500 bg-white/5 p-8">
+
+            <h2 className="text-3xl font-black text-white">
+              Editar Produto
+            </h2>
+
+            <div className="mt-8 space-y-4">
+
+              <input
+                value={editForm.name}
+                onChange={(e) =>
+                  setEditForm({
+                    ...editForm,
+                    name: e.target.value
+                  })
+                }
+                placeholder="Nome"
+                className="w-full rounded-2xl bg-black/40 p-4 text-white outline-none"
+              />
+
+              <textarea
+                value={editForm.description}
+                onChange={(e) =>
+                  setEditForm({
+                    ...editForm,
+                    description:
+                      e.target.value
+                  })
+                }
+                placeholder="Descrição"
+                className="w-full rounded-2xl bg-black/40 p-4 text-white outline-none"
+              />
+
+              <input
+                value={editForm.price}
+                onChange={(e) =>
+                  setEditForm({
+                    ...editForm,
+                    price: e.target.value
+                  })
+                }
+                placeholder="Preço"
+                className="w-full rounded-2xl bg-black/40 p-4 text-white outline-none"
+              />
+
+              <input
+                value={editForm.stock}
+                onChange={(e) =>
+                  setEditForm({
+                    ...editForm,
+                    stock: e.target.value
+                  })
+                }
+                placeholder="Estoque"
+                className="w-full rounded-2xl bg-black/40 p-4 text-white outline-none"
+              />
+
+              <input
+                value={editForm.image}
+                onChange={(e) =>
+                  setEditForm({
+                    ...editForm,
+                    image: e.target.value
+                  })
+                }
+                placeholder="Imagem URL"
+                className="w-full rounded-2xl bg-black/40 p-4 text-white outline-none"
+              />
+
+              <div className="flex gap-4">
+
+                <button
+                  onClick={handleSaveEdit}
+                  className="rounded-full bg-green-500 px-6 py-3 font-semibold text-white"
+                >
+                  Salvar
+                </button>
+
+                <button
+                  onClick={() =>
+                    setEditingProduct(null)
+                  }
+                  className="rounded-full bg-zinc-700 px-6 py-3 font-semibold text-white"
+                >
+                  Cancelar
+                </button>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        )}
+
         <div className="mt-16">
 
           <h2 className="text-3xl font-black text-white">
@@ -322,145 +512,27 @@ export default function AdminPage() {
 
                 </div>
 
-                <button
-                  onClick={() =>
-                    handleDeleteProduct(
-                      product.id
-                    )
-                  }
-                  className="mt-6 w-full rounded-full bg-red-500 px-4 py-3 font-semibold text-white transition hover:bg-red-400"
-                >
-                  Excluir Produto
-                </button>
+                <div className="mt-6 flex gap-3">
 
-              </div>
+                  <button
+                    onClick={() =>
+                      handleEditProduct(product)
+                    }
+                    className="w-full rounded-full bg-blue-500 px-4 py-3 font-semibold text-white transition hover:bg-blue-400"
+                  >
+                    Editar
+                  </button>
 
-            ))}
-
-          </div>
-
-        </div>
-
-        <div className="mt-20">
-
-          <h2 className="text-3xl font-black text-white">
-            Pedidos Recentes
-          </h2>
-
-          <div className="mt-8 space-y-6">
-
-            {orders.map((order) => (
-
-              <div
-                key={order.id}
-                className="rounded-[2rem] border border-white/10 bg-white/5 p-6"
-              >
-
-                <div className="flex flex-col gap-6">
-
-                  <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-
-                    <div>
-
-                      <p className="text-sm text-zinc-400">
-                        Cliente
-                      </p>
-
-                      <h3 className="text-xl font-bold text-white">
-                        {order.user.name}
-                      </h3>
-
-                      <p className="mt-1 text-sm text-zinc-500">
-                        {order.user.email}
-                      </p>
-
-                    </div>
-
-                    <div>
-
-                      <p className="text-sm text-zinc-400">
-                        Status
-                      </p>
-
-                      <p className="mt-1 font-semibold text-pink-400">
-
-                        {order.status === 'PENDING' && 'Pendente'}
-
-                        {order.status === 'PAID' && 'Pago'}
-
-                        {order.status === 'SENT' && 'Enviado'}
-
-                        {order.status === 'DELIVERED' && 'Entregue'}
-
-                      </p>
-
-                    </div>
-
-                    <div>
-
-                      <p className="text-sm text-zinc-400">
-                        Total
-                      </p>
-
-                      <p className="mt-1 text-xl font-bold text-white">
-                        R$ {order.total.toFixed(2)}
-                      </p>
-
-                    </div>
-
-                  </div>
-
-                  <div className="flex flex-wrap gap-3">
-
-                    <button
-                      onClick={() =>
-                        handleUpdateStatus(
-                          order.id,
-                          'PENDING'
-                        )
-                      }
-                      className="rounded-full bg-yellow-500 px-4 py-2 text-sm font-semibold text-white"
-                    >
-                      Pendente
-                    </button>
-
-                    <button
-                      onClick={() =>
-                        handleUpdateStatus(
-                          order.id,
-                          'PAID'
-                        )
-                      }
-                      className="rounded-full bg-green-500 px-4 py-2 text-sm font-semibold text-white"
-                    >
-                      Pago
-                    </button>
-
-                    <button
-                      onClick={() =>
-                        handleUpdateStatus(
-                          order.id,
-                          'SENT'
-                        )
-                      }
-                      className="rounded-full bg-blue-500 px-4 py-2 text-sm font-semibold text-white"
-                    >
-                      Enviado
-                    </button>
-
-                    <button
-                      onClick={() =>
-                        handleUpdateStatus(
-                          order.id,
-                          'DELIVERED'
-                        )
-                      }
-                      className="rounded-full bg-violet-500 px-4 py-2 text-sm font-semibold text-white"
-                    >
-                      Entregue
-                    </button>
-
-                  </div>
+                  <button
+                    onClick={() =>
+                      handleDeleteProduct(
+                        product.id
+                      )
+                    }
+                    className="w-full rounded-full bg-red-500 px-4 py-3 font-semibold text-white transition hover:bg-red-400"
+                  >
+                    Excluir
+                  </button>
 
                 </div>
 
