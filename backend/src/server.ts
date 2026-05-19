@@ -12,6 +12,7 @@ import { paymentClient } from './services/mercadoPago'
 
 import uploadRoutes from './routes/upload.routes'
 import favoriteRoutes from './routes/favorite.routes'
+import cartRoutes from './routes/cart.routes'
 
 const app = express()
 
@@ -38,6 +39,7 @@ app.use(productRoutes)
 app.use(adminRoutes)
 app.use(uploadRoutes)
 app.use(favoriteRoutes)
+app.use(cartRoutes)
 
 app.get('/', (req, res) => {
 

@@ -11,7 +11,8 @@ router.post('/orders', async (req, res) => {
 
     const {
       userId,
-      items
+      items,
+      couponCode
     } = req.body
 
     const user =
@@ -64,12 +65,38 @@ router.post('/orders', async (req, res) => {
 
       )
 
+    let discount = 0
+
+    if (couponCode) {
+      const coupon = await prisma.coupon.findUnique({
+        where: {
+          code: couponCode
+        }
+      })
+
+      if (!coupon || !coupon.active) {
+        return res.status(400).json({ error: 'Cupom inválido ou expirado' })
+      }
+
+      if (coupon.type === 'PERCENT') {
+        discount = total * (coupon.value / 100)
+      } else {
+        discount = coupon.value
+      }
+
+      if (discount > total) {
+        discount = total
+      }
+    }
+
+    const finalTotal = Math.max(0, total - discount)
+
     const paymentData =
       await paymentClient.create({
 
         body: {
 
-          transaction_amount: total,
+          transaction_amount: finalTotal,
 
           description:
             'Pedido AKsemijoias',
@@ -94,7 +121,11 @@ router.post('/orders', async (req, res) => {
 
           userId,
 
-          total,
+          total: finalTotal,
+
+          discount,
+
+          couponCode,
 
           paymentId,
 
