@@ -117,4 +117,65 @@ router.patch(
   }
 )
 
+router.get(
+  '/admin/products',
+  async (req, res) => {
+
+    try {
+
+      const products =
+        await prisma.product.findMany({
+
+          orderBy: {
+            createdAt: 'desc'
+          }
+
+        })
+
+      return res.json(products)
+
+    } catch (error) {
+
+      console.log(error)
+
+      return res.status(500).json({
+        error: 'Erro ao buscar produtos'
+      })
+    }
+
+  }
+)
+
+router.delete(
+  '/admin/products/:id',
+  async (req, res) => {
+
+    try {
+
+      const { id } = req.params
+
+      await prisma.product.delete({
+
+        where: {
+          id
+        }
+
+      })
+
+      return res.json({
+        message: 'Produto excluído'
+      })
+
+    } catch (error) {
+
+      console.log(error)
+
+      return res.status(500).json({
+        error: 'Erro ao excluir produto'
+      })
+    }
+
+  }
+)
+
 export default router
