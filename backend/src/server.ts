@@ -10,6 +10,9 @@ import adminRoutes from './routes/admin.routes'
 import { prisma } from './lib/prisma'
 import { paymentClient } from './services/mercadoPago'
 
+import uploadRoutes from './routes/upload.routes'
+import favoriteRoutes from './routes/favorite.routes'
+
 const app = express()
 
 const PORT = process.env.PORT || 3333
@@ -33,6 +36,8 @@ app.use(orderRoutes)
 app.use(userRoutes)
 app.use(productRoutes)
 app.use(adminRoutes)
+app.use(uploadRoutes)
+app.use(favoriteRoutes)
 
 app.get('/', (req, res) => {
 
