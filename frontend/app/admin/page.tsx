@@ -21,7 +21,13 @@ export default function AdminPage() {
 
       products: 0,
       orders: 0,
-      users: 0
+      users: 0,
+
+      revenue: 0,
+
+      paidOrders: 0,
+
+      averageTicket: 0
 
     })
 
@@ -368,6 +374,52 @@ export default function AdminPage() {
 
         </div>
 
+        <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-3">
+
+          <div className="rounded-[2rem] border border-green-500/20 bg-green-500/10 p-8">
+
+            <p className="text-green-300">
+              Faturamento
+            </p>
+
+            <h2 className="mt-3 text-4xl font-black text-white">
+
+              R$ {stats.revenue.toFixed(2)}
+
+            </h2>
+
+          </div>
+
+          <div className="rounded-[2rem] border border-blue-500/20 bg-blue-500/10 p-8">
+
+            <p className="text-blue-300">
+              Pedidos Pagos
+            </p>
+
+            <h2 className="mt-3 text-4xl font-black text-white">
+
+              {stats.paidOrders}
+
+            </h2>
+
+          </div>
+
+          <div className="rounded-[2rem] border border-pink-500/20 bg-pink-500/10 p-8">
+
+            <p className="text-pink-300">
+              Ticket Médio
+            </p>
+
+            <h2 className="mt-3 text-4xl font-black text-white">
+
+              R$ {stats.averageTicket.toFixed(2)}
+
+            </h2>
+
+          </div>
+
+        </div>
+
         <div className="mt-12">
 
           <CreateProductForm />
@@ -543,136 +595,137 @@ export default function AdminPage() {
           </div>
 
         </div>
+
         <div className="mt-20">
 
-  <h2 className="text-3xl font-black text-white">
-    Pedidos Recentes
-  </h2>
+          <h2 className="text-3xl font-black text-white">
+            Pedidos Recentes
+          </h2>
 
-  <div className="mt-8 space-y-6">
+          <div className="mt-8 space-y-6">
 
-    {orders.map((order) => (
+            {orders.map((order) => (
 
-      <div
-        key={order.id}
-        className="rounded-[2rem] border border-white/10 bg-white/5 p-6"
-      >
+              <div
+                key={order.id}
+                className="rounded-[2rem] border border-white/10 bg-white/5 p-6"
+              >
 
-        <div className="flex flex-col gap-6">
+                <div className="flex flex-col gap-6">
 
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                  <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
 
-            <div>
+                    <div>
 
-              <p className="text-sm text-zinc-400">
-                Cliente
-              </p>
+                      <p className="text-sm text-zinc-400">
+                        Cliente
+                      </p>
 
-              <h3 className="text-xl font-bold text-white">
-                {order.user.name}
-              </h3>
+                      <h3 className="text-xl font-bold text-white">
+                        {order.user.name}
+                      </h3>
 
-              <p className="mt-1 text-sm text-zinc-500">
-                {order.user.email}
-              </p>
+                      <p className="mt-1 text-sm text-zinc-500">
+                        {order.user.email}
+                      </p>
 
-            </div>
+                    </div>
 
-            <div>
+                    <div>
 
-              <p className="text-sm text-zinc-400">
-                Status
-              </p>
+                      <p className="text-sm text-zinc-400">
+                        Status
+                      </p>
 
-              <p className="mt-1 font-semibold text-pink-400">
+                      <p className="mt-1 font-semibold text-pink-400">
 
-                {order.status === 'PENDING' && 'Pendente'}
+                        {order.status === 'PENDING' && 'Pendente'}
 
-                {order.status === 'PAID' && 'Pago'}
+                        {order.status === 'PAID' && 'Pago'}
 
-                {order.status === 'SENT' && 'Enviado'}
+                        {order.status === 'SENT' && 'Enviado'}
 
-                {order.status === 'DELIVERED' && 'Entregue'}
+                        {order.status === 'DELIVERED' && 'Entregue'}
 
-              </p>
+                      </p>
 
-            </div>
+                    </div>
 
-            <div>
+                    <div>
 
-              <p className="text-sm text-zinc-400">
-                Total
-              </p>
+                      <p className="text-sm text-zinc-400">
+                        Total
+                      </p>
 
-              <p className="mt-1 text-xl font-bold text-white">
-                R$ {order.total.toFixed(2)}
-              </p>
+                      <p className="mt-1 text-xl font-bold text-white">
+                        R$ {order.total.toFixed(2)}
+                      </p>
 
-            </div>
+                    </div>
 
-          </div>
+                  </div>
 
-          <div className="flex flex-wrap gap-3">
+                  <div className="flex flex-wrap gap-3">
 
-            <button
-              onClick={() =>
-                handleUpdateStatus(
-                  order.id,
-                  'PENDING'
-                )
-              }
-              className="rounded-full bg-yellow-500 px-4 py-2 text-sm font-semibold text-white"
-            >
-              Pendente
-            </button>
+                    <button
+                      onClick={() =>
+                        handleUpdateStatus(
+                          order.id,
+                          'PENDING'
+                        )
+                      }
+                      className="rounded-full bg-yellow-500 px-4 py-2 text-sm font-semibold text-white"
+                    >
+                      Pendente
+                    </button>
 
-            <button
-              onClick={() =>
-                handleUpdateStatus(
-                  order.id,
-                  'PAID'
-                )
-              }
-              className="rounded-full bg-green-500 px-4 py-2 text-sm font-semibold text-white"
-            >
-              Pago
-            </button>
+                    <button
+                      onClick={() =>
+                        handleUpdateStatus(
+                          order.id,
+                          'PAID'
+                        )
+                      }
+                      className="rounded-full bg-green-500 px-4 py-2 text-sm font-semibold text-white"
+                    >
+                      Pago
+                    </button>
 
-            <button
-              onClick={() =>
-                handleUpdateStatus(
-                  order.id,
-                  'SENT'
-                )
-              }
-              className="rounded-full bg-blue-500 px-4 py-2 text-sm font-semibold text-white"
-            >
-              Enviado
-            </button>
+                    <button
+                      onClick={() =>
+                        handleUpdateStatus(
+                          order.id,
+                          'SENT'
+                        )
+                      }
+                      className="rounded-full bg-blue-500 px-4 py-2 text-sm font-semibold text-white"
+                    >
+                      Enviado
+                    </button>
 
-            <button
-              onClick={() =>
-                handleUpdateStatus(
-                  order.id,
-                  'DELIVERED'
-                )
-              }
-              className="rounded-full bg-violet-500 px-4 py-2 text-sm font-semibold text-white"
-            >
-              Entregue
-            </button>
+                    <button
+                      onClick={() =>
+                        handleUpdateStatus(
+                          order.id,
+                          'DELIVERED'
+                        )
+                      }
+                      className="rounded-full bg-violet-500 px-4 py-2 text-sm font-semibold text-white"
+                    >
+                      Entregue
+                    </button>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            ))}
 
           </div>
 
         </div>
-
-      </div>
-
-    ))}
-
-  </div>
-
-</div>
 
       </div>
 
