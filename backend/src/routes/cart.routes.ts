@@ -1,12 +1,24 @@
 import { Router } from 'express'
+import { z } from 'zod'
 
 import { prisma } from '../lib/prisma'
+import { validateBody } from '../middlewares/validate'
 
 const router = Router()
 
+const cartItemSchema = z.object({
+  productId: z.string().min(1),
+  quantity: z.number().int().min(0)
+})
+
+const cartDeleteSchema = z.object({
+  productId: z.string().optional()
+})
+
 router.get('/cart/:userId', async (req, res) => {
   try {
-    const { userId } = req.params
+    const authUser = (req as any).user
+    const userId = authUser.id
 
     const cart = await prisma.cart.findUnique({
       where: {
@@ -32,11 +44,13 @@ router.get('/cart/:userId', async (req, res) => {
   }
 })
 
-router.post('/cart', async (req, res) => {
+router.post('/cart', validateBody(cartItemSchema), async (req, res) => {
   try {
-    const { userId, productId, quantity } = req.body
+    const authUser = (req as any).user
+    const { productId, quantity } = req.body
+    const userId = authUser.id
 
-    if (!userId || !productId || typeof quantity !== 'number') {
+    if (!productId || typeof quantity !== 'number') {
       return res.status(400).json({ error: 'Dados do carrinho inválidos' })
     }
 
@@ -116,11 +130,13 @@ router.post('/cart', async (req, res) => {
   }
 })
 
-router.patch('/cart', async (req, res) => {
+router.patch('/cart', validateBody(cartItemSchema), async (req, res) => {
   try {
-    const { userId, productId, quantity } = req.body
+    const authUser = (req as any).user
+    const { productId, quantity } = req.body
+    const userId = authUser.id
 
-    if (!userId || !productId || typeof quantity !== 'number') {
+    if (!productId || typeof quantity !== 'number') {
       return res.status(400).json({ error: 'Dados do carrinho inválidos' })
     }
 
@@ -182,9 +198,11 @@ router.patch('/cart', async (req, res) => {
   }
 })
 
-router.delete('/cart', async (req, res) => {
+router.delete('/cart', validateBody(cartDeleteSchema), async (req, res) => {
   try {
-    const { userId, productId } = req.body
+    const authUser = (req as any).user
+    const { productId } = req.body
+    const userId = authUser.id
 
     if (!userId) {
       return res.status(400).json({ error: 'Dados do carrinho inválidos' })

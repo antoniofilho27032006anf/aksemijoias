@@ -9,18 +9,22 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  name      String
-  email     String   @unique
-  password  String
+  id                   String   @id @default(uuid())
+  name                 String
+  email                String   @unique
+  password             String
+  avatarUrl            String?
+  refreshToken         String?
+  passwordResetToken   String?
+  passwordResetExpires DateTime?
 
   role      String   @default("USER")
 
   createdAt DateTime @default(now())
 
   orders    Order[]
-
   favorites Favorite[]
+  cart      Cart?
 }
 
 model Product {
@@ -32,11 +36,10 @@ model Product {
   image       String
   status      Boolean  @default(true)
   createdAt   DateTime @default(now())
-  
 
   orderItems  OrderItem[]
-
-  favorites Favorite[]
+  cartItems   CartItem[]
+  favorites   Favorite[]
 }
 
 model Order {
@@ -56,6 +59,7 @@ model Order {
   createdAt  DateTime @default(now())
 
   items      OrderItem[]
+  orderEvents OrderEvent[]
 }
 
 model OrderItem {
@@ -84,4 +88,39 @@ model Favorite {
 
   createdAt DateTime @default(now())
 
+}
+
+model Cart {
+  id        String    @id @default(uuid())
+  userId    String    @unique
+  user      User      @relation(fields: [userId], references: [id])
+  items     CartItem[]
+  createdAt DateTime  @default(now())
+}
+
+model CartItem {
+  id        String   @id @default(uuid())
+  cartId    String
+  cart      Cart     @relation(fields: [cartId], references: [id])
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  quantity  Int
+}
+
+model Coupon {
+  id        String   @id @default(uuid())
+  code      String   @unique
+  type      String   @default("FIXED")
+  value     Float
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+model OrderEvent {
+  id          String   @id @default(uuid())
+  orderId     String
+  order       Order    @relation(fields: [orderId], references: [id])
+  status      String
+  description String?
+  createdAt   DateTime @default(now())
 }

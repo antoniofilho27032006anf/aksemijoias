@@ -1,23 +1,41 @@
 import { Router } from 'express'
+import { z } from 'zod'
 
 import { prisma } from '../lib/prisma'
 import { upload } from '../middlewares/upload'
+import { adminMiddleware } from '../middlewares/admin'
+import { validateBody } from '../middlewares/validate'
 
 const cloudinary = require('cloudinary').v2
 
 cloudinary.config({
-  cloud_name: 'dkv1fo87n',
-  api_key: '954673969238786',
-  api_secret: process.env.CLOUDINARY_API_SECRET
+
+  cloud_name:
+    process.env.CLOUDINARY_CLOUD_NAME,
+
+  api_key:
+    process.env.CLOUDINARY_API_KEY,
+
+  api_secret:
+    process.env.CLOUDINARY_API_SECRET
+
 })
 
 const router = Router()
 
+const productSchema = z.object({
+  name: z.string().min(3),
+  description: z.string().min(10),
+  price: z.preprocess((value) => Number(value), z.number().positive()),
+  stock: z.preprocess((value) => Number(value), z.number().int().nonnegative())
+})
+
 router.post(
   '/products',
+  adminMiddleware,
   upload.single('image'),
+  validateBody(productSchema),
   async (req, res) => {
-
     const {
       name,
       description,
@@ -93,9 +111,10 @@ router.get(
 
 router.put(
   '/products/:id',
+  adminMiddleware,
   upload.single('image'),
+  validateBody(productSchema),
   async (req, res) => {
-
     const { id } = req.params
 
     const {
@@ -168,8 +187,8 @@ router.put(
 
 router.delete(
   '/products/:id',
+  adminMiddleware,
   async (req, res) => {
-
     const { id } = req.params
 
     await prisma.product.update({

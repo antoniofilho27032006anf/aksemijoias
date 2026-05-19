@@ -1,6 +1,8 @@
 import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
+import helmet from 'helmet'
+import rateLimit from 'express-rate-limit'
 
 import userRoutes from './routes/user.routes'
 import productRoutes from './routes/product.routes'
@@ -13,6 +15,11 @@ import { paymentClient } from './services/mercadoPago'
 import uploadRoutes from './routes/upload.routes'
 import favoriteRoutes from './routes/favorite.routes'
 import cartRoutes from './routes/cart.routes'
+
+import { authMiddleware } from './middlewares/auth'
+import { adminMiddleware } from './middlewares/admin'
+import { requestLogger } from './middlewares/logger'
+import { sanitizeMiddleware } from './middlewares/sanitize'
 
 const app = express()
 
@@ -31,15 +38,31 @@ app.use(
   })
 )
 
-app.use(express.json())
+app.use(helmet())
 
-app.use(orderRoutes)
-app.use(userRoutes)
+app.use(
+  rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: {
+      error: 'Muitas requisições. Tente novamente mais tarde.'
+    }
+  })
+)
+
+app.use(requestLogger)
+app.use(sanitizeMiddleware)
+app.use(express.json({ limit: '10mb' }))
+
+app.use('/orders', authMiddleware, orderRoutes)
+app.use('/cart', authMiddleware, cartRoutes)
+app.use('/admin', authMiddleware, adminMiddleware, adminRoutes)
+app.use('/users', userRoutes)
 app.use(productRoutes)
-app.use(adminRoutes)
 app.use(uploadRoutes)
 app.use(favoriteRoutes)
-app.use(cartRoutes)
 
 app.get('/', (req, res) => {
 
