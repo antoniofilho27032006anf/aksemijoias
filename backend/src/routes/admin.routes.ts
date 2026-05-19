@@ -19,11 +19,47 @@ router.get(
       const users =
         await prisma.user.count()
 
+      const paidOrders =
+        await prisma.order.findMany({
+
+          where: {
+            status: 'PAID'
+          }
+
+        })
+
+      const revenue =
+        paidOrders.reduce(
+
+          (acc, order) =>
+            acc + order.total,
+
+          0
+
+        )
+
+      const averageTicket =
+
+        paidOrders.length > 0
+
+          ? revenue / paidOrders.length
+
+          : 0
+
       return res.json({
 
         products,
+
         orders,
-        users
+
+        users,
+
+        revenue,
+
+        paidOrders:
+          paidOrders.length,
+
+        averageTicket
 
       })
 
@@ -146,6 +182,7 @@ router.get(
   }
 )
 
+
 router.delete(
   '/admin/products/:id',
   async (req, res) => {
@@ -154,10 +191,14 @@ router.delete(
 
       const { id } = req.params
 
-      await prisma.product.delete({
+      await prisma.product.update({
 
         where: {
           id
+        },
+
+        data: {
+            status:false
         }
 
       })
