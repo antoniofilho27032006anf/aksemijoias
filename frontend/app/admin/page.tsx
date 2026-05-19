@@ -384,7 +384,7 @@ export default function AdminPage() {
 
             <h2 className="mt-3 text-4xl font-black text-white">
 
-              R$ {stats.revenue.toFixed(2)}
+              R$ {Number(stats.revenue).toFixed(2)}
 
             </h2>
 
@@ -412,7 +412,7 @@ export default function AdminPage() {
 
             <h2 className="mt-3 text-4xl font-black text-white">
 
-              R$ {stats.averageTicket.toFixed(2)}
+              R$ {Number(stats.averageTicket).toFixed(2)}
 
             </h2>
 
