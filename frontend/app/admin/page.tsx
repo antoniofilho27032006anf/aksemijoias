@@ -25,6 +25,9 @@ export default function AdminPage() {
 
     })
 
+  const [orders, setOrders] =
+    useState<any[]>([])
+
   useEffect(() => {
 
     const token =
@@ -43,6 +46,19 @@ export default function AdminPage() {
         .then((response) => {
 
           setStats(response.data)
+
+        })
+        .catch((error) => {
+
+          console.log(error)
+
+        })
+
+      api
+        .get('/admin/orders')
+        .then((response) => {
+
+          setOrders(response.data)
 
         })
         .catch((error) => {
@@ -155,6 +171,73 @@ export default function AdminPage() {
         <div className="mt-12">
 
           <CreateProductForm />
+
+        </div>
+
+        <div className="mt-16">
+
+          <h2 className="text-3xl font-black text-white">
+            Pedidos Recentes
+          </h2>
+
+          <div className="mt-8 space-y-6">
+
+            {orders.map((order) => (
+
+              <div
+                key={order.id}
+                className="rounded-[2rem] border border-white/10 bg-white/5 p-6"
+              >
+
+                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+
+                  <div>
+
+                    <p className="text-sm text-zinc-400">
+                      Cliente
+                    </p>
+
+                    <h3 className="text-xl font-bold text-white">
+                      {order.user.name}
+                    </h3>
+
+                    <p className="mt-1 text-sm text-zinc-500">
+                      {order.user.email}
+                    </p>
+
+                  </div>
+
+                  <div>
+
+                    <p className="text-sm text-zinc-400">
+                      Status
+                    </p>
+
+                    <p className="mt-1 font-semibold text-pink-400">
+                      {order.status}
+                    </p>
+
+                  </div>
+
+                  <div>
+
+                    <p className="text-sm text-zinc-400">
+                      Total
+                    </p>
+
+                    <p className="mt-1 text-xl font-bold text-white">
+                      R$ {order.total.toFixed(2)}
+                    </p>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            ))}
+
+          </div>
 
         </div>
 
