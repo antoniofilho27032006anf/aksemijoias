@@ -7,6 +7,8 @@ import { CartProvider } from '../src/contexts/CartContext'
 
 import './globals.css'
 
+import { Toaster } from 'sonner'
+
 const geistSans = Geist({
   variable: '--font-geist-sans',
   subsets: ['latin'],
@@ -27,20 +29,38 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+
   return (
+
     <html
       lang="pt-BR"
       className={`${geistSans.variable} ${geistMono.variable}`}
     >
+
       <body>
+
         <AuthProvider>
+
           <FavoritesProvider>
+
             <CartProvider>
+
               {children}
+
+              <Toaster
+                richColors
+                position="top-right"
+              />
+
             </CartProvider>
+
           </FavoritesProvider>
+
         </AuthProvider>
+
       </body>
+
     </html>
+
   )
 }
