@@ -71,6 +71,51 @@ export default function AdminPage() {
 
   }, [router])
 
+  async function handleUpdateStatus(
+    orderId: string,
+    status: string
+  ) {
+
+    try {
+
+      await api.patch(
+
+        `/admin/orders/${orderId}`,
+
+        {
+          status
+        }
+
+      )
+
+      setOrders((prevOrders) =>
+
+        prevOrders.map((order) => {
+
+          if (order.id === orderId) {
+
+            return {
+              ...order,
+              status
+            }
+          }
+
+          return order
+
+        })
+
+      )
+
+    } catch (error) {
+
+      console.log(error)
+
+      alert('Erro ao atualizar status')
+
+    }
+
+  }
+
   if (loading) {
     return null
   }
@@ -189,45 +234,101 @@ export default function AdminPage() {
                 className="rounded-[2rem] border border-white/10 bg-white/5 p-6"
               >
 
-                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div className="flex flex-col gap-6">
 
-                  <div>
+                  <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
 
-                    <p className="text-sm text-zinc-400">
-                      Cliente
-                    </p>
+                    <div>
 
-                    <h3 className="text-xl font-bold text-white">
-                      {order.user.name}
-                    </h3>
+                      <p className="text-sm text-zinc-400">
+                        Cliente
+                      </p>
 
-                    <p className="mt-1 text-sm text-zinc-500">
-                      {order.user.email}
-                    </p>
+                      <h3 className="text-xl font-bold text-white">
+                        {order.user.name}
+                      </h3>
+
+                      <p className="mt-1 text-sm text-zinc-500">
+                        {order.user.email}
+                      </p>
+
+                    </div>
+
+                    <div>
+
+                      <p className="text-sm text-zinc-400">
+                        Status
+                      </p>
+
+                      <p className="mt-1 font-semibold text-pink-400">
+                        {order.status}
+                      </p>
+
+                    </div>
+
+                    <div>
+
+                      <p className="text-sm text-zinc-400">
+                        Total
+                      </p>
+
+                      <p className="mt-1 text-xl font-bold text-white">
+                        R$ {order.total.toFixed(2)}
+                      </p>
+
+                    </div>
 
                   </div>
 
-                  <div>
+                  <div className="flex flex-wrap gap-3">
 
-                    <p className="text-sm text-zinc-400">
-                      Status
-                    </p>
+                    <button
+                      onClick={() =>
+                        handleUpdateStatus(
+                          order.id,
+                          'PENDING'
+                        )
+                      }
+                      className="rounded-full bg-yellow-500 px-4 py-2 text-sm font-semibold text-white"
+                    >
+                      PENDING
+                    </button>
 
-                    <p className="mt-1 font-semibold text-pink-400">
-                      {order.status}
-                    </p>
+                    <button
+                      onClick={() =>
+                        handleUpdateStatus(
+                          order.id,
+                          'PAID'
+                        )
+                      }
+                      className="rounded-full bg-green-500 px-4 py-2 text-sm font-semibold text-white"
+                    >
+                      PAID
+                    </button>
 
-                  </div>
+                    <button
+                      onClick={() =>
+                        handleUpdateStatus(
+                          order.id,
+                          'SENT'
+                        )
+                      }
+                      className="rounded-full bg-blue-500 px-4 py-2 text-sm font-semibold text-white"
+                    >
+                      SENT
+                    </button>
 
-                  <div>
-
-                    <p className="text-sm text-zinc-400">
-                      Total
-                    </p>
-
-                    <p className="mt-1 text-xl font-bold text-white">
-                      R$ {order.total.toFixed(2)}
-                    </p>
+                    <button
+                      onClick={() =>
+                        handleUpdateStatus(
+                          order.id,
+                          'DELIVERED'
+                        )
+                      }
+                      className="rounded-full bg-violet-500 px-4 py-2 text-sm font-semibold text-white"
+                    >
+                      DELIVERED
+                    </button>
 
                   </div>
 
