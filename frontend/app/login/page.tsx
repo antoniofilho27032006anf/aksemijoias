@@ -1,107 +1,88 @@
 ﻿'use client'
 
-import { useEffect } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 import { useAuth } from '@/src/contexts/AuthContext'
-import { CreateProductForm } from '@/src/components/CreateProductForm'
 
-export default function AdminPage() {
-
-  const { user } = useAuth()
+export default function LoginPage() {
 
   const router = useRouter()
 
-  useEffect(() => {
+  const { signIn } = useAuth()
 
-    if (!user) {
-      router.push('/login')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+
+  async function handleLogin(
+    e: React.FormEvent
+  ) {
+
+    e.preventDefault()
+
+    try {
+
+      await signIn(
+        email,
+        password
+      )
+
+      router.push('/')
+
+    } catch (error) {
+
+      alert('Erro ao fazer login')
     }
-
-  }, [user, router])
-
-  if (!user) {
-    return null
   }
 
   return (
-    <div className="min-h-screen bg-[#09040f] p-10 text-white">
+    <div className="flex min-h-screen items-center justify-center bg-[#09040f] px-6">
 
-      <div className="mx-auto max-w-7xl">
+      <form
+        onSubmit={handleLogin}
+        className="w-full max-w-md rounded-[2rem] border border-white/10 bg-white/5 p-10 text-white shadow-2xl"
+      >
 
-        <div className="flex items-center justify-between">
+        <h1 className="text-4xl font-black">
+          Entrar
+        </h1>
 
-          <div>
+        <p className="mt-2 text-zinc-400">
+          Faça login para continuar
+        </p>
 
-            <p className="text-sm uppercase tracking-[0.3em] text-pink-400">
-              Painel Administrativo
-            </p>
+        <div className="mt-8 space-y-5">
 
-            <h1 className="mt-4 text-5xl font-black">
-              Bem-vindo, {user.name}
-            </h1>
+          <input
+            type="email"
+            placeholder="Seu email"
+            value={email}
+            onChange={(e) =>
+              setEmail(e.target.value)
+            }
+            className="w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-4 outline-none"
+          />
 
-          </div>
+          <input
+            type="password"
+            placeholder="Sua senha"
+            value={password}
+            onChange={(e) =>
+              setPassword(e.target.value)
+            }
+            className="w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-4 outline-none"
+          />
 
-          <div className="rounded-3xl border border-white/10 bg-white/5 px-6 py-4">
-
-            <p className="text-sm text-zinc-400">
-              Status
-            </p>
-
-            <p className="mt-1 font-semibold text-green-400">
-              Online
-            </p>
-
-          </div>
-
-        </div>
-
-        <div className="mt-14 grid grid-cols-1 gap-6 md:grid-cols-3">
-
-          <div className="rounded-[2rem] border border-white/10 bg-white/5 p-8">
-
-            <p className="text-zinc-400">
-              Produtos
-            </p>
-
-            <h2 className="mt-3 text-4xl font-black">
-              12
-            </h2>
-
-          </div>
-
-          <div className="rounded-[2rem] border border-white/10 bg-white/5 p-8">
-
-            <p className="text-zinc-400">
-              Pedidos
-            </p>
-
-            <h2 className="mt-3 text-4xl font-black">
-              28
-            </h2>
-
-          </div>
-
-          <div className="rounded-[2rem] border border-white/10 bg-white/5 p-8">
-
-            <p className="text-zinc-400">
-              Clientes
-            </p>
-
-            <h2 className="mt-3 text-4xl font-black">
-              96
-            </h2>
-
-          </div>
+          <button
+            type="submit"
+            className="w-full rounded-2xl bg-pink-500 py-4 font-semibold transition hover:bg-pink-600"
+          >
+            Entrar
+          </button>
 
         </div>
 
-        <div className="mt-12">
-          <CreateProductForm />
-        </div>
-
-      </div>
+      </form>
 
     </div>
   )
