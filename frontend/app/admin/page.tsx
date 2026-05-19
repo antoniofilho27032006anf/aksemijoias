@@ -9,7 +9,6 @@ import { api } from '@/src/services/api'
 
 export default function AdminPage() {
 
-  
   const { user } = useAuth() as any
 
   const router = useRouter()
@@ -17,15 +16,41 @@ export default function AdminPage() {
   const [loading, setLoading] =
     useState(true)
 
+  const [stats, setStats] =
+    useState({
+
+      products: 0,
+      orders: 0,
+      users: 0
+
+    })
+
   useEffect(() => {
 
     const token =
       localStorage.getItem('@ak-token')
 
     if (!token) {
+
       router.push('/login')
+
     } else {
+
       setLoading(false)
+
+      api
+        .get('/admin/dashboard')
+        .then((response) => {
+
+          setStats(response.data)
+
+        })
+        .catch((error) => {
+
+          console.log(error)
+
+        })
+
     }
 
   }, [router])
@@ -35,23 +60,26 @@ export default function AdminPage() {
   }
 
   if (!user) {
-  return null
-}
+    return null
+  }
 
-if (user.role !== 'ADMIN') {
+  if (user.role !== 'ADMIN') {
+
+    return (
+
+      <div className="flex min-h-screen items-center justify-center bg-black text-white">
+
+        <h1 className="text-3xl font-bold">
+          Acesso negado
+        </h1>
+
+      </div>
+
+    )
+  }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-black text-white">
 
-      <h1 className="text-3xl font-bold">
-        Acesso negado
-      </h1>
-
-    </div>
-  )   
-}
-
-  return (
     <div className="min-h-screen bg-[#09040f] p-10 text-white">
 
       <div className="mx-auto max-w-7xl">
@@ -93,7 +121,7 @@ if (user.role !== 'ADMIN') {
             </p>
 
             <h2 className="mt-3 text-4xl font-black">
-              12
+              {stats.products}
             </h2>
 
           </div>
@@ -105,7 +133,7 @@ if (user.role !== 'ADMIN') {
             </p>
 
             <h2 className="mt-3 text-4xl font-black">
-              28
+              {stats.orders}
             </h2>
 
           </div>
@@ -117,7 +145,7 @@ if (user.role !== 'ADMIN') {
             </p>
 
             <h2 className="mt-3 text-4xl font-black">
-              96
+              {stats.users}
             </h2>
 
           </div>
@@ -125,11 +153,14 @@ if (user.role !== 'ADMIN') {
         </div>
 
         <div className="mt-12">
+
           <CreateProductForm />
+
         </div>
 
       </div>
 
     </div>
+
   )
 }
