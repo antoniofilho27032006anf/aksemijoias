@@ -60,12 +60,15 @@ router.post(
     const product =
       await prisma.product.create({
         data: {
+
           name,
           description,
           price: Number(price),
           stock: Number(stock),
           image,
+
           status: true
+
         }
       })
 
@@ -78,11 +81,13 @@ router.get(
   async (req, res) => {
 
     const products =
-      await prisma.product.findMany()
+      await prisma.product.findMany({
+        where: {
+          status: true
+        }
+      })
 
-    where: {
-      status: true
-    }
+    return res.json(products)
   }
 )
 
@@ -144,12 +149,16 @@ router.put(
         },
 
         data: {
+
           name,
           description,
           price: Number(price),
           stock: Number(stock),
-          image,
+
+          ...(image && { image }),
+
           status: true
+
         }
       })
 
