@@ -261,7 +261,15 @@ export default function AdminPage() {
                       </p>
 
                       <p className="mt-1 font-semibold text-pink-400">
-                        {order.status}
+
+                        {order.status === 'PENDING' && 'Pendente'}
+
+                        {order.status === 'PAID' && 'Pago'}
+
+                        {order.status === 'SENT' && 'Enviado'}
+
+                        {order.status === 'DELIVERED' && 'Entregue'}
+
                       </p>
 
                     </div>
@@ -291,7 +299,7 @@ export default function AdminPage() {
                       }
                       className="rounded-full bg-yellow-500 px-4 py-2 text-sm font-semibold text-white"
                     >
-                      PENDING
+                      Pendente
                     </button>
 
                     <button
@@ -303,7 +311,7 @@ export default function AdminPage() {
                       }
                       className="rounded-full bg-green-500 px-4 py-2 text-sm font-semibold text-white"
                     >
-                      PAID
+                      Pago
                     </button>
 
                     <button
@@ -315,7 +323,7 @@ export default function AdminPage() {
                       }
                       className="rounded-full bg-blue-500 px-4 py-2 text-sm font-semibold text-white"
                     >
-                      SENT
+                      Enviado
                     </button>
 
                     <button
@@ -327,7 +335,7 @@ export default function AdminPage() {
                       }
                       className="rounded-full bg-violet-500 px-4 py-2 text-sm font-semibold text-white"
                     >
-                      DELIVERED
+                      Entregue
                     </button>
 
                   </div>
