@@ -1,13 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 
 import { api } from '@/src/services/api'
 
 export default function RegisterPage() {
-
-  const router = useRouter()
 
   const [name, setName] =
     useState('')
@@ -41,27 +38,27 @@ export default function RegisterPage() {
 
     } catch (error: any) {
 
-  console.log(
-    'ERRO COMPLETO:',
-    error
-  )
+      console.log(
+        'ERRO COMPLETO:',
+        error
+      )
 
-  console.log(
-    'RESPOSTA:',
-    error?.response
-  )
+      console.log(
+        'RESPOSTA:',
+        error?.response
+      )
 
-  console.log(
-    'DATA:',
-    error?.response?.data
-  )
+      console.log(
+        'DATA:',
+        error?.response?.data
+      )
 
-  alert(
-    JSON.stringify(
-      error?.response?.data
-    )
-  )
-}
+      alert(
+        error?.response?.data?.error ||
+        'Erro ao cadastrar'
+      )
+    }
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#09040f] px-6">
@@ -124,5 +121,4 @@ export default function RegisterPage() {
 
     </div>
   )
-}
 }
