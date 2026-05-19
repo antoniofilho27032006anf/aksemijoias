@@ -56,7 +56,7 @@ app.post(
         })
 
       const status =
-        payment.body.status
+        payment.status
 
       if (status === 'approved') {
 
