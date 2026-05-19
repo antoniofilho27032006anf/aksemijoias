@@ -178,4 +178,60 @@ router.delete(
   }
 )
 
+router.put(
+  '/admin/products/:id',
+  async (req, res) => {
+
+    try {
+
+      const { id } = req.params
+
+      const {
+        name,
+        description,
+        price,
+        stock,
+        image
+      } = req.body
+
+      const product =
+        await prisma.product.update({
+
+          where: {
+            id
+          },
+
+          data: {
+
+            name,
+
+            description,
+
+            price: Number(price),
+
+            stock: Number(stock),
+
+            image
+
+          }
+
+        })
+
+      return res.json(product)
+
+    } catch (error) {
+
+      console.log(error)
+
+      return res.status(500).json({
+
+        error:
+          'Erro ao editar produto'
+
+      })
+    }
+
+  }
+)
+
 export default router
