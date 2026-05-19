@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "tsc",
-    "start": "node dist/server.js"
+    "start": "node dist/server.js",
+    "prisma-generate": "node node_modules/prisma/build/index.js generate"
   },
   "dependencies": {
     "@prisma/client": "^6.8.2",
