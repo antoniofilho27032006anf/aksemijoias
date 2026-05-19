@@ -11,7 +11,13 @@ router.get(
     try {
 
       const products =
-        await prisma.product.count()
+        await prisma.product.count({
+
+          where: {
+            status: true
+          }
+
+        })
 
       const orders =
         await prisma.order.count()
@@ -162,6 +168,10 @@ router.get(
       const products =
         await prisma.product.findMany({
 
+          where: {
+            status: true
+          },
+
           orderBy: {
             createdAt: 'desc'
           }
@@ -182,7 +192,6 @@ router.get(
   }
 )
 
-
 router.delete(
   '/admin/products/:id',
   async (req, res) => {
@@ -198,7 +207,7 @@ router.delete(
         },
 
         data: {
-            status:false
+          status: false
         }
 
       })
