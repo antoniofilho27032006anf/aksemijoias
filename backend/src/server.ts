@@ -5,6 +5,7 @@ import cors from 'cors'
 import userRoutes from './routes/user.routes'
 import productRoutes from './routes/product.routes'
 import orderRoutes from './routes/order.routes'
+import adminRoutes from './routes/admin.routes'
 
 import { prisma } from './lib/prisma'
 import { paymentClient } from './services/mercadoPago'
@@ -16,7 +17,8 @@ const PORT = process.env.PORT || 3333
 console.log({
   userRoutes,
   productRoutes,
-  orderRoutes
+  orderRoutes,
+  adminRoutes
 })
 
 app.use(
@@ -30,11 +32,14 @@ app.use(express.json())
 app.use(orderRoutes)
 app.use(userRoutes)
 app.use(productRoutes)
+app.use(adminRoutes)
 
 app.get('/', (req, res) => {
+
   return res.json({
     message: 'API AKsemijoias funcionando'
   })
+
 })
 
 app.post(
@@ -47,12 +52,15 @@ app.post(
         req.body?.data?.id
 
       if (!paymentId) {
+
         return res.sendStatus(200)
       }
 
       const payment =
         await paymentClient.get({
+
           id: paymentId
+
         })
 
       const status =
@@ -63,7 +71,8 @@ app.post(
         await prisma.order.updateMany({
 
           where: {
-            paymentId: paymentId.toString()
+            paymentId:
+              paymentId.toString()
           },
 
           data: {
@@ -87,5 +96,9 @@ app.post(
 )
 
 app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`)
+
+  console.log(
+    `Servidor rodando na porta ${PORT}`
+  )
+
 })
