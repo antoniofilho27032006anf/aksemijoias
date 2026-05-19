@@ -45,62 +45,70 @@ export function AuthProvider({
     const storedUser =
       localStorage.getItem('@ak-user')
 
-    if (storedUser) {
+    const token =
+      localStorage.getItem('@ak-token')
+
+    if (storedUser && token) {
+
+      api.defaults.headers.common[
+        'Authorization'
+      ] = `Bearer ${token}`
+
       setUser(JSON.parse(storedUser))
     }
 
   }, [])
 
   async function signIn(
-  email: string,
-  password: string
-) {
+    email: string,
+    password: string
+  ) {
 
-  try {
+    try {
 
-    console.log('tentando login')
+      const response = await api.post(
+        '/login',
+        {
+          email: email.trim(),
+          password: password.trim()
+        }
+      )
 
-    const response = await api.post(
-      '/login',
-      {
-        email: email.trim(),
-        password: password.trim()
-      }
-    )
+      const { token, user } = response.data
 
-    console.log('resposta backend')
+      localStorage.setItem(
+        '@ak-token',
+        token
+      )
 
-    console.log(response.data)
+      localStorage.setItem(
+        '@ak-user',
+        JSON.stringify(user)
+      )
 
-    const { token, user } = response.data
+      api.defaults.headers.common[
+        'Authorization'
+      ] = `Bearer ${token}`
 
-    localStorage.setItem(
-      '@ak-token',
-      token
-    )
+      setUser(user)
 
-    localStorage.setItem(
-      '@ak-user',
-      JSON.stringify(user)
-    )
+    } catch (error) {
 
-    console.log('salvou localstorage')
+      console.log(error)
 
-    setUser(user)
-
-  } catch (error) {
-
-    console.log(error)
-
-    throw error
+      throw error
+    }
   }
-}
 
   function logout() {
 
     localStorage.removeItem('@ak-token')
 
     localStorage.removeItem('@ak-user')
+
+    delete api.defaults.headers.common[
+      'Authorization'
+    ]
 
     setUser(null)
   }
