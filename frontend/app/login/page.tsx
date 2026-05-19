@@ -31,13 +31,14 @@ export default function LoginPage() {
 
     } catch (error: any) {
 
-  console.log(error)
+      console.log(error)
 
-  alert(
-    error?.response?.data?.error ||
-    'Erro ao fazer login'
-  )
-}
+      alert(
+        error?.response?.data?.error ||
+        'Erro ao fazer login'
+      )
+    }
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#09040f] px-6">
@@ -90,5 +91,4 @@ export default function LoginPage() {
 
     </div>
   )
-}
 }
