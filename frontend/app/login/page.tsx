@@ -31,10 +31,11 @@ export default function LoginPage() {
 
     } catch (error: any) {
 
-  console.log(error.response.data)
+  console.log(error)
 
   alert(
-    error.response.data.error
+    error?.response?.data?.error ||
+    'Erro ao fazer login'
   )
 }
 
