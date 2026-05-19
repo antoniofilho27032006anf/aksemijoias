@@ -5,11 +5,12 @@ import { useRouter } from 'next/navigation'
 
 import { useAuth } from '@/src/contexts/AuthContext'
 import { CreateProductForm } from '@/src/components/CreateProductForm'
+import { api } from '@/src/services/api'
 
 export default function AdminPage() {
 
-  const { user } = useAuth()
-  console.log(user)
+  
+  const { user } = useAuth() as any
 
   const router = useRouter()
 
