@@ -41,14 +41,27 @@ export default function RegisterPage() {
 
     } catch (error: any) {
 
-      console.log(error)
+  console.log(
+    'ERRO COMPLETO:',
+    error
+  )
 
-      alert(
-        error?.response?.data?.error ||
-        'Erro ao cadastrar'
-      )
-    }
-  }
+  console.log(
+    'RESPOSTA:',
+    error?.response
+  )
+
+  console.log(
+    'DATA:',
+    error?.response?.data
+  )
+
+  alert(
+    JSON.stringify(
+      error?.response?.data
+    )
+  )
+}
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#09040f] px-6">
@@ -111,4 +124,5 @@ export default function RegisterPage() {
 
     </div>
   )
+}
 }
