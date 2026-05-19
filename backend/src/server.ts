@@ -7,7 +7,7 @@ import productRoutes from './routes/product.routes'
 import orderRoutes from './routes/order.routes'
 
 import { prisma } from './lib/prisma'
-import { mercadopago } from './services/mercadoPago'
+import { payment } from './services/mercadoPago'
 
 const app = express()
 
@@ -51,9 +51,9 @@ app.post(
       }
 
       const payment =
-        await mercadopago.payment.findById(
-          paymentId
-        )
+        await payment.get({
+          id: paymentId
+        })
 
       const status =
         payment.body.status
