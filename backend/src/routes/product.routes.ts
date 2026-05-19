@@ -172,16 +172,21 @@ router.delete(
 
     const { id } = req.params
 
-    await prisma.product.delete({
+    await prisma.product.update({
+
       where: {
         id
+      },
+
+      data: {
+        status: false
       }
+
     })
 
     return res.json({
-      message: 'Produto deletado'
+      message: 'Produto ocultado'
     })
   }
 )
-
 export default router
