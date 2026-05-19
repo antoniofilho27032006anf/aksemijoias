@@ -14,50 +14,39 @@ model User {
   email     String   @unique
   password  String
   createdAt DateTime @default(now())
-
+  role      String?  @default("USER")
   orders    Order[]
 }
 
 model Product {
-  id          String   @id @default(uuid())
+  id          String      @id @default(uuid())
   name        String
   description String
   price       Float
   stock       Int
   image       String
-  status      Boolean  @default(true)
-  createdAt   DateTime @default(now())
-
+  createdAt   DateTime    @default(now())
+  status      Boolean     @default(true)
   orderItems  OrderItem[]
 }
 
 model Order {
-  id        String   @id @default(uuid())
-
+  id        String      @id @default(uuid())
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
-
   total     Float
-
-  status    String   @default("PENDING")
-
+  status    String      @default("PENDING")
+  createdAt DateTime    @default(now())
   paymentId String?
-
-  createdAt DateTime @default(now())
-
+  user      User        @relation(fields: [userId], references: [id])
   items     OrderItem[]
 }
 
 model OrderItem {
-  id        String   @id @default(uuid())
-
+  id        String  @id @default(uuid())
   orderId   String
-  order     Order    @relation(fields: [orderId], references: [id])
-
   productId String
-  product   Product  @relation(fields: [productId], references: [id])
-
   quantity  Int
-
   price     Float
+  order     Order   @relation(fields: [orderId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
 }
