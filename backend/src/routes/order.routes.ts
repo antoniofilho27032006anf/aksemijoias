@@ -1,7 +1,7 @@
 import { Router } from 'express'
 
 import { prisma } from '../lib/prisma'
-import { payment } from '../services/mercadoPago'
+import { paymentClient } from '../services/mercadoPago'
 
 const router = Router()
 
@@ -65,7 +65,7 @@ router.post('/orders', async (req, res) => {
       )
 
     const paymentData =
-      await payment.create({
+      await paymentClient.create({
 
         body: {
 
