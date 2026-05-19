@@ -9,6 +9,7 @@ import { CreateProductForm } from '@/src/components/CreateProductForm'
 export default function AdminPage() {
 
   const { user } = useAuth()
+  console.log(user)
 
   const router = useRouter()
 
@@ -33,8 +34,21 @@ export default function AdminPage() {
   }
 
   if (!user) {
-    return null
-  }
+  return null
+}
+
+if (user.role !== 'ADMIN') {
+
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-black text-white">
+
+      <h1 className="text-3xl font-bold">
+        Acesso negado
+      </h1>
+
+    </div>
+  )   
+}
 
   return (
     <div className="min-h-screen bg-[#09040f] p-10 text-white">
