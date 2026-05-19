@@ -80,7 +80,9 @@ router.get(
     const products =
       await prisma.product.findMany()
 
-    return res.json(products)
+    where: {
+      status: true
+    }
   }
 )
 
