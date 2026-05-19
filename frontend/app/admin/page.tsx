@@ -28,6 +28,9 @@ export default function AdminPage() {
   const [orders, setOrders] =
     useState<any[]>([])
 
+  const [products, setProducts] =
+    useState<any[]>([])
+
   useEffect(() => {
 
     const token =
@@ -59,6 +62,19 @@ export default function AdminPage() {
         .then((response) => {
 
           setOrders(response.data)
+
+        })
+        .catch((error) => {
+
+          console.log(error)
+
+        })
+
+      api
+        .get('/admin/products')
+        .then((response) => {
+
+          setProducts(response.data)
 
         })
         .catch((error) => {
@@ -111,6 +127,52 @@ export default function AdminPage() {
       console.log(error)
 
       alert('Erro ao atualizar status')
+
+    }
+
+  }
+
+  async function handleDeleteProduct(
+    productId: string
+  ) {
+
+    const confirmDelete =
+      confirm(
+        'Deseja realmente excluir este produto?'
+      )
+
+    if (!confirmDelete) {
+      return
+    }
+
+    try {
+
+      await api.delete(
+        `/admin/products/${productId}`
+      )
+
+      setProducts((prevProducts) =>
+
+        prevProducts.filter(
+          (product) =>
+            product.id !== productId
+        )
+
+      )
+
+      setStats((prev) => ({
+        ...prev,
+        products:
+          prev.products - 1
+      }))
+
+      alert('Produto excluído')
+
+    } catch (error) {
+
+      console.log(error)
+
+      alert('Erro ao excluir produto')
 
     }
 
@@ -220,6 +282,66 @@ export default function AdminPage() {
         </div>
 
         <div className="mt-16">
+
+          <h2 className="text-3xl font-black text-white">
+            Produtos
+          </h2>
+
+          <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+
+            {products.map((product) => (
+
+              <div
+                key={product.id}
+                className="rounded-[2rem] border border-white/10 bg-white/5 p-5"
+              >
+
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="h-60 w-full rounded-2xl object-cover"
+                />
+
+                <h3 className="mt-5 text-2xl font-bold text-white">
+                  {product.name}
+                </h3>
+
+                <p className="mt-2 text-sm text-zinc-400">
+                  {product.description}
+                </p>
+
+                <div className="mt-5 flex items-center justify-between">
+
+                  <p className="text-xl font-black text-pink-400">
+                    R$ {product.price.toFixed(2)}
+                  </p>
+
+                  <p className="text-sm text-zinc-400">
+                    Estoque: {product.stock}
+                  </p>
+
+                </div>
+
+                <button
+                  onClick={() =>
+                    handleDeleteProduct(
+                      product.id
+                    )
+                  }
+                  className="mt-6 w-full rounded-full bg-red-500 px-4 py-3 font-semibold text-white transition hover:bg-red-400"
+                >
+                  Excluir Produto
+                </button>
+
+              </div>
+
+            ))}
+
+          </div>
+
+        </div>
+
+        <div className="mt-20">
 
           <h2 className="text-3xl font-black text-white">
             Pedidos Recentes
