@@ -29,11 +29,14 @@ export default function LoginPage() {
 
       router.push('/')
 
-    } catch (error) {
+    } catch (error: any) {
 
-      alert('Erro ao fazer login')
-    }
-  }
+  console.log(error.response.data)
+
+  alert(
+    error.response.data.error
+  )
+}
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#09040f] px-6">
@@ -86,4 +89,5 @@ export default function LoginPage() {
 
     </div>
   )
+}
 }
