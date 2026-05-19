@@ -39,4 +39,45 @@ router.get(
   }
 )
 
+router.get(
+  '/admin/orders',
+  async (req, res) => {
+
+    try {
+
+      const orders =
+        await prisma.order.findMany({
+
+          include: {
+
+            user: true,
+
+            items: {
+              include: {
+                product: true
+              }
+            }
+
+          },
+
+          orderBy: {
+            createdAt: 'desc'
+          }
+
+        })
+
+      return res.json(orders)
+
+    } catch (error) {
+
+      console.log(error)
+
+      return res.status(500).json({
+        error: 'Erro ao buscar pedidos'
+      })
+    }
+
+  }
+)
+
 export default router
