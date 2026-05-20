@@ -9,25 +9,16 @@ import { useAuth } from '@/src/contexts/AuthContext'
 import { useCart } from '@/src/contexts/CartContext'
 import { api } from '@/src/services/api'
 
-const paymentOptions = [
-  { value: 'pix', label: 'PIX' },
-  { value: 'stripe', label: 'Cartão (Stripe)' },
-  { value: 'mercadopago', label: 'Mercado Pago' },
-  { value: 'card', label: 'Cartão comum' }
-]
-
-type PaymentMethod = 'pix' | 'stripe' | 'mercadopago' | 'card'
-
 export default function CheckoutPage() {
   const router = useRouter()
   const { user } = useAuth()
   const { cart, clearCart } = useCart()
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('pix')
   const [couponCode, setCouponCode] = useState('')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
   const [pixCode, setPixCode] = useState('')
   const [pixQr, setPixQr] = useState('')
+  const [copied, setCopied] = useState(false)
 
   const total = useMemo(
     () => cart.reduce((acc, item) => acc + item.price * item.quantity, 0),
@@ -52,39 +43,38 @@ export default function CheckoutPage() {
       setMessage('')
 
       const response = await api.post('/orders', {
-        userId: user.id,
         items: cart.map((item) => ({
           productId: item.id,
           quantity: item.quantity
         })),
         couponCode: couponCode.trim() || undefined,
-        paymentMethod,
-        returnUrl: `${window.location.origin}/checkout/success`
+        paymentMethod: 'pix'
       })
-
-      if (response.data.stripeUrl) {
-        clearCart()
-        window.location.href = response.data.stripeUrl
-        return
-      }
 
       if (response.data.pix) {
         setPixQr(response.data.pix.qr_code_base64)
         setPixCode(response.data.pix.qr_code)
-        setMessage('PIX pronto. Copie o código ou use o QR code para concluir.')
         clearCart()
         return
       }
 
-      setMessage('Pedido criado com sucesso. Confira seus pedidos.')
       clearCart()
       router.push('/checkout/success')
     } catch (error: any) {
       console.log(error)
       setMessage(error?.response?.data?.error || 'Erro ao processar pagamento')
-      router.push('/checkout/failure')
     } finally {
       setLoading(false)
+    }
+  }
+
+  async function handleCopy() {
+    try {
+      await navigator.clipboard.writeText(pixCode)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 3000)
+    } catch {
+      setCopied(false)
     }
   }
 
@@ -96,7 +86,7 @@ export default function CheckoutPage() {
         <div className="grid gap-10 xl:grid-cols-[0.9fr,_0.6fr]">
           <section className="rounded-[2rem] border border-pink-100/50 bg-white/85 p-8 shadow-[0_40px_120px_rgba(145,92,255,0.12)]">
             <h1 className="text-4xl font-black text-slate-900">Checkout</h1>
-            <p className="mt-3 text-sm text-slate-600">Finalize sua compra com diversos métodos de pagamento seguros.</p>
+            <p className="mt-3 text-sm text-slate-600">Finalize sua compra com pagamento via PIX.</p>
 
             <div className="mt-8 space-y-6">
               <div className="rounded-[2rem] border border-white/10 bg-slate-950/5 p-6">
@@ -114,71 +104,120 @@ export default function CheckoutPage() {
                 </div>
                 <div className="mt-6 flex items-center justify-between border-t border-slate-200 pt-4 text-base font-semibold text-slate-900">
                   <span>Total</span>
-                  <span>R$ {total.toFixed(2)}</span>
+                  <span className="text-2xl font-black text-pink-500">R$ {total.toFixed(2)}</span>
                 </div>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid gap-3 sm:grid-cols-2">
-                  {paymentOptions.map((option) => (
-                    <label key={option.value} className={`cursor-pointer rounded-3xl border p-4 transition ${paymentMethod === option.value ? 'border-pink-500 bg-pink-50' : 'border-white/10 bg-white/80 hover:border-pink-300'}`}>
-                      <input
-                        type="radio"
-                        name="payment"
-                        value={option.value}
-                        checked={paymentMethod === option.value}
-                        onChange={() => setPaymentMethod(option.value as PaymentMethod)}
-                        className="mr-3 h-4 w-4"
-                      />
-                      <span className="font-semibold text-slate-900">{option.label}</span>
-                    </label>
-                  ))}
-                </div>
+              {!pixCode && (
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="rounded-3xl border border-green-200 bg-green-50 p-5 flex items-center gap-4">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-green-500 text-white text-xl font-bold">
+                      PIX
+                    </div>
+                    <div>
+                      <p className="font-semibold text-slate-900">Pagamento via PIX</p>
+                      <p className="text-sm text-slate-500">Aprovação imediata após o pagamento</p>
+                    </div>
+                  </div>
 
-                <div className="rounded-3xl border border-white/10 bg-white/80 p-5">
-                  <label className="block text-sm font-semibold text-slate-700">Cupom de desconto</label>
-                  <input
-                    value={couponCode}
-                    onChange={(event) => setCouponCode(event.target.value)}
-                    placeholder="Código do cupom"
-                    className="mt-3 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none"
-                  />
-                </div>
+                  <div className="rounded-3xl border border-white/10 bg-white/80 p-5">
+                    <label className="block text-sm font-semibold text-slate-700">Cupom de desconto</label>
+                    <input
+                      value={couponCode}
+                      onChange={(e) => setCouponCode(e.target.value)}
+                      placeholder="Código do cupom (opcional)"
+                      className="mt-3 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none"
+                    />
+                  </div>
 
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full rounded-full bg-gradient-to-r from-pink-500 via-fuchsia-500 to-violet-500 px-6 py-4 text-sm font-semibold text-white shadow-lg shadow-pink-500/20 transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  {loading ? 'Processando...' : 'Finalizar pedido'}
-                </button>
-              </form>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full rounded-full bg-gradient-to-r from-green-500 to-emerald-500 px-6 py-4 text-sm font-semibold text-white shadow-lg shadow-green-500/20 transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {loading ? 'Gerando PIX...' : 'Gerar QR Code PIX'}
+                  </button>
+                </form>
+              )}
 
-              {message ? (
-                <div className="rounded-[2rem] border border-pink-200 bg-pink-50 p-5 text-slate-800">
+              {message && (
+                <div className="rounded-[2rem] border border-red-200 bg-red-50 p-5 text-red-700">
                   <p>{message}</p>
                 </div>
-              ) : null}
+              )}
 
-              {pixQr ? (
-                <div className="rounded-[2rem] border border-green-200 bg-green-50 p-5">
-                  <h2 className="text-lg font-semibold text-slate-900">PIX gerado</h2>
-                  <img src={`data:image/png;base64,${pixQr}`} alt="QRCode PIX" className="mt-4 h-52 w-52 rounded-3xl bg-white p-2" />
-                  <textarea readOnly value={pixCode} className="mt-4 w-full rounded-3xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700" />
+              {pixCode && (
+                <div className="rounded-[2rem] border border-green-200 bg-green-50 p-6 space-y-5">
+                  <div className="text-center">
+                    <div className="inline-flex items-center gap-2 rounded-full bg-green-100 px-4 py-2 text-sm font-semibold text-green-700">
+                      ✓ PIX gerado com sucesso!
+                    </div>
+                    <p className="mt-3 text-sm text-slate-500">Escaneie o QR Code ou copie o código para pagar</p>
+                  </div>
+
+                  {pixQr && (
+                    <div className="flex justify-center">
+                      <img
+                        src={`data:image/png;base64,${pixQr}`}
+                        alt="QRCode PIX"
+                        className="h-56 w-56 rounded-3xl bg-white p-3 shadow-md"
+                      />
+                    </div>
+                  )}
+
+                  <div className="space-y-2">
+                    <p className="text-sm font-semibold text-slate-700">Código PIX copia e cola:</p>
+                    <div className="relative">
+                      <textarea
+                        readOnly
+                        value={pixCode}
+                        className="w-full rounded-2xl border border-slate-200 bg-white p-4 pr-14 text-xs text-slate-600 outline-none resize-none h-24"
+                      />
+                      <button
+                        onClick={handleCopy}
+                        title="Copiar código PIX"
+                        className="absolute right-3 top-3 flex items-center justify-center rounded-xl bg-green-500 p-2 text-white transition hover:bg-green-400"
+                      >
+                        {copied ? (
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                        ) : (
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                          </svg>
+                        )}
+                      </button>
+                    </div>
+                    {copied && (
+                      <p className="text-sm text-green-600 font-semibold">✓ Código copiado!</p>
+                    )}
+                  </div>
+
+                  <p className="text-center text-xs text-slate-400">
+                    Após o pagamento, seu pedido será confirmado automaticamente.
+                  </p>
                 </div>
-              ) : null}
+              )}
             </div>
           </section>
 
           <aside className="space-y-6">
-            <div className="rounded-[2rem] border border-white/10 bg-white/90 p-6 shadow-[0_30px_80px_rgba(145,92,255,0.12)]">
-              <p className="text-sm uppercase tracking-[0.24em] text-pink-700">Pagamento seguro</p>
-              <h2 className="mt-3 text-2xl font-bold text-slate-900">Método selecionado</h2>
-              <p className="mt-4 text-sm text-slate-600">Todos os pagamentos são feitos em ambiente seguro e confiável.</p>
-            </div>
-            <div className="rounded-[2rem] border border-pink-100/50 bg-white/90 p-6 shadow-[0_30px_80px_rgba(255,182,193,0.12)]">
-              <h3 className="text-lg font-semibold text-slate-900">Ajuda</h3>
-              <p className="mt-3 text-sm leading-6 text-slate-600">Se precisar de suporte, entre em contato com nosso atendimento e acompanhe seu pedido diretamente na área do usuário.</p>
+            <div className="rounded-[2rem] border border-green-100 bg-white/90 p-6 shadow-[0_30px_80px_rgba(145,92,255,0.12)]">
+              <p className="text-sm uppercase tracking-[0.24em] text-green-600">Pagamento seguro</p>
+              <h2 className="mt-3 text-2xl font-bold text-slate-900">PIX</h2>
+              <p className="mt-4 text-sm text-slate-600">Pagamento instantâneo, seguro e sem taxas adicionais.</p>
+              <ul className="mt-6 space-y-3">
+                <li className="flex items-center gap-3 text-sm text-slate-600">
+                  <span className="text-green-500">✓</span> Aprovação imediata
+                </li>
+                <li className="flex items-center gap-3 text-sm text-slate-600">
+                  <span className="text-green-500">✓</span> Sem taxa extra
+                </li>
+                <li className="flex items-center gap-3 text-sm text-slate-600">
+                  <span className="text-green-500">✓</span> 100% seguro
+                </li>
+              </ul>
             </div>
           </aside>
         </div>
