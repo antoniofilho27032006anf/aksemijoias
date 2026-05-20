@@ -38,18 +38,31 @@ function sortProducts(products: Product[], option: SortOption) {
   return [...products].sort((a, b) => getPopularityScore(b.id) - getPopularityScore(a.id))
 }
 
+interface Category {
+  id: string
+  name: string
+  slug: string
+}
+
 export default function Home() {
   const [allProducts, setAllProducts] = useState<Product[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
+  const [selectedCategory, setSelectedCategory] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
   const [sortOption, setSortOption] = useState<SortOption>('bestseller')
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    api.get('/categories').then((r) => setCategories(r.data)).catch(() => {})
+  }, [])
+
+  useEffect(() => {
     async function loadProducts() {
       try {
         setLoading(true)
-        const response = await api.get('/products')
-        setAllProducts(response.data)
+        const url = selectedCategory ? `/products?category=${selectedCategory}` : '/products'
+        const response = await api.get(url)
+        setAllProducts(response.data.products ?? [])
       } catch (error) {
         console.log(error)
       } finally {
@@ -58,7 +71,7 @@ export default function Home() {
     }
 
     loadProducts()
-  }, [])
+  }, [selectedCategory])
 
   const products = useMemo(() => {
     const normalized = searchTerm.trim().toLowerCase()
@@ -185,6 +198,26 @@ export default function Home() {
           </div>
 
           <p className="mt-3 max-w-2xl text-slate-500">Uma curadoria feminina com design delicado, perfeita para quem gosta de joias leves e cheias de charme.</p>
+
+          {categories.length > 0 && (
+            <div className="mt-6 flex flex-wrap gap-2">
+              <button
+                onClick={() => setSelectedCategory('')}
+                className={`rounded-full px-5 py-2 text-sm font-semibold transition ${selectedCategory === '' ? 'bg-pink-500 text-white' : 'border border-slate-200 bg-white text-slate-700 hover:border-pink-300'}`}
+              >
+                Todos
+              </button>
+              {categories.map((cat) => (
+                <button
+                  key={cat.id}
+                  onClick={() => setSelectedCategory(cat.slug)}
+                  className={`rounded-full px-5 py-2 text-sm font-semibold transition ${selectedCategory === cat.slug ? 'bg-pink-500 text-white' : 'border border-slate-200 bg-white text-slate-700 hover:border-pink-300'}`}
+                >
+                  {cat.name}
+                </button>
+              ))}
+            </div>
+          )}
 
           <div className="mt-10">
             {loading ? (

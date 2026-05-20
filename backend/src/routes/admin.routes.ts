@@ -3,6 +3,7 @@ import { z } from 'zod'
 
 import { prisma } from '../lib/prisma'
 import { validateBody } from '../middlewares/validate'
+import { sendOrderStatusEmail } from '../services/email'
 
 const router = Router()
 
@@ -163,7 +164,8 @@ router.patch('/admin/orders/:id', validateBody(orderStatusSchema), async (req, r
 
     const order = await prisma.order.update({
       where: { id },
-      data: { status }
+      data: { status },
+      include: { user: true }
     })
 
     await prisma.orderEvent.create({
@@ -173,6 +175,8 @@ router.patch('/admin/orders/:id', validateBody(orderStatusSchema), async (req, r
         description: 'Status atualizado pelo administrador'
       }
     })
+
+    sendOrderStatusEmail(order.user.email, { orderId: id, status }).catch(console.error)
 
     return res.json(order)
   } catch (error) {

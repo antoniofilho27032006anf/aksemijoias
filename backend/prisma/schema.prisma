@@ -22,9 +22,9 @@ model User {
 
   createdAt DateTime @default(now())
 
-  orders    Order[]
-  favorites Favorite[]
-  cart      Cart?
+  orders        Order[]
+  favorites     Favorite[]
+  cart          Cart?
 }
 
 model Category {
@@ -162,3 +162,4 @@ model OrderEvent {
   description String?
   createdAt   DateTime @default(now())
 }
+

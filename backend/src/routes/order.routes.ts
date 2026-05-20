@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { prisma } from '../lib/prisma'
 import { paymentClient } from '../services/mercadoPago'
 import { validateBody } from '../middlewares/validate'
+import { sendOrderCreatedEmail, sendOrderStatusEmail } from '../services/email'
 
 const router = Router()
 
@@ -125,6 +126,8 @@ router.post('/orders', validateBody(createOrderSchema), async (req, res) => {
 
     await createOrderEvent(order.id, 'PENDING', 'Pedido criado e aguardando pagamento')
 
+    sendOrderCreatedEmail(user.email, { orderId: order.id, total: finalTotal }).catch(console.error)
+
     if (paymentMethod === 'stripe') {
       if (!stripe) {
         return res.status(500).json({ error: 'Stripe não configurado' })
@@ -157,10 +160,11 @@ router.post('/orders', validateBody(createOrderSchema), async (req, res) => {
       body: {
         transaction_amount: finalTotal,
         description: 'Pedido AKsemijoias',
-        payment_method_id: paymentMethod === 'mercadopago' ? 'pix' : 'pix',
+        payment_method_id: 'pix',
         payer: {
           email: user.email
-        }
+        },
+        notification_url: `${process.env.API_URL || 'http://localhost:3333'}/webhooks/mercadopago`
       }
     })
 
@@ -254,7 +258,10 @@ router.patch('/orders/:id/cancel', validateBody(cancelOrderSchema), async (req, 
     const id = String(req.params.id)
     const { reason } = req.body
 
-    const existingOrder = await prisma.order.findUnique({ where: { id } })
+    const existingOrder = await prisma.order.findUnique({
+      where: { id },
+      include: { user: true }
+    })
 
     if (!existingOrder) {
       return res.status(404).json({ error: 'Pedido não encontrado' })
@@ -270,6 +277,12 @@ router.patch('/orders/:id/cancel', validateBody(cancelOrderSchema), async (req, 
     })
 
     await createOrderEvent(order.id, 'CANCELLED', reason || 'Pedido cancelado pelo usuário')
+
+    sendOrderStatusEmail(existingOrder.user.email, {
+      orderId: order.id,
+      status: 'CANCELLED',
+      description: reason || 'Seu pedido foi cancelado.'
+    }).catch(console.error)
 
     return res.json(order)
   } catch (error) {

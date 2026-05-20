@@ -7,6 +7,8 @@ import { useAuth } from '@/src/contexts/AuthContext'
 import { CreateProductForm } from '@/src/components/CreateProductForm'
 import { api } from '@/src/services/api'
 
+import { toast } from 'sonner'
+
 export default function AdminPage() {
 
   const { user } = useAuth() as any
@@ -42,14 +44,17 @@ export default function AdminPage() {
 
   const [editForm, setEditForm] =
     useState({
-
       name: '',
       description: '',
       price: '',
       stock: '',
       image: ''
-
     })
+
+  const [categories, setCategories] = useState<any[]>([])
+  const [newCategory, setNewCategory] = useState('')
+  const [tags, setTags] = useState<any[]>([])
+  const [newTag, setNewTag] = useState('')
 
   useEffect(() => {
 
@@ -93,16 +98,14 @@ export default function AdminPage() {
       api
         .get('/admin/products')
         .then((response) => {
-
           setProducts(response.data)
-
         })
         .catch((error) => {
-
           console.log(error)
-
         })
 
+      api.get('/categories').then((r) => setCategories(r.data)).catch(() => {})
+      api.get('/tags').then((r) => setTags(r.data)).catch(() => {})
     }
 
   }, [router])
@@ -146,7 +149,7 @@ export default function AdminPage() {
 
       console.log(error)
 
-      alert('Erro ao atualizar status')
+      toast.error('Erro ao atualizar status')
 
     }
 
@@ -186,13 +189,13 @@ export default function AdminPage() {
           prev.products - 1
       }))
 
-      alert('Produto excluído')
+      toast.success('Produto excluído')
 
     } catch (error) {
 
       console.log(error)
 
-      alert('Erro ao excluir produto')
+      toast.error('Erro ao excluir produto')
 
     }
 
@@ -265,16 +268,76 @@ export default function AdminPage() {
 
       setEditingProduct(null)
 
-      alert('Produto atualizado')
+      toast.success('Produto atualizado')
 
     } catch (error) {
 
       console.log(error)
 
-      alert('Erro ao editar produto')
+      toast.error('Erro ao editar produto')
 
     }
 
+  }
+
+  async function handleCreateCategory() {
+    if (!newCategory.trim()) return
+    try {
+      const response = await api.post('/categories', { name: newCategory.trim() })
+      setCategories((prev) => [...prev, response.data])
+      setNewCategory('')
+      toast.success('Categoria criada')
+    } catch {
+      toast.error('Erro ao criar categoria')
+    }
+  }
+
+  async function handleDeleteCategory(id: string) {
+    if (!confirm('Excluir categoria?')) return
+    try {
+      await api.delete(`/categories/${id}`)
+      setCategories((prev) => prev.filter((c) => c.id !== id))
+      toast.success('Categoria removida')
+    } catch {
+      toast.error('Erro ao remover categoria')
+    }
+  }
+
+  async function handleCreateTag() {
+    if (!newTag.trim()) return
+    try {
+      const response = await api.post('/tags', { name: newTag.trim() })
+      setTags((prev) => [...prev, response.data])
+      setNewTag('')
+      toast.success('Tag criada')
+    } catch {
+      toast.error('Erro ao criar tag')
+    }
+  }
+
+  async function handleDeleteTag(id: string) {
+    if (!confirm('Excluir tag?')) return
+    try {
+      await api.delete(`/tags/${id}`)
+      setTags((prev) => prev.filter((t) => t.id !== id))
+      toast.success('Tag removida')
+    } catch {
+      toast.error('Erro ao remover tag')
+    }
+  }
+
+  async function handleExportCSV() {
+    try {
+      const response = await api.get('/admin/reports/export', { responseType: 'blob' })
+      const url = window.URL.createObjectURL(new Blob([response.data]))
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'relatorio-pedidos.csv'
+      a.click()
+      window.URL.revokeObjectURL(url)
+    } catch {
+      toast.error('Erro ao exportar relatório')
+    }
   }
 
   if (loading) {
@@ -725,6 +788,87 @@ export default function AdminPage() {
 
           </div>
 
+        </div>
+
+        {/* Exportar CSV */}
+        <div className="mt-16 flex items-center justify-between">
+          <h2 className="text-3xl font-black text-white">Relatórios</h2>
+          <button
+            onClick={handleExportCSV}
+            className="rounded-full bg-green-500 px-6 py-3 font-semibold text-white transition hover:bg-green-400"
+          >
+            Exportar pedidos CSV
+          </button>
+        </div>
+
+        {/* Categorias */}
+        <div className="mt-16">
+          <h2 className="text-3xl font-black text-white">Categorias</h2>
+          <div className="mt-6 flex gap-3">
+            <input
+              value={newCategory}
+              onChange={(e) => setNewCategory(e.target.value)}
+              placeholder="Nome da categoria"
+              className="flex-1 rounded-full bg-white/10 px-5 py-3 text-white outline-none placeholder:text-zinc-500"
+            />
+            <button
+              onClick={handleCreateCategory}
+              className="rounded-full bg-pink-500 px-6 py-3 font-semibold text-white transition hover:bg-pink-400"
+            >
+              Criar
+            </button>
+          </div>
+          <div className="mt-4 flex flex-wrap gap-3">
+            {categories.map((cat) => (
+              <div key={cat.id} className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2">
+                <span className="text-sm text-white">{cat.name}</span>
+                <button
+                  onClick={() => handleDeleteCategory(cat.id)}
+                  className="text-red-400 transition hover:text-red-300"
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+            {categories.length === 0 && (
+              <p className="text-sm text-zinc-500">Nenhuma categoria cadastrada.</p>
+            )}
+          </div>
+        </div>
+
+        {/* Tags */}
+        <div className="mt-16 pb-16">
+          <h2 className="text-3xl font-black text-white">Tags</h2>
+          <div className="mt-6 flex gap-3">
+            <input
+              value={newTag}
+              onChange={(e) => setNewTag(e.target.value)}
+              placeholder="Nome da tag"
+              className="flex-1 rounded-full bg-white/10 px-5 py-3 text-white outline-none placeholder:text-zinc-500"
+            />
+            <button
+              onClick={handleCreateTag}
+              className="rounded-full bg-violet-500 px-6 py-3 font-semibold text-white transition hover:bg-violet-400"
+            >
+              Criar
+            </button>
+          </div>
+          <div className="mt-4 flex flex-wrap gap-3">
+            {tags.map((tag) => (
+              <div key={tag.id} className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2">
+                <span className="text-sm text-white">{tag.name}</span>
+                <button
+                  onClick={() => handleDeleteTag(tag.id)}
+                  className="text-red-400 transition hover:text-red-300"
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+            {tags.length === 0 && (
+              <p className="text-sm text-zinc-500">Nenhuma tag cadastrada.</p>
+            )}
+          </div>
         </div>
 
       </div>

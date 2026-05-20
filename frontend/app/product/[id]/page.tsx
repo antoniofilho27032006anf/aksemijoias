@@ -11,6 +11,14 @@ import { CartSidebar } from '../../../src/components/CartSidebar'
 import { useCart } from '../../../src/contexts/CartContext'
 import { useFavorites } from '../../../src/contexts/FavoritesContext'
 
+interface Variation {
+  id: string
+  name: string
+  value: string
+  stock: number
+  price?: number
+}
+
 interface Product {
   id: string
   name: string
@@ -18,6 +26,8 @@ interface Product {
   price: number
   image: string
   stock: number
+  variations: Variation[]
+  category?: { name: string }
 }
 
 function getPopularityScore(id: string) {
@@ -33,33 +43,36 @@ export default function ProductPage() {
   const [product, setProduct] = useState<Product | null>(null)
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
+  const [selectedVariations, setSelectedVariations] = useState<Record<string, string>>({})
 
   useEffect(() => {
     async function loadProduct() {
       setLoading(true)
-
       try {
-        const response = await api.get('/products')
-        const allProducts: Product[] = response.data
-
-        const currentProduct = allProducts.find((item) => item.id === productId) ?? null
-        setProduct(currentProduct)
-
-        const related = allProducts
-          .filter((item) => item.id !== productId)
-          .sort((a, b) => getPopularityScore(b.id) - getPopularityScore(a.id))
-          .slice(0, 3)
-
-        setRelatedProducts(related)
+        const [productRes, relatedRes] = await Promise.all([
+          api.get(`/products/${productId}`),
+          api.get('/products?limit=4')
+        ])
+        setProduct(productRes.data)
+        setRelatedProducts(
+          (relatedRes.data.products ?? [])
+            .filter((p: Product) => p.id !== productId)
+            .slice(0, 3)
+        )
       } catch (error) {
         console.log(error)
       } finally {
         setLoading(false)
       }
     }
-
     loadProduct()
   }, [productId])
+
+  const variationGroups = product?.variations?.reduce((acc: Record<string, Variation[]>, v) => {
+    if (!acc[v.name]) acc[v.name] = []
+    acc[v.name].push(v)
+    return acc
+  }, {}) ?? {}
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(255,182,193,0.24),transparent_18%),radial-gradient(circle_at_bottom_right,_rgba(155,92,255,0.16),transparent_24%),linear-gradient(180deg,#ffffff_0%,#f7efff_100%)] text-slate-900">
@@ -106,6 +119,25 @@ export default function ProductPage() {
                     {product.stock > 0 ? 'Em estoque' : 'Esgotado'}
                   </span>
                 </div>
+                {Object.entries(variationGroups).map(([groupName, options]) => (
+                  <div key={groupName} className="mt-6">
+                    <p className="text-sm font-semibold text-slate-700">{groupName}</p>
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {options.map((v) => (
+                        <button
+                          key={v.id}
+                          onClick={() => setSelectedVariations((prev) => ({ ...prev, [groupName]: v.value }))}
+                          disabled={v.stock === 0}
+                          className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${selectedVariations[groupName] === v.value ? 'border-pink-500 bg-pink-50 text-pink-700' : 'border-slate-200 bg-white text-slate-700 hover:border-pink-300'} disabled:cursor-not-allowed disabled:opacity-40`}
+                        >
+                          {v.value}
+                          {v.price ? ` (+R$ ${v.price.toFixed(2)})` : ''}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+
                 <div className="mt-8 flex flex-wrap gap-4">
                   <button
                     onClick={() => addToCart({ id: product.id, name: product.name, price: product.price, image: product.image })}
