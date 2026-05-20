@@ -39,8 +39,8 @@ async function uploadToCloudinary(buffer: Buffer): Promise<string> {
 }
 
 const productSchema = z.object({
-  name: z.string().min(3),
-  description: z.string().min(10),
+  name: z.string().min(1),
+  description: z.string().min(1),
   price: z.preprocess((v) => Number(v), z.number().positive()),
   stock: z.preprocess((v) => Number(v), z.number().int().nonnegative()),
   categoryId: z.string().optional(),
