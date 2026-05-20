@@ -35,19 +35,18 @@ export default function RegisterPage() {
         backgroundImage: "url('/bg-login.jpg')",
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        backgroundAttachment: 'fixed'
+        backgroundRepeat: 'no-repeat'
       }}
     >
       <div className="absolute inset-0 bg-black/50" />
 
-      <div className="relative z-10 w-full max-w-sm px-4 py-10">
+      <div className="relative z-10 w-full max-w-sm px-3 py-6 sm:px-4">
         <form
           onSubmit={handleRegister}
-          className="rounded-[2rem] bg-white px-8 py-10 shadow-[0_32px_80px_rgba(0,0,0,0.4)]"
+          className="rounded-[1.5rem] bg-white px-5 py-7 shadow-[0_32px_80px_rgba(0,0,0,0.4)] sm:px-8 sm:py-10"
         >
-          <div className="mb-8 text-center">
-            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-pink-400 to-rose-500 shadow-lg">
+          <div className="mb-6 text-center sm:mb-8">
+            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-pink-400 to-rose-500 shadow-lg sm:h-14 sm:w-14">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
               </svg>
