@@ -36,7 +36,7 @@ router.get('/categories', async (req, res) => {
 
 router.get('/categories/:slug', async (req, res) => {
   try {
-    const { slug } = req.params
+    const slug = String(req.params.slug)
     const category = await prisma.category.findUnique({
       where: { slug },
       include: {
@@ -69,7 +69,7 @@ router.post('/categories', adminMiddleware, validateBody(categorySchema), async 
 
 router.put('/categories/:id', adminMiddleware, validateBody(categorySchema), async (req, res) => {
   try {
-    const { id } = req.params
+    const id = String(req.params.id)
     const { name } = req.body
     const slug = generateSlug(name)
 
@@ -86,7 +86,7 @@ router.put('/categories/:id', adminMiddleware, validateBody(categorySchema), asy
 
 router.delete('/categories/:id', adminMiddleware, async (req, res) => {
   try {
-    const { id } = req.params
+    const id = String(req.params.id)
     await prisma.category.delete({ where: { id } })
     return res.json({ message: 'Categoria removida' })
   } catch (error) {

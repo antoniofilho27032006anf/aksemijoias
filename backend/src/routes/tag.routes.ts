@@ -41,7 +41,7 @@ router.post('/tags', adminMiddleware, validateBody(tagSchema), async (req, res) 
 
 router.delete('/tags/:id', adminMiddleware, async (req, res) => {
   try {
-    const { id } = req.params
+    const id = String(req.params.id)
     await prisma.tag.delete({ where: { id } })
     return res.json({ message: 'Tag removida' })
   } catch (error) {

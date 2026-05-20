@@ -223,7 +223,7 @@ router.post('/refresh-token', validateBody(refreshSchema), async (req, res) => {
 router.get('/users/:id', authMiddleware, async (req, res) => {
   try {
     const authUser = (req as any).user
-    const { id } = req.params
+    const id = String(req.params.id)
 
     if (authUser.id !== id && authUser.role !== 'ADMIN') {
       return res.status(403).json({ error: 'Acesso negado' })
@@ -251,7 +251,7 @@ router.get('/users/:id', authMiddleware, async (req, res) => {
 router.patch('/users/:id', authMiddleware, validateBody(updateUserSchema), async (req, res) => {
   try {
     const authUser = (req as any).user
-    const { id } = req.params
+    const id = String(req.params.id)
     const { name, email, avatarUrl } = req.body
 
     if (authUser.id !== id && authUser.role !== 'ADMIN') {
@@ -279,7 +279,7 @@ router.patch('/users/:id', authMiddleware, validateBody(updateUserSchema), async
 router.patch('/users/:id/password', authMiddleware, validateBody(passwordSchema), async (req, res) => {
   try {
     const authUser = (req as any).user
-    const { id } = req.params
+    const id = String(req.params.id)
     const { currentPassword, newPassword } = req.body
 
     if (authUser.id !== id && authUser.role !== 'ADMIN') {
