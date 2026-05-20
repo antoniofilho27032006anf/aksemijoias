@@ -40,10 +40,10 @@ export default function LoginPage() {
     >
       <div className="absolute inset-0 bg-black/50" />
 
-      <div className="relative z-10 w-full max-w-sm px-3 py-6 sm:px-4">
+      <div className="relative z-10 w-full max-w-[320px] px-2 py-4 sm:max-w-sm sm:px-4">
         <form
           onSubmit={handleLogin}
-          className="rounded-[1.5rem] bg-white px-5 py-7 shadow-[0_32px_80px_rgba(0,0,0,0.4)] sm:px-8 sm:py-10"
+          className="rounded-2xl bg-white px-4 py-5 shadow-[0_32px_80px_rgba(0,0,0,0.4)] sm:px-8 sm:py-10"
         >
           <div className="mb-6 text-center sm:mb-8">
             <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-pink-400 to-rose-500 shadow-lg sm:h-14 sm:w-14">
