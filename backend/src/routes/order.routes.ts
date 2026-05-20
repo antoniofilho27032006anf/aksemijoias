@@ -163,8 +163,7 @@ router.post('/orders', validateBody(createOrderSchema), async (req, res) => {
         payment_method_id: 'pix',
         payer: {
           email: user.email
-        },
-        notification_url: `${process.env.API_URL || 'http://localhost:3333'}/webhooks/mercadopago`
+        }
       }
     })
 
