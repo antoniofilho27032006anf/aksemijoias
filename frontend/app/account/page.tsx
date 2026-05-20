@@ -52,8 +52,7 @@ export default function AccountPage() {
     async function loadOrders() {
       try {
         const response = await api.get('/orders')
-        const userOrders: Order[] = response.data.filter((order: Order) => order.user?.id === user.id)
-        setOrders(userOrders)
+        setOrders(response.data)
       } catch (error) {
         console.log(error)
       } finally {
