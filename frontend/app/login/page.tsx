@@ -46,7 +46,7 @@ export default function LoginPage() {
           className="rounded-2xl bg-white px-4 py-5 shadow-[0_32px_80px_rgba(0,0,0,0.4)] sm:px-8 sm:py-10"
         >
           <div className="mb-6 text-center sm:mb-8">
-            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-pink-400 to-rose-500 shadow-lg sm:h-14 sm:w-14">
+            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-purple-600 shadow-lg sm:h-14 sm:w-14">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
@@ -66,7 +66,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-sm text-slate-800 outline-none transition placeholder:text-slate-300 focus:border-pink-400 focus:bg-white focus:ring-2 focus:ring-pink-100"
+                className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-sm text-slate-800 outline-none transition placeholder:text-slate-300 focus:border-violet-400 focus:bg-white focus:ring-2 focus:ring-violet-100"
               />
             </div>
 
@@ -80,10 +80,10 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-sm text-slate-800 outline-none transition placeholder:text-slate-300 focus:border-pink-400 focus:bg-white focus:ring-2 focus:ring-pink-100"
+                className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-sm text-slate-800 outline-none transition placeholder:text-slate-300 focus:border-violet-400 focus:bg-white focus:ring-2 focus:ring-violet-100"
               />
               <div className="mt-2 flex justify-end">
-                <Link href="/forgot-password" className="text-xs text-pink-400 hover:text-pink-500 transition">
+                <Link href="/forgot-password" className="text-xs text-violet-400 hover:text-violet-500 transition">
                   Esqueci minha senha
                 </Link>
               </div>
@@ -99,7 +99,7 @@ export default function LoginPage() {
               type="submit"
               disabled={loading}
               className="w-full rounded-2xl py-4 text-sm font-semibold text-white shadow-md transition hover:opacity-90 disabled:opacity-60"
-              style={{ background: 'linear-gradient(135deg, #f472b6, #e11d48)' }}
+              style={{ background: 'linear-gradient(135deg, #8b5cf6, #6d28d9)' }}
             >
               {loading ? 'Entrando...' : 'Entrar'}
             </button>
@@ -113,7 +113,7 @@ export default function LoginPage() {
 
           <p className="mt-6 text-center text-sm text-slate-400">
             Ainda não tem conta?{' '}
-            <Link href="/register" className="font-semibold text-pink-500 hover:text-pink-600 transition">
+            <Link href="/register" className="font-semibold text-violet-500 hover:text-violet-600 transition">
               Criar conta
             </Link>
           </p>
