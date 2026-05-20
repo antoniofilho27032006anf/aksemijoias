@@ -65,6 +65,11 @@ export function Navbar() {
               Minha conta
             </Link>
           ) : null}
+          {(user as any)?.role === 'ADMIN' ? (
+            <Link href="/admin" className="rounded-full bg-pink-500/20 px-4 py-2 text-sm font-semibold text-pink-300 transition hover:bg-pink-500/30">
+              Painel Admin
+            </Link>
+          ) : null}
         </div>
 
         <div className="flex items-center gap-3">
@@ -121,6 +126,9 @@ export function Navbar() {
             ) : (
               <Link href="/login" className="rounded-full px-4 py-3 transition hover:bg-white/5">Login</Link>
             )}
+            {(user as any)?.role === 'ADMIN' ? (
+              <Link href="/admin" className="rounded-full bg-pink-500/20 px-4 py-3 font-semibold text-pink-300 transition hover:bg-pink-500/30">Painel Admin</Link>
+            ) : null}
           </nav>
         </div>
       ) : null}
