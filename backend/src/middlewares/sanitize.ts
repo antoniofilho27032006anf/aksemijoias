@@ -31,7 +31,5 @@ export function sanitizeMiddleware(
   next: NextFunction
 ) {
   req.body = sanitizeValue(req.body) as any
-  req.query = sanitizeValue(req.query) as any
-  req.params = sanitizeValue(req.params) as any
   next()
 }
