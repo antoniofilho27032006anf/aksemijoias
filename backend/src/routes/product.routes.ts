@@ -44,7 +44,11 @@ const productSchema = z.object({
   price: z.preprocess((v) => Number(v), z.number().positive()),
   stock: z.preprocess((v) => Number(v), z.number().int().nonnegative()),
   categoryId: z.string().optional(),
-  tags: z.preprocess((v) => (typeof v === 'string' ? JSON.parse(v) : v), z.array(z.string()).optional())
+  tags: z.preprocess((v) => {
+    if (!v || v === '') return undefined
+    if (typeof v === 'string') { try { return JSON.parse(v) } catch { return undefined } }
+    return v
+  }, z.array(z.string()).optional())
 })
 
 router.post('/products', authMiddleware, adminMiddleware, upload.single('image'), validateBody(productSchema), async (req, res) => {

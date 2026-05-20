@@ -6,6 +6,7 @@ export function validateBody<T>(schema: ZodType<T>) {
     const parseResult = schema.safeParse(req.body)
 
     if (!parseResult.success) {
+      console.log('Validation error:', JSON.stringify(parseResult.error.issues))
       return res.status(400).json({
         error: parseResult.error.issues.map((issue: any) => issue.message).join(', ')
       })
