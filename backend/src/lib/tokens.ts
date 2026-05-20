@@ -6,7 +6,7 @@ export function createAccessToken(payload: AuthPayload) {
     payload,
     process.env.JWT_SECRET as string,
     {
-      expiresIn: '15m'
+      expiresIn: '7d'
     }
   )
 }
