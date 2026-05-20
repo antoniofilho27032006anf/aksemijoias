@@ -30,38 +30,35 @@ export default function LoginPage() {
 
   return (
     <div
-      className="relative flex min-h-screen items-center justify-center px-4"
+      className="relative flex min-h-screen w-full items-center justify-center"
       style={{
         backgroundImage: "url('/bg-login.jpg')",
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'fixed'
       }}
     >
-      <div className="absolute inset-0 bg-black/60" />
+      <div className="absolute inset-0 bg-black/50" />
 
-      <div className="relative z-10 w-full max-w-md">
-        <div className="mb-8 text-center">
-          <p className="text-sm font-light uppercase tracking-[0.4em] text-pink-300">Bem-vinda de volta</p>
-          <h1
-            className="mt-2 text-5xl font-bold text-transparent bg-clip-text"
-            style={{ backgroundImage: 'linear-gradient(135deg, #f9a8d4, #d4a853, #f9a8d4)' }}
-          >
-            Anna Kelly
-          </h1>
-          <p className="mt-1 text-sm text-white/60 tracking-widest">Semijóias & Tals.</p>
-        </div>
-
+      <div className="relative z-10 w-full max-w-sm px-4">
         <form
           onSubmit={handleLogin}
-          className="rounded-3xl border border-white/10 bg-white/10 p-8 shadow-2xl backdrop-blur-md"
+          className="rounded-[2rem] bg-white px-8 py-10 shadow-[0_32px_80px_rgba(0,0,0,0.4)]"
         >
-          <h2 className="text-2xl font-semibold text-white text-center">Entrar na sua conta</h2>
-          <p className="mt-1 text-center text-sm text-white/50">Acesse para continuar comprando</p>
+          <div className="mb-8 text-center">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-pink-400 to-rose-500 shadow-lg">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </div>
+            <h2 className="text-2xl font-bold text-slate-800">Bem-vinda!</h2>
+            <p className="mt-1 text-sm text-slate-400">Acesse sua conta para continuar</p>
+          </div>
 
-          <div className="mt-8 space-y-4">
+          <div className="space-y-4">
             <div>
-              <label className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-pink-200">
+              <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500">
                 E-mail
               </label>
               <input
@@ -70,12 +67,12 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full rounded-2xl border border-white/20 bg-white/10 px-5 py-3.5 text-sm text-white placeholder:text-white/30 outline-none transition focus:border-pink-400 focus:bg-white/15"
+                className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-sm text-slate-800 outline-none transition placeholder:text-slate-300 focus:border-pink-400 focus:bg-white focus:ring-2 focus:ring-pink-100"
               />
             </div>
 
             <div>
-              <label className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-pink-200">
+              <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500">
                 Senha
               </label>
               <input
@@ -84,18 +81,17 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full rounded-2xl border border-white/20 bg-white/10 px-5 py-3.5 text-sm text-white placeholder:text-white/30 outline-none transition focus:border-pink-400 focus:bg-white/15"
+                className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-sm text-slate-800 outline-none transition placeholder:text-slate-300 focus:border-pink-400 focus:bg-white focus:ring-2 focus:ring-pink-100"
               />
-            </div>
-
-            <div className="flex justify-end">
-              <Link href="/forgot-password" className="text-xs text-pink-300 hover:text-pink-200 transition">
-                Esqueci minha senha
-              </Link>
+              <div className="mt-2 flex justify-end">
+                <Link href="/forgot-password" className="text-xs text-pink-400 hover:text-pink-500 transition">
+                  Esqueci minha senha
+                </Link>
+              </div>
             </div>
 
             {error && (
-              <p className="rounded-2xl bg-red-500/20 px-4 py-3 text-center text-sm text-red-300">
+              <p className="rounded-2xl bg-red-50 px-4 py-3 text-center text-sm text-red-500 border border-red-100">
                 {error}
               </p>
             )}
@@ -103,17 +99,23 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-2xl py-4 text-sm font-semibold text-white transition disabled:opacity-60"
-              style={{ background: 'linear-gradient(135deg, #ec4899, #d4a853)' }}
+              className="w-full rounded-2xl py-4 text-sm font-semibold text-white shadow-md transition hover:opacity-90 disabled:opacity-60"
+              style={{ background: 'linear-gradient(135deg, #f472b6, #e11d48)' }}
             >
               {loading ? 'Entrando...' : 'Entrar'}
             </button>
           </div>
 
-          <p className="mt-6 text-center text-sm text-white/50">
+          <div className="mt-6 flex items-center gap-3">
+            <div className="h-px flex-1 bg-slate-100" />
+            <span className="text-xs text-slate-300">ou</span>
+            <div className="h-px flex-1 bg-slate-100" />
+          </div>
+
+          <p className="mt-6 text-center text-sm text-slate-400">
             Ainda não tem conta?{' '}
-            <Link href="/register" className="font-semibold text-pink-300 hover:text-pink-200 transition">
-              Cadastre-se
+            <Link href="/register" className="font-semibold text-pink-500 hover:text-pink-600 transition">
+              Criar conta
             </Link>
           </p>
         </form>
