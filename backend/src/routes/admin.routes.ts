@@ -158,7 +158,7 @@ router.get('/admin/orders', async (req, res) => {
 
 router.patch('/admin/orders/:id', validateBody(orderStatusSchema), async (req, res) => {
   try {
-    const { id } = req.params
+    const id = String(req.params.id)
     const { status } = req.body
 
     const order = await prisma.order.update({
@@ -249,7 +249,7 @@ router.get('/admin/reports/export', async (req, res) => {
           order.user.email,
           order.status,
           order.total.toFixed(2),
-          order.couponCode ?? '',
+          (order as any).couponCode ?? '',
           order.createdAt.toISOString()
         ]
           .map((cell) => `"${cell}"`)

@@ -28,7 +28,7 @@ const cancelOrderSchema = z.object({
 
 const stripe = process.env.STRIPE_SECRET_KEY
   ? new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: '2022-11-15'
+      apiVersion: '2026-04-22.dahlia' as any
     })
   : null
 
@@ -216,7 +216,7 @@ router.get('/orders', async (req, res) => {
 router.get('/orders/:id', async (req, res) => {
   try {
     const authUser = (req as any).user
-    const { id } = req.params
+    const id = String(req.params.id)
 
     const order = await prisma.order.findUnique({
       where: { id },
@@ -251,7 +251,7 @@ router.get('/orders/:id', async (req, res) => {
 router.patch('/orders/:id/cancel', validateBody(cancelOrderSchema), async (req, res) => {
   try {
     const authUser = (req as any).user
-    const { id } = req.params
+    const id = String(req.params.id)
     const { reason } = req.body
 
     const existingOrder = await prisma.order.findUnique({ where: { id } })

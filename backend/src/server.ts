@@ -15,6 +15,9 @@ import { paymentClient } from './services/mercadoPago'
 import uploadRoutes from './routes/upload.routes'
 import favoriteRoutes from './routes/favorite.routes'
 import cartRoutes from './routes/cart.routes'
+import categoryRoutes from './routes/category.routes'
+import tagRoutes from './routes/tag.routes'
+import variationRoutes from './routes/variation.routes'
 
 import { authMiddleware } from './middlewares/auth'
 import { adminMiddleware } from './middlewares/admin'
@@ -58,18 +61,19 @@ app.use(express.json({ limit: '10mb' }))
 
 app.use('/orders', authMiddleware, orderRoutes)
 app.use('/cart', authMiddleware, cartRoutes)
+app.use('/favorites', authMiddleware, favoriteRoutes)
 app.use('/admin', authMiddleware, adminMiddleware, adminRoutes)
 app.use('/users', userRoutes)
 app.use(productRoutes)
 app.use(uploadRoutes)
-app.use(favoriteRoutes)
+app.use(categoryRoutes)
+app.use(tagRoutes)
+app.use(variationRoutes)
 
-app.get('/', (req, res) => {
-
+app.get('/', (_req, res) => {
   return res.json({
     message: 'API AKsemijoias funcionando'
   })
-
 })
 
 app.post(

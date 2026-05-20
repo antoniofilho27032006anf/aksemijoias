@@ -30,8 +30,8 @@ export function sanitizeMiddleware(
   res: Response,
   next: NextFunction
 ) {
-  req.body = sanitizeValue(req.body)
-  req.query = sanitizeValue(req.query)
-  req.params = sanitizeValue(req.params)
+  req.body = sanitizeValue(req.body) as any
+  req.query = sanitizeValue(req.query) as any
+  req.params = sanitizeValue(req.params) as any
   next()
 }
