@@ -4,6 +4,7 @@ import { z } from 'zod'
 import { prisma } from '../lib/prisma'
 import { upload } from '../middlewares/upload'
 import { adminMiddleware } from '../middlewares/admin'
+import { authMiddleware } from '../middlewares/auth'
 import { validateBody } from '../middlewares/validate'
 
 const cloudinary = require('cloudinary').v2
@@ -46,7 +47,7 @@ const productSchema = z.object({
   tags: z.preprocess((v) => (typeof v === 'string' ? JSON.parse(v) : v), z.array(z.string()).optional())
 })
 
-router.post('/products', adminMiddleware, upload.single('image'), validateBody(productSchema), async (req, res) => {
+router.post('/products', authMiddleware, adminMiddleware, upload.single('image'), validateBody(productSchema), async (req, res) => {
   try {
     const { name, description, price, stock, categoryId, tags } = req.body
     const file = req.file as Express.Multer.File
@@ -155,7 +156,7 @@ router.get('/products/:id', async (req, res) => {
   }
 })
 
-router.put('/products/:id', adminMiddleware, upload.single('image'), validateBody(productSchema), async (req, res) => {
+router.put('/products/:id', authMiddleware, adminMiddleware, upload.single('image'), validateBody(productSchema), async (req, res) => {
   try {
     const id = String(req.params.id)
     const { name, description, price, stock, categoryId, tags } = req.body
@@ -195,7 +196,7 @@ router.put('/products/:id', adminMiddleware, upload.single('image'), validateBod
   }
 })
 
-router.delete('/products/:id', adminMiddleware, async (req, res) => {
+router.delete('/products/:id', authMiddleware, adminMiddleware, async (req, res) => {
   try {
     const id = String(req.params.id)
     await prisma.product.update({ where: { id }, data: { status: false } })

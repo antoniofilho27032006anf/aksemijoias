@@ -95,6 +95,7 @@ app.use('/orders', authMiddleware)
 app.use('/cart', authMiddleware)
 app.use('/favorites', authMiddleware)
 app.use('/admin', authMiddleware, adminMiddleware)
+app.use('/upload', authMiddleware)
 
 app.use(orderRoutes)
 app.use(cartRoutes)
