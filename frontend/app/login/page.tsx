@@ -29,35 +29,68 @@ export default function LoginPage() {
   }
 
   return (
-    <div
-      className="relative flex min-h-screen w-full items-center justify-center"
-      style={{
-        backgroundImage: "url('/bg-login.jpg')",
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
-      }}
-    >
-      <div className="absolute inset-0 bg-black/50" />
+    <div className="flex min-h-screen">
 
-      <div className="relative z-10 w-full max-w-[320px] px-2 py-4 sm:max-w-sm sm:px-4">
-        <form
-          onSubmit={handleLogin}
-          className="rounded-2xl bg-white px-4 py-5 shadow-[0_32px_80px_rgba(0,0,0,0.4)] sm:px-8 sm:py-10"
-        >
-          <div className="mb-6 text-center sm:mb-8">
-            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-purple-600 shadow-lg sm:h-14 sm:w-14">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+      {/* Painel esquerdo — imagem */}
+      <div
+        className="hidden lg:flex lg:w-[55%] relative flex-col items-center justify-end pb-16"
+        style={{
+          backgroundImage: "url('/bg-login.jpg')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
+        }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+        <div className="relative z-10 text-center px-12">
+          <div className="mb-3 flex justify-center">
+            <span className="h-px w-16 bg-gradient-to-r from-transparent via-amber-400 to-transparent" />
+          </div>
+          <p className="text-xs font-light uppercase tracking-[0.5em] text-amber-300">Exclusividade em cada detalhe</p>
+          <p className="mt-4 text-lg font-light leading-relaxed text-white/70 max-w-xs mx-auto">
+            Peças únicas que contam histórias e encantam olhares.
+          </p>
+          <div className="mt-3 flex justify-center">
+            <span className="h-px w-16 bg-gradient-to-r from-transparent via-amber-400 to-transparent" />
+          </div>
+        </div>
+      </div>
+
+      {/* Painel direito — formulário */}
+      <div className="flex w-full flex-col items-center justify-center lg:w-[45%] relative"
+        style={{
+          background: 'linear-gradient(160deg, #1a0a2e 0%, #0f0520 60%, #1a0a2e 100%)'
+        }}
+      >
+        {/* Mobile background */}
+        <div
+          className="absolute inset-0 lg:hidden"
+          style={{
+            backgroundImage: "url('/bg-login.jpg')",
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          }}
+        />
+        <div className="absolute inset-0 lg:hidden bg-black/65" />
+
+        <div className="relative z-10 w-full max-w-[340px] px-4 py-10 sm:max-w-sm">
+
+          {/* Logo/topo */}
+          <div className="mb-10 text-center">
+            <div className="mx-auto mb-5 inline-flex h-16 w-16 items-center justify-center rounded-full border border-amber-400/30"
+              style={{ background: 'linear-gradient(135deg, #2d1b4e, #1a0a2e)' }}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" viewBox="0 0 24 24" fill="none">
+                <path d="M12 2L9 8H3L8 12.5L6 19L12 15L18 19L16 12.5L21 8H15L12 2Z" stroke="#d4a853" strokeWidth="1.5" strokeLinejoin="round" fill="rgba(212,168,83,0.15)" />
               </svg>
             </div>
-            <h2 className="text-2xl font-bold text-slate-800">Bem-vinda!</h2>
-            <p className="mt-1 text-sm text-slate-400">Acesse sua conta para continuar</p>
+            <h1 className="text-3xl font-bold tracking-tight text-white">Bem-vinda</h1>
+            <p className="mt-1.5 text-sm text-white/40">Acesse sua conta exclusiva</p>
           </div>
 
+          {/* Form */}
           <div className="space-y-4">
-            <div>
-              <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500">
+            <div className="group">
+              <label className="mb-1.5 block text-[10px] font-semibold uppercase tracking-[0.15em] text-amber-400/70">
                 E-mail
               </label>
               <input
@@ -66,12 +99,12 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-sm text-slate-800 outline-none transition placeholder:text-slate-300 focus:border-violet-400 focus:bg-white focus:ring-2 focus:ring-violet-100"
+                className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-white/20 outline-none transition duration-200 focus:border-amber-400/50 focus:bg-white/8"
               />
             </div>
 
             <div>
-              <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500">
+              <label className="mb-1.5 block text-[10px] font-semibold uppercase tracking-[0.15em] text-amber-400/70">
                 Senha
               </label>
               <input
@@ -80,44 +113,54 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-sm text-slate-800 outline-none transition placeholder:text-slate-300 focus:border-violet-400 focus:bg-white focus:ring-2 focus:ring-violet-100"
+                className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-white/20 outline-none transition duration-200 focus:border-amber-400/50 focus:bg-white/8"
               />
               <div className="mt-2 flex justify-end">
-                <Link href="/forgot-password" className="text-xs text-violet-400 hover:text-violet-500 transition">
+                <Link href="/forgot-password" className="text-[11px] text-amber-400/60 hover:text-amber-400 transition">
                   Esqueci minha senha
                 </Link>
               </div>
             </div>
 
             {error && (
-              <p className="rounded-2xl bg-red-50 px-4 py-3 text-center text-sm text-red-500 border border-red-100">
+              <div className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-center text-sm text-red-300">
                 {error}
-              </p>
+              </div>
             )}
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-2xl py-4 text-sm font-semibold text-white shadow-md transition hover:opacity-90 disabled:opacity-60"
+              onClick={handleLogin as any}
+              className="relative w-full overflow-hidden rounded-xl py-3.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
               style={{ background: 'linear-gradient(135deg, #8b5cf6, #6d28d9)' }}
             >
-              {loading ? 'Entrando...' : 'Entrar'}
+              <span className="absolute inset-0 bg-gradient-to-r from-amber-400/10 to-transparent" />
+              <span className="relative">{loading ? 'Entrando...' : 'Entrar'}</span>
             </button>
           </div>
 
-          <div className="mt-6 flex items-center gap-3">
-            <div className="h-px flex-1 bg-slate-100" />
-            <span className="text-xs text-slate-300">ou</span>
-            <div className="h-px flex-1 bg-slate-100" />
+          {/* Divisor */}
+          <div className="my-7 flex items-center gap-3">
+            <div className="h-px flex-1" style={{ background: 'linear-gradient(to right, transparent, rgba(255,255,255,0.1))' }} />
+            <span className="text-[10px] uppercase tracking-widest text-white/20">ou</span>
+            <div className="h-px flex-1" style={{ background: 'linear-gradient(to left, transparent, rgba(255,255,255,0.1))' }} />
           </div>
 
-          <p className="mt-6 text-center text-sm text-slate-400">
+          <p className="text-center text-sm text-white/30">
             Ainda não tem conta?{' '}
-            <Link href="/register" className="font-semibold text-violet-500 hover:text-violet-600 transition">
+            <Link href="/register" className="font-semibold text-violet-400 hover:text-violet-300 transition">
               Criar conta
             </Link>
           </p>
-        </form>
+
+          <Link href="/" className="mt-6 flex items-center justify-center gap-2 text-[11px] text-white/20 hover:text-white/40 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Voltar à loja
+          </Link>
+        </div>
       </div>
     </div>
   )
