@@ -29,9 +29,34 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="grid-bg-gold flex min-h-screen items-center justify-center bg-[#06040c] px-4">
+    <div className="grid-bg-gold relative flex min-h-screen items-center justify-center bg-[#06040c] px-4">
       <style>{`footer { display: none !important; }`}</style>
-      <div className="w-full max-w-[290px] rounded-2xl bg-white px-5 py-7 shadow-2xl">
+
+      {/* Corner brackets */}
+      <div className="pointer-events-none absolute inset-0 z-[2] overflow-hidden">
+        {/* Top-left */}
+        <div className="gold-bracket absolute left-6 top-6 h-16 w-16 sm:left-10 sm:top-10" style={{ animationDelay: '0ms' }}>
+          <div className="absolute left-0 top-0 h-full w-px bg-gradient-to-b from-[#e8c94a] to-transparent" />
+          <div className="absolute left-0 top-0 h-px w-full bg-gradient-to-r from-[#e8c94a] to-transparent" />
+        </div>
+        {/* Top-right */}
+        <div className="gold-bracket absolute right-6 top-6 h-16 w-16 sm:right-10 sm:top-10" style={{ animationDelay: '150ms' }}>
+          <div className="absolute right-0 top-0 h-full w-px bg-gradient-to-b from-[#e8c94a] to-transparent" />
+          <div className="absolute right-0 top-0 h-px w-full bg-gradient-to-l from-[#e8c94a] to-transparent" />
+        </div>
+        {/* Bottom-left */}
+        <div className="gold-bracket absolute bottom-6 left-6 h-16 w-16 sm:bottom-10 sm:left-10" style={{ animationDelay: '300ms' }}>
+          <div className="absolute bottom-0 left-0 h-full w-px bg-gradient-to-t from-[#e8c94a] to-transparent" />
+          <div className="absolute bottom-0 left-0 h-px w-full bg-gradient-to-r from-[#e8c94a] to-transparent" />
+        </div>
+        {/* Bottom-right */}
+        <div className="gold-bracket absolute bottom-6 right-6 h-16 w-16 sm:bottom-10 sm:right-10" style={{ animationDelay: '450ms' }}>
+          <div className="absolute bottom-0 right-0 h-full w-px bg-gradient-to-t from-[#e8c94a] to-transparent" />
+          <div className="absolute bottom-0 right-0 h-px w-full bg-gradient-to-l from-[#e8c94a] to-transparent" />
+        </div>
+      </div>
+
+      <div className="relative z-10 w-full max-w-[290px] rounded-2xl bg-white px-5 py-7 shadow-2xl">
 
         {/* Logo/topo */}
         <div className="mb-7 text-center">

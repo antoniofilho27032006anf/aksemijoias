@@ -129,9 +129,40 @@ button, input, textarea { font: inherit; }
   50%       { opacity: 1;    }
 }
 
-.grid-bg-gold > * {
-  position: relative;
-  z-index: 1;
+/* Horizontal scan line sweeping top → bottom */
+.grid-bg-gold::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  top: -100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    transparent       0%,
+    transparent       44%,
+    rgba(201,162,39,0.04) 47%,
+    rgba(232,201,74,0.13) 50%,
+    rgba(201,162,39,0.04) 53%,
+    transparent       56%,
+    transparent       100%
+  );
+  animation: gold-scan 10s linear infinite;
+}
+
+@keyframes gold-scan {
+  from { transform: translateY(0%);   }
+  to   { transform: translateY(200%); }
+}
+
+/* Corner bracket fade-in */
+@keyframes bracket-in {
+  from { opacity: 0; transform: scale(0.85); }
+  to   { opacity: 1; transform: scale(1);    }
+}
+.gold-bracket {
+  animation: bracket-in 0.8s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 
 @keyframes slide-in {
