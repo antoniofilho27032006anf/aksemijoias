@@ -75,7 +75,7 @@ export default function Home() {
   }, [allProducts, searchTerm, sortOption])
 
   return (
-    <div className="min-h-screen grid-bg transition-colors duration-300" style={{ backgroundColor: 'var(--c-bg)', color: 'var(--c-text)' }}>
+    <div className="min-h-screen grid-bg-gold-white transition-colors duration-300" style={{ backgroundColor: 'var(--c-bg)', color: 'var(--c-text)' }}>
       <Navbar />
 
       <main className="mx-auto max-w-[1320px] px-4 pb-24 sm:px-8">
