@@ -93,11 +93,19 @@ button, input, textarea { font: inherit; }
   backdrop-filter: blur(20px);
 }
 
-/* Subtle grid background pattern */
+/* Subtle grid background pattern — purple */
 .grid-bg {
   background-image:
     linear-gradient(var(--c-border) 1px, transparent 1px),
     linear-gradient(90deg, var(--c-border) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+/* Subtle grid background pattern — gold */
+.grid-bg-gold {
+  background-image:
+    linear-gradient(rgba(201, 162, 39, 0.10) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201, 162, 39, 0.10) 1px, transparent 1px);
   background-size: 48px 48px;
 }
 

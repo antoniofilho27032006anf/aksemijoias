@@ -21,7 +21,7 @@ export function Footer() {
               backgroundClip: 'text',
             }}
           >
-            AKsemijoias
+            AK Semij&oacute;ias &amp; Tals
           </span>
           <p className="text-sm leading-relaxed" style={{ color: 'var(--c-dim)' }}>
             Coleções selecionadas com acabamento delicado, para quem busca elegância e conforto em cada detalhe.

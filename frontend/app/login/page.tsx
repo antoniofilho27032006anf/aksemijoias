@@ -29,7 +29,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-black px-4">
+    <div className="grid-bg-gold flex min-h-screen items-center justify-center bg-black px-4">
       <style>{`footer { display: none !important; }`}</style>
       <div className="w-full max-w-[290px] rounded-2xl bg-white px-5 py-7 shadow-2xl">
 
