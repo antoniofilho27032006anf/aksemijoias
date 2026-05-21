@@ -117,7 +117,7 @@ export function CategoryCarousel({ onCategorySelect }: Props) {
     <section className="mt-12 sm:mt-16">
       <div className="mb-6 flex items-end justify-between">
         <div>
-          <p className="text-[10px] uppercase tracking-[0.35em] text-[#c9a227]">Navegue</p>
+          <p className="text-[10px] uppercase tracking-[0.35em] text-[#7c3aed]">Navegue</p>
           <h2 className="mt-1 text-2xl font-black sm:text-3xl" style={{ color: 'var(--c-text)' }}>
             Explore por categoria
           </h2>

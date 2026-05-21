@@ -38,7 +38,7 @@ export function Navbar() {
             <span
               className="text-2xl font-black tracking-tight"
               style={{
-                background: 'linear-gradient(135deg, #a78bfa 0%, #c9a227 60%, #f0c040 100%)',
+                background: 'linear-gradient(135deg, #5b21b6 0%, #a78bfa 60%, #7c3aed 100%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 backgroundClip: 'text',
@@ -77,7 +77,7 @@ export function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              className="rounded-lg px-3 py-2 text-sm font-medium transition hover:text-[#e8c94a]"
+              className="rounded-lg px-3 py-2 text-sm font-medium transition hover:text-[#7c3aed]"
               style={{ color: 'var(--c-muted)' }}
             >
               {link.label}
@@ -86,7 +86,7 @@ export function Navbar() {
           {user ? (
             <Link
               href="/account"
-              className="rounded-lg px-3 py-2 text-sm font-medium transition hover:text-[#e8c94a]"
+              className="rounded-lg px-3 py-2 text-sm font-medium transition hover:text-[#7c3aed]"
               style={{ color: 'var(--c-muted)' }}
             >
               Minha conta
@@ -95,8 +95,8 @@ export function Navbar() {
           {(user as any)?.role === 'ADMIN' ? (
             <Link
               href="/admin"
-              className="rounded-lg border px-3 py-2 text-sm font-semibold text-[#e8c94a] transition"
-              style={{ borderColor: 'var(--c-border-gold)', backgroundColor: 'rgba(201,162,39,0.08)' }}
+              className="rounded-lg border px-3 py-2 text-sm font-semibold text-[#7c3aed] transition"
+              style={{ borderColor: 'var(--c-border-mid)', backgroundColor: 'rgba(124,58,237,0.08)' }}
             >
               Admin
             </Link>
@@ -122,7 +122,7 @@ export function Navbar() {
               <path d="M16 10a4 4 0 0 1-8 0"/>
             </svg>
             {totalItems > 0 && (
-              <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-[#06040c] px-1 text-xs font-black text-[#e8c94a]">
+              <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-white px-1 text-xs font-black text-[#5b21b6]">
                 {totalItems}
               </span>
             )}
@@ -135,7 +135,7 @@ export function Navbar() {
               </span>
               <button
                 onClick={logout}
-                className="rounded-xl border px-3 py-2 text-xs font-semibold transition hover:text-[#e8c94a]"
+                className="rounded-xl border px-3 py-2 text-xs font-semibold transition hover:text-[#7c3aed]"
                 style={{ borderColor: 'var(--c-border)', backgroundColor: 'var(--c-glass)', color: 'var(--c-muted)' }}
               >
                 Sair
@@ -144,7 +144,7 @@ export function Navbar() {
           ) : (
             <Link
               href="/login"
-              className="hidden rounded-xl border px-4 py-2 text-xs font-semibold transition hover:text-[#e8c94a] md:inline-flex"
+              className="hidden rounded-xl border px-4 py-2 text-xs font-semibold transition hover:text-[#7c3aed] md:inline-flex"
               style={{ borderColor: 'var(--c-border)', backgroundColor: 'var(--c-glass)', color: 'var(--c-muted)' }}
             >
               Entrar
@@ -192,7 +192,7 @@ export function Navbar() {
                 key={link.href}
                 href={link.href}
                 onClick={() => setIsOpen(false)}
-                className="rounded-xl px-4 py-3 text-sm font-medium transition hover:text-[#e8c94a]"
+                className="rounded-xl px-4 py-3 text-sm font-medium transition hover:text-[#7c3aed]"
                 style={{ color: 'var(--c-muted)' }}
               >
                 {link.label}
@@ -202,8 +202,8 @@ export function Navbar() {
               <Link
                 href="/admin"
                 onClick={() => setIsOpen(false)}
-                className="mx-2 my-1 rounded-xl border px-4 py-3 text-sm font-semibold text-[#e8c94a]"
-                style={{ borderColor: 'var(--c-border-gold)', backgroundColor: 'rgba(201,162,39,0.08)' }}
+                className="mx-2 my-1 rounded-xl border px-4 py-3 text-sm font-semibold text-[#7c3aed]"
+                style={{ borderColor: 'var(--c-border-mid)', backgroundColor: 'rgba(124,58,237,0.08)' }}
               >
                 Painel Admin
               </Link>

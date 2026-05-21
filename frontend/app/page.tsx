@@ -85,10 +85,10 @@ export default function Home() {
 
           <div className="space-y-6 sm:space-y-8">
             <span
-              className="inline-flex items-center gap-2 rounded-xl border px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.35em] text-[#c9a227]"
-              style={{ borderColor: 'var(--c-border-gold)', backgroundColor: 'rgba(201,162,39,0.07)' }}
+              className="inline-flex items-center gap-2 rounded-xl border px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.35em] text-[#7c3aed]"
+              style={{ borderColor: 'var(--c-border-mid)', backgroundColor: 'rgba(124,58,237,0.07)' }}
             >
-              <span className="h-1.5 w-1.5 rounded-full bg-[#c9a227] animate-pulse" />
+              <span className="h-1.5 w-1.5 rounded-full bg-[#7c3aed] animate-pulse" />
               Delicadeza em cada detalhe
             </span>
 
@@ -97,7 +97,7 @@ export default function Home() {
               <br />
               <span
                 style={{
-                  background: 'linear-gradient(135deg, #a78bfa 0%, #c9a227 55%, #f0c040 100%)',
+                  background: 'linear-gradient(135deg, #5b21b6 0%, #a78bfa 55%, #7c3aed 100%)',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                   backgroundClip: 'text',
@@ -108,7 +108,7 @@ export default function Home() {
             </h1>
 
             <p className="max-w-lg text-sm leading-relaxed sm:text-base sm:leading-8" style={{ color: 'var(--c-muted)' }}>
-              Rommanel, Brunna Semijoias e Prata 925 — marcas que você confia, qualidade que você exige.
+              Rommanel, Brunna Semijoias e Lapidare — marcas que você confia, qualidade que você exige.
             </p>
 
             <div className="flex flex-wrap gap-3">
@@ -146,7 +146,7 @@ export default function Home() {
                   <p
                     className="text-lg font-black sm:text-2xl"
                     style={{
-                      background: 'linear-gradient(135deg, #c9a227 0%, #f0c040 60%, #c9a227 100%)',
+                      background: 'linear-gradient(135deg, #5b21b6 0%, #7c3aed 60%, #5b21b6 100%)',
                       WebkitBackgroundClip: 'text',
                       WebkitTextFillColor: 'transparent',
                       backgroundClip: 'text',
@@ -166,11 +166,11 @@ export default function Home() {
             style={{ borderColor: 'var(--c-border)', backgroundColor: 'var(--c-raised)' }}
           >
             <div className="absolute inset-0 opacity-20" style={{ background: 'radial-gradient(ellipse 80% 60% at 20% 10%, #7c3aed, transparent)' }} />
-            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#c9a227] to-transparent opacity-50" />
+            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#7c3aed] to-transparent opacity-40" />
 
             <div className="relative space-y-4">
               <div className="rounded-xl border p-5" style={{ borderColor: 'var(--c-border)', backgroundColor: 'var(--c-glass-deep)' }}>
-                <p className="text-[10px] uppercase tracking-[0.35em] text-[#c9a227]">Seleção Premium</p>
+                <p className="text-[10px] uppercase tracking-[0.35em] text-[#7c3aed]">Seleção Premium</p>
                 <h2 className="mt-2 text-xl font-bold sm:text-2xl" style={{ color: 'var(--c-text)' }}>Colar Pérola Lunar</h2>
                 <p className="mt-2 text-sm leading-relaxed" style={{ color: 'var(--c-muted)' }}>
                   Design suave com acabamento em pérola e detalhes em ametista para um brilho feminino.
@@ -179,7 +179,7 @@ export default function Home() {
                   <span
                     className="text-2xl font-black sm:text-3xl"
                     style={{
-                      background: 'linear-gradient(135deg, #c9a227 0%, #f0c040 60%, #c9a227 100%)',
+                      background: 'linear-gradient(135deg, #5b21b6 0%, #7c3aed 60%, #5b21b6 100%)',
                       WebkitBackgroundClip: 'text',
                       WebkitTextFillColor: 'transparent',
                       backgroundClip: 'text',
@@ -224,7 +224,7 @@ export default function Home() {
         <section id="produtos" className="mt-16 sm:mt-20">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="text-[10px] uppercase tracking-[0.35em] text-[#c9a227]">Nova coleção</p>
+              <p className="text-[10px] uppercase tracking-[0.35em] text-[#7c3aed]">Nova coleção</p>
               <h2 className="mt-1 text-2xl font-black sm:text-3xl" style={{ color: 'var(--c-text)' }}>Joias que encantam</h2>
             </div>
 
@@ -272,7 +272,7 @@ export default function Home() {
                 onClick={() => setSelectedCategory('')}
                 className="rounded-xl border px-4 py-2 text-xs font-semibold transition"
                 style={selectedCategory === '' ? {
-                  background: 'linear-gradient(135deg, #b8891e 0%, #e8c94a 50%, #b8891e 100%)',
+                  background: 'linear-gradient(135deg, #5b21b6 0%, #7c3aed 50%, #5b21b6 100%)',
                   color: '#0a0612',
                   borderColor: 'transparent',
                 } : {
