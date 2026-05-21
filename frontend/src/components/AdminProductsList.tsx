@@ -13,6 +13,7 @@ interface Product {
   price: number
   stock: number
   image: string
+  categoryId?: string
 }
 
 export function AdminProductsList() {

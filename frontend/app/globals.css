@@ -8,8 +8,32 @@
   --purple-light: #a78bfa;
 }
 
-/* ─── Dark theme (default) ─── */
-:root,
+/* ─── White theme (default) ─── */
+:root {
+  --c-bg:           #ffffff;
+  --c-card:         #fafaf8;
+  --c-raised:       #f8f5ff;
+  --c-footer:       #f3eefc;
+  --c-footer-bar:   #ede8ff;
+  --c-nav-bg:       rgba(255, 255, 255, 0.95);
+  --c-glass:        rgba(248, 245, 255, 0.92);
+  --c-glass-deep:   rgba(242, 236, 255, 0.98);
+  --c-cart:         #ffffff;
+  --c-input:        rgba(248, 245, 255, 0.92);
+  --c-text:         #1a0a3c;
+  --c-muted:        #4a3a6c;
+  --c-dim:          #6050a0;
+  --c-vdim:         #9080c8;
+  --c-border:       rgba(120, 60, 220, 0.22);
+  --c-border-mid:   rgba(120, 60, 220, 0.40);
+  --c-border-gold:  rgba(201, 162, 39, 0.30);
+  --c-hover:        rgba(120, 60, 220, 0.08);
+  --c-hover-soft:   rgba(120, 60, 220, 0.06);
+  --c-skeleton-a:   rgba(200, 180, 240, 0.50);
+  --c-skeleton-b:   rgba(220, 200, 255, 0.40);
+}
+
+/* ─── Dark theme ─── */
 [data-theme="dark"] {
   --c-bg:           #06040c;
   --c-card:         #0a0618;

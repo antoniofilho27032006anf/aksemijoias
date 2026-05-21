@@ -7,7 +7,7 @@ import { api } from '../src/services/api'
 import { Navbar } from '../src/components/Navbar'
 import { ProductCard } from '../src/components/ProductCard'
 import { CartSidebar } from '../src/components/CartSidebar'
-import { BannerCarousel } from '../src/components/BannerCarousel'
+import { CategoryCarousel } from '../src/components/CategoryCarousel'
 import { ProductSkeleton } from '../src/components/ProductSkeleton'
 
 interface Product {
@@ -93,7 +93,7 @@ export default function Home() {
             </span>
 
             <h1 className="text-3xl font-black leading-tight tracking-tight sm:text-4xl lg:text-5xl xl:text-6xl">
-              <span className="text-white">Alta joalheria sob</span>
+              <span style={{ color: 'var(--c-text)' }}>Alta joalheria sob</span>
               <br />
               <span
                 style={{
@@ -114,8 +114,8 @@ export default function Home() {
             <div className="flex flex-wrap gap-3">
               <Link
                 href="/favorites"
-                className="inline-flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-bold text-[#0a0612] transition hover:opacity-90 active:scale-95"
-                style={{ background: 'linear-gradient(135deg, #b8891e 0%, #e8c94a 50%, #b8891e 100%)' }}
+                className="inline-flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-bold text-white transition hover:opacity-90 active:scale-95"
+                style={{ background: 'linear-gradient(135deg, #5b21b6 0%, #7c3aed 50%, #5b21b6 100%)' }}
               >
                 Minhas favoritas
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -124,8 +124,8 @@ export default function Home() {
               </Link>
               <Link
                 href="/orders"
-                className="inline-flex items-center gap-2 rounded-xl border px-6 py-3 text-sm font-bold text-white transition hover:text-[#e8c94a]"
-                style={{ borderColor: 'var(--c-border-mid)', backgroundColor: 'var(--c-hover-soft)' }}
+                className="inline-flex items-center gap-2 rounded-xl border px-6 py-3 text-sm font-bold transition hover:text-[#7c3aed]"
+                style={{ borderColor: 'var(--c-border-mid)', backgroundColor: 'var(--c-hover-soft)', color: 'var(--c-text)' }}
               >
                 Meus pedidos
               </Link>
@@ -171,7 +171,7 @@ export default function Home() {
             <div className="relative space-y-4">
               <div className="rounded-xl border p-5" style={{ borderColor: 'var(--c-border)', backgroundColor: 'var(--c-glass-deep)' }}>
                 <p className="text-[10px] uppercase tracking-[0.35em] text-[#c9a227]">Seleção Premium</p>
-                <h2 className="mt-2 text-xl font-bold text-white sm:text-2xl">Colar Pérola Lunar</h2>
+                <h2 className="mt-2 text-xl font-bold sm:text-2xl" style={{ color: 'var(--c-text)' }}>Colar Pérola Lunar</h2>
                 <p className="mt-2 text-sm leading-relaxed" style={{ color: 'var(--c-muted)' }}>
                   Design suave com acabamento em pérola e detalhes em ametista para um brilho feminino.
                 </p>
@@ -188,7 +188,7 @@ export default function Home() {
                     R$ 299
                   </span>
                   <span
-                    className="rounded-lg border px-3 py-1 text-[10px] uppercase tracking-wider text-[#a78bfa]"
+                    className="rounded-lg border px-3 py-1 text-[10px] uppercase tracking-wider text-[#7c3aed]"
                     style={{ borderColor: 'var(--c-border-mid)', backgroundColor: 'var(--c-hover-soft)' }}
                   >
                     Nova chegada
@@ -207,7 +207,7 @@ export default function Home() {
                     style={{ borderColor: 'var(--c-border)', backgroundColor: 'var(--c-glass)' }}
                   >
                     <p className="text-[10px]" style={{ color: 'var(--c-dim)' }}>{item.tag}</p>
-                    <p className="mt-2 text-sm font-semibold text-white">{item.title}</p>
+                    <p className="mt-2 text-sm font-semibold" style={{ color: 'var(--c-text)' }}>{item.title}</p>
                   </div>
                 ))}
               </div>
@@ -215,14 +215,17 @@ export default function Home() {
           </div>
         </section>
 
-        <BannerCarousel />
+        <CategoryCarousel onCategorySelect={(slug) => {
+          setSelectedCategory(slug)
+          document.getElementById('produtos')?.scrollIntoView({ behavior: 'smooth' })
+        }} />
 
         {/* Products section */}
         <section id="produtos" className="mt-16 sm:mt-20">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <p className="text-[10px] uppercase tracking-[0.35em] text-[#c9a227]">Nova coleção</p>
-              <h2 className="mt-1 text-2xl font-black text-white sm:text-3xl">Joias que encantam</h2>
+              <h2 className="mt-1 text-2xl font-black sm:text-3xl" style={{ color: 'var(--c-text)' }}>Joias que encantam</h2>
             </div>
 
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
@@ -237,8 +240,8 @@ export default function Home() {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Buscar produto..."
-                  className="min-w-0 flex-1 bg-transparent text-sm text-white outline-none"
-                  style={{ caretColor: '#e8c94a' }}
+                  className="min-w-0 flex-1 bg-transparent text-sm outline-none"
+                  style={{ color: 'var(--c-text)', caretColor: '#7c3aed' }}
                 />
               </div>
               <select
@@ -286,8 +289,8 @@ export default function Home() {
                   onClick={() => setSelectedCategory(cat.slug)}
                   className="rounded-xl border px-4 py-2 text-xs font-semibold transition"
                   style={selectedCategory === cat.slug ? {
-                    background: 'linear-gradient(135deg, #b8891e 0%, #e8c94a 50%, #b8891e 100%)',
-                    color: '#0a0612',
+                    background: 'linear-gradient(135deg, #5b21b6 0%, #7c3aed 50%, #5b21b6 100%)',
+                    color: '#ffffff',
                     borderColor: 'transparent',
                   } : {
                     borderColor: 'var(--c-border)',
@@ -312,14 +315,14 @@ export default function Home() {
                 className="rounded-2xl border border-dashed p-12 text-center transition-colors duration-300"
                 style={{ borderColor: 'var(--c-border)', backgroundColor: 'var(--c-glass)' }}
               >
-                <p className="text-lg font-bold text-white">Nenhum produto encontrado</p>
+                <p className="text-lg font-bold" style={{ color: 'var(--c-text)' }}>Nenhum produto encontrado</p>
                 <p className="mt-2 text-sm" style={{ color: 'var(--c-dim)' }}>
                   Experimente outro termo como "anel", "colar" ou "brinco".
                 </p>
                 <Link
                   href="/search"
-                  className="mt-6 inline-flex rounded-xl px-6 py-3 text-sm font-bold text-[#0a0612] transition hover:opacity-90"
-                  style={{ background: 'linear-gradient(135deg, #b8891e 0%, #e8c94a 50%, #b8891e 100%)' }}
+                  className="mt-6 inline-flex rounded-xl px-6 py-3 text-sm font-bold text-white transition hover:opacity-90"
+                  style={{ background: 'linear-gradient(135deg, #5b21b6 0%, #7c3aed 50%, #5b21b6 100%)' }}
                 >
                   Ver todos os produtos
                 </Link>

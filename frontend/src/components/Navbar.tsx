@@ -113,8 +113,8 @@ export function Navbar() {
           {/* Cart */}
           <button
             onClick={openCart}
-            className="relative flex h-10 items-center gap-2 rounded-xl px-4 text-sm font-bold text-[#0a0612] transition hover:opacity-90 active:scale-95"
-            style={{ background: 'linear-gradient(135deg, #b8891e 0%, #e8c94a 50%, #b8891e 100%)' }}
+            className="relative flex h-10 items-center gap-2 rounded-xl px-4 text-sm font-bold text-white transition hover:opacity-90 active:scale-95"
+            style={{ background: 'linear-gradient(135deg, #5b21b6 0%, #7c3aed 50%, #5b21b6 100%)' }}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
@@ -168,13 +168,13 @@ export function Navbar() {
               value={searchTerm}
               onChange={(event) => setSearchTerm(event.target.value)}
               placeholder="Buscar joias..."
-              className="min-w-0 flex-1 rounded-xl border px-4 py-2.5 text-sm text-white outline-none"
-              style={{ borderColor: 'var(--c-border)', backgroundColor: 'var(--c-input)' }}
+              className="min-w-0 flex-1 rounded-xl border px-4 py-2.5 text-sm outline-none"
+              style={{ borderColor: 'var(--c-border)', backgroundColor: 'var(--c-input)', color: 'var(--c-text)' }}
             />
             <button
               type="submit"
-              className="rounded-xl px-4 py-2.5 text-sm font-bold text-[#0a0612]"
-              style={{ background: 'linear-gradient(135deg, #b8891e 0%, #e8c94a 50%, #b8891e 100%)' }}
+              className="rounded-xl px-4 py-2.5 text-sm font-bold text-white"
+              style={{ background: 'linear-gradient(135deg, #5b21b6 0%, #7c3aed 50%, #5b21b6 100%)' }}
             >
               Ir
             </button>
