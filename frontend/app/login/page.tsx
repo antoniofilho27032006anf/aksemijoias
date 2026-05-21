@@ -30,7 +30,7 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-black px-4">
-      <div className="w-full max-w-[340px] rounded-2xl bg-white px-8 py-10 shadow-2xl">
+      <div className="w-full max-w-[290px] rounded-2xl bg-white px-5 py-7 shadow-2xl">
 
         {/* Logo/topo */}
         <div className="mb-8 text-center">

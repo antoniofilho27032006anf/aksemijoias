@@ -30,13 +30,15 @@ export default function RegisterPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-black px-4">
-      <div className="w-full max-w-[340px] rounded-2xl bg-white px-8 py-10 shadow-2xl">
+      <div className="w-full max-w-[290px] rounded-2xl bg-white px-5 py-7 shadow-2xl">
 
         {/* Logo/topo */}
         <div className="mb-7 text-center">
           <div className="mx-auto mb-4 inline-flex h-14 w-14 items-center justify-center rounded-full border border-amber-300 bg-amber-50">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 24 24" fill="none">
-              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" stroke="#d97706" strokeWidth="1.5" fill="rgba(217,119,6,0.12)" />
+              <circle cx="12" cy="12" r="6" stroke="#d97706" strokeWidth="1.5" fill="rgba(217,119,6,0.12)" />
+              <circle cx="12" cy="12" r="9" stroke="#d97706" strokeWidth="1" strokeDasharray="3 2" fill="none" />
+              <path d="M9 12 Q12 9 15 12" stroke="#d97706" strokeWidth="1.5" fill="none" strokeLinecap="round" />
             </svg>
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-gray-900">Criar conta</h1>
