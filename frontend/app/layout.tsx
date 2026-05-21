@@ -36,7 +36,7 @@ export default function RootLayout({
 
     <html
       lang="pt-BR"
-      data-theme="dark"
+      data-theme="light"
       className={`${geistSans.variable} ${geistMono.variable}`}
     >
 
