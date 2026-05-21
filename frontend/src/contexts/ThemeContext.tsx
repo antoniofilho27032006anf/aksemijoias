@@ -18,7 +18,7 @@ interface ThemeContextData {
 const ThemeContext = createContext({} as ThemeContextData)
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('dark')
+  const [theme, setTheme] = useState<Theme>('light')
 
   useEffect(() => {
     const storedTheme =
@@ -29,7 +29,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     const preferred =
       storedTheme === 'light' || storedTheme === 'dark'
         ? storedTheme
-        : 'dark'
+        : 'light'
 
     setTheme(preferred)
   }, [])

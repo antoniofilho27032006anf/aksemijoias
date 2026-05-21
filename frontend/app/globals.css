@@ -58,29 +58,29 @@
   --c-skeleton-b:   rgba(80, 40, 140, 0.4);
 }
 
-/* ─── Light dark theme (dark navy/indigo — still escuro) ─── */
+/* ─── Light / White theme (applied by ThemeContext default) ─── */
 [data-theme="light"] {
-  --c-bg:           #0d0925;
-  --c-card:         #130e35;
-  --c-raised:       #100c2e;
-  --c-footer:       #0b0820;
-  --c-footer-bar:   #080618;
-  --c-nav-bg:       rgba(13, 9, 37, 0.92);
-  --c-glass:        rgba(22, 16, 55, 0.85);
-  --c-glass-deep:   rgba(22, 16, 55, 0.98);
-  --c-cart:         #0d0925;
-  --c-input:        rgba(22, 16, 55, 0.85);
-  --c-text:         #eeeaff;
-  --c-muted:        #d0c4f0;
-  --c-dim:          #b0a0e0;
+  --c-bg:           #ffffff;
+  --c-card:         #fafaf8;
+  --c-raised:       #f8f5ff;
+  --c-footer:       #f3eefc;
+  --c-footer-bar:   #ede8ff;
+  --c-nav-bg:       rgba(255, 255, 255, 0.95);
+  --c-glass:        rgba(248, 245, 255, 0.92);
+  --c-glass-deep:   rgba(242, 236, 255, 0.98);
+  --c-cart:         #ffffff;
+  --c-input:        rgba(248, 245, 255, 0.92);
+  --c-text:         #1a0a3c;
+  --c-muted:        #4a3a6c;
+  --c-dim:          #6050a0;
   --c-vdim:         #9080c8;
-  --c-border:       rgba(140, 80, 255, 0.22);
-  --c-border-mid:   rgba(140, 80, 255, 0.38);
-  --c-border-gold:  rgba(220, 185, 50, 0.34);
-  --c-hover:        rgba(140, 80, 255, 0.13);
-  --c-hover-soft:   rgba(140, 80, 255, 0.08);
-  --c-skeleton-a:   rgba(60, 30, 120, 0.55);
-  --c-skeleton-b:   rgba(100, 60, 180, 0.35);
+  --c-border:       rgba(120, 60, 220, 0.22);
+  --c-border-mid:   rgba(120, 60, 220, 0.40);
+  --c-border-gold:  rgba(201, 162, 39, 0.30);
+  --c-hover:        rgba(120, 60, 220, 0.08);
+  --c-hover-soft:   rgba(120, 60, 220, 0.06);
+  --c-skeleton-a:   rgba(200, 180, 240, 0.50);
+  --c-skeleton-b:   rgba(220, 200, 255, 0.40);
 }
 
 @theme inline {
