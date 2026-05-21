@@ -29,60 +29,8 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-black px-4 relative overflow-hidden">
-
-      <style>{`
-        @keyframes floatA {
-          0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.18; }
-          50% { transform: translateY(-22px) rotate(12deg); opacity: 0.38; }
-        }
-        @keyframes floatB {
-          0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.12; }
-          50% { transform: translateY(-30px) rotate(-18deg); opacity: 0.3; }
-        }
-        @keyframes floatC {
-          0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.2; }
-          50% { transform: translateY(-18px) rotate(8deg); opacity: 0.4; }
-        }
-      `}</style>
-
-      {/* Joias flutuantes */}
-      <div className="pointer-events-none absolute inset-0">
-        {/* Anéis */}
-        {[
-          { top: '8%', left: '5%', size: 38, delay: '0s', dur: '4s', anim: 'floatA' },
-          { top: '20%', right: '8%', size: 28, delay: '1s', dur: '5s', anim: 'floatB' },
-          { top: '55%', left: '3%', size: 44, delay: '2s', dur: '4.5s', anim: 'floatC' },
-          { top: '75%', right: '5%', size: 32, delay: '0.5s', dur: '6s', anim: 'floatA' },
-          { top: '40%', left: '88%', size: 24, delay: '1.5s', dur: '3.8s', anim: 'floatB' },
-          { top: '88%', left: '15%', size: 36, delay: '3s', dur: '5.2s', anim: 'floatC' },
-        ].map((item, i) => (
-          <svg key={i} width={item.size} height={item.size} viewBox="0 0 40 40" fill="none"
-            style={{ position: 'absolute', top: item.top, left: (item as any).left, right: (item as any).right,
-              animation: `${item.anim} ${item.dur} ${item.delay} ease-in-out infinite` }}>
-            <circle cx="20" cy="20" r="13" stroke="#d4a853" strokeWidth="2.5" fill="none" />
-            <circle cx="20" cy="20" r="7" stroke="#8b5cf6" strokeWidth="1.5" fill="rgba(139,92,246,0.08)" />
-            <circle cx="20" cy="9" r="3" fill="rgba(212,168,83,0.35)" stroke="#d4a853" strokeWidth="1.2" />
-          </svg>
-        ))}
-
-        {/* Brincos */}
-        {[
-          { top: '15%', left: '80%', delay: '0.8s', dur: '4.2s', anim: 'floatB' },
-          { top: '65%', left: '92%', delay: '2.2s', dur: '5s', anim: 'floatA' },
-          { top: '35%', left: '2%', delay: '1.8s', dur: '4.8s', anim: 'floatC' },
-          { top: '82%', left: '70%', delay: '0.3s', dur: '3.5s', anim: 'floatA' },
-        ].map((item, i) => (
-          <svg key={i} width="22" height="36" viewBox="0 0 22 36" fill="none"
-            style={{ position: 'absolute', top: item.top, left: item.left,
-              animation: `${item.anim} ${item.dur} ${item.delay} ease-in-out infinite` }}>
-            <circle cx="11" cy="5" r="4" stroke="#d4a853" strokeWidth="1.5" fill="rgba(212,168,83,0.15)" />
-            <line x1="11" y1="9" x2="11" y2="16" stroke="#d4a853" strokeWidth="1.2" />
-            <ellipse cx="11" cy="26" rx="6" ry="9" stroke="#8b5cf6" strokeWidth="1.5" fill="rgba(139,92,246,0.12)" />
-            <ellipse cx="11" cy="26" rx="3" ry="5" fill="rgba(212,168,83,0.2)" />
-          </svg>
-        ))}
-      </div>
+    <div className="flex min-h-screen items-center justify-center bg-black px-4">
+      <style>{`footer { display: none !important; }`}</style>
       <div className="w-full max-w-[290px] rounded-2xl bg-white px-5 py-7 shadow-2xl">
 
         {/* Logo/topo */}
