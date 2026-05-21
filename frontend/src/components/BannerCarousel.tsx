@@ -40,17 +40,17 @@ export function BannerCarousel() {
   const slide = slides[activeSlide]
 
   return (
-    <section className="mt-12 overflow-hidden rounded-2xl border border-[rgba(120,60,220,0.2)] bg-[#080514]">
-      {/* Top gold line */}
+    <section
+      className="mt-12 overflow-hidden rounded-2xl border transition-colors duration-300"
+      style={{ borderColor: 'var(--c-border)', backgroundColor: 'var(--c-raised)' }}
+    >
       <div className="h-px bg-gradient-to-r from-transparent via-[#c9a227] to-transparent opacity-50" />
 
       <div className="relative grid gap-6 p-6 sm:grid-cols-[1fr,auto] sm:items-center sm:p-10">
         {/* Background glow */}
         <div
-          className="pointer-events-none absolute inset-0 opacity-20 transition-all duration-1000"
-          style={{
-            background: `radial-gradient(ellipse 60% 80% at 0% 50%, ${slide.accent}55, transparent)`,
-          }}
+          className="pointer-events-none absolute inset-0 opacity-15 transition-all duration-1000"
+          style={{ background: `radial-gradient(ellipse 60% 80% at 0% 50%, ${slide.accent}55, transparent)` }}
         />
 
         {/* Content */}
@@ -63,7 +63,10 @@ export function BannerCarousel() {
               color: slide.accent === '#c9a227' ? '#e8c94a' : '#a78bfa',
             }}
           >
-            <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ backgroundColor: slide.accent === '#c9a227' ? '#e8c94a' : '#a78bfa' }} />
+            <span
+              className="h-1.5 w-1.5 rounded-full animate-pulse"
+              style={{ backgroundColor: slide.accent === '#c9a227' ? '#e8c94a' : '#a78bfa' }}
+            />
             {slide.badge}
           </span>
 
@@ -71,7 +74,7 @@ export function BannerCarousel() {
             {slide.title}
           </h2>
 
-          <p className="max-w-lg text-sm leading-relaxed text-[#8070a8] sm:text-base">
+          <p className="max-w-lg text-sm leading-relaxed sm:text-base" style={{ color: 'var(--c-muted)' }}>
             {slide.description}
           </p>
 
@@ -89,7 +92,10 @@ export function BannerCarousel() {
 
         {/* Right card */}
         <div className="hidden sm:block">
-          <div className="relative w-64 overflow-hidden rounded-2xl border border-[rgba(120,60,220,0.2)] bg-[rgba(12,8,28,0.9)] p-5 shadow-[0_24px_80px_rgba(0,0,0,0.4)]">
+          <div
+            className="relative w-64 overflow-hidden rounded-2xl border p-5 shadow-[0_24px_80px_rgba(0,0,0,0.4)]"
+            style={{ borderColor: 'var(--c-border)', backgroundColor: 'var(--c-glass-deep)' }}
+          >
             <div
               className="absolute inset-0 opacity-15"
               style={{ background: `radial-gradient(circle at 50% 0%, ${slide.accent}, transparent 70%)` }}
@@ -100,7 +106,7 @@ export function BannerCarousel() {
               <div className="h-px bg-gradient-to-r from-transparent via-[rgba(120,60,220,0.3)] to-transparent" />
               <div className="space-y-1.5">
                 {['Entrega rápida', 'Embalagem presente', 'Garantia de qualidade'].map((item) => (
-                  <div key={item} className="flex items-center gap-2 text-xs text-[#7c6fa0]">
+                  <div key={item} className="flex items-center gap-2 text-xs" style={{ color: 'var(--c-muted)' }}>
                     <span className="h-1 w-1 rounded-full bg-[#c9a227]" />
                     {item}
                   </div>
@@ -111,8 +117,11 @@ export function BannerCarousel() {
         </div>
       </div>
 
-      {/* Bottom controls */}
-      <div className="flex items-center justify-between border-t border-[rgba(120,60,220,0.1)] px-6 py-4 sm:px-10">
+      {/* Controls */}
+      <div
+        className="flex items-center justify-between border-t px-6 py-4 sm:px-10"
+        style={{ borderColor: 'var(--c-border)' }}
+      >
         <div className="flex items-center gap-2">
           {slides.map((_, index) => (
             <button
@@ -123,13 +132,13 @@ export function BannerCarousel() {
                 width: activeSlide === index ? '28px' : '8px',
                 background: activeSlide === index
                   ? 'linear-gradient(90deg, #c9a227, #e8c94a)'
-                  : 'rgba(120,60,220,0.25)',
+                  : 'var(--c-border-mid)',
               }}
               aria-label={`Ir para slide ${index + 1}`}
             />
           ))}
         </div>
-        <span className="text-xs text-[#5a4f7a]">{activeSlide + 1} / {slides.length}</span>
+        <span className="text-xs" style={{ color: 'var(--c-vdim)' }}>{activeSlide + 1} / {slides.length}</span>
       </div>
     </section>
   )
