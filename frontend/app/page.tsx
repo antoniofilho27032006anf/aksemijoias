@@ -124,7 +124,7 @@ export default function Home() {
               </Link>
               <Link
                 href="/orders"
-                className="inline-flex items-center gap-2 rounded-xl border px-6 py-3 text-sm font-semibold text-[#a78bfa] transition hover:text-[#e8c94a]"
+                className="inline-flex items-center gap-2 rounded-xl border px-6 py-3 text-sm font-bold text-white transition hover:text-[#e8c94a]"
                 style={{ borderColor: 'var(--c-border-mid)', backgroundColor: 'var(--c-hover-soft)' }}
               >
                 Meus pedidos

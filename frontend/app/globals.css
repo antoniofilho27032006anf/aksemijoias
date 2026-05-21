@@ -22,9 +22,9 @@
   --c-cart:         #06040c;
   --c-input:        rgba(12, 8, 28, 0.80);
   --c-text:         #f0eeff;
-  --c-muted:        #7c6fa0;
-  --c-dim:          #5a4f7a;
-  --c-vdim:         #3d3560;
+  --c-muted:        #c0b0e0;
+  --c-dim:          #9888c8;
+  --c-vdim:         #7060a8;
   --c-border:       rgba(120, 60, 220, 0.18);
   --c-border-mid:   rgba(120, 60, 220, 0.30);
   --c-border-gold:  rgba(201, 162, 39, 0.30);
@@ -47,9 +47,9 @@
   --c-cart:         #0d0925;
   --c-input:        rgba(22, 16, 55, 0.85);
   --c-text:         #eeeaff;
-  --c-muted:        #9080c0;
-  --c-dim:          #6a5a9a;
-  --c-vdim:         #4a3a80;
+  --c-muted:        #d0c4f0;
+  --c-dim:          #b0a0e0;
+  --c-vdim:         #9080c8;
   --c-border:       rgba(140, 80, 255, 0.22);
   --c-border-mid:   rgba(140, 80, 255, 0.38);
   --c-border-gold:  rgba(220, 185, 50, 0.34);

@@ -103,7 +103,7 @@ export function ProductCard({ id, name, description, price, image, stock }: Prod
           </button>
           <Link
             href={`/product/${id}`}
-            className="flex justify-center rounded-xl border py-2.5 text-xs font-semibold text-[#a78bfa] transition hover:text-[#e8c94a] sm:text-sm"
+            className="flex justify-center rounded-xl border py-2.5 text-xs font-bold text-white transition hover:text-[#e8c94a] sm:text-sm"
             style={{ borderColor: 'var(--c-border-mid)', backgroundColor: 'var(--c-hover-soft)' }}
           >
             Ver detalhes
