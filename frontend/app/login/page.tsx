@@ -35,9 +35,7 @@ export default function LoginPage() {
 
         {/* Logo/topo */}
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 h-20 w-20 overflow-hidden rounded-full border-2 border-amber-300 shadow-lg">
-            <img src="/logo.png" alt="Logo" className="h-full w-full object-cover" />
-          </div>
+          <img src="/logo.png" alt="Logo" className="mx-auto mb-2 h-32 w-auto object-contain" style={{ mixBlendMode: 'multiply' }} />
           <h1 className="text-2xl font-bold tracking-tight text-gray-900">Bem-vinda</h1>
           <p className="mt-1 text-sm text-gray-500">Acesse sua conta exclusiva</p>
         </div>
