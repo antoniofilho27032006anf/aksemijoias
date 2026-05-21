@@ -71,68 +71,65 @@ export function AdminProductsList() {
 
       <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
 
-        {products.map((product) => (
+        {products.map((product) => {
+          return (
 
-          <div
-            key={product.id}
-            className="rounded-[2rem] border border-white/10 bg-white/5 p-5"
-          >
+            <div
+              key={product.id}
+              className="rounded-[2rem] border border-white/10 bg-white/5 p-5"
+            >
 
-            <img
-              src={product.image}
-              alt={product.name}
-              className="h-60 w-full rounded-2xl object-cover"
-            />
+              <img
+                src={product.image}
+                alt={product.name}
+                className="h-60 w-full rounded-2xl object-cover" />
 
-            <h3 className="mt-5 text-2xl font-bold text-white">
-              {product.name}
-            </h3>
+              <h3 className="mt-5 text-2xl font-bold text-white">
+                {product.name}
+              </h3>
 
-            <p className="mt-2 text-sm text-zinc-400">
-              {product.description}
-            </p>
+              <p className="mt-2 text-sm text-zinc-400">
+                {product.description}
+              </p>
 
-            <div className="mt-5 flex items-center justify-between gap-3">
+              <div className="mt-5 flex items-center justify-between gap-3">
 
-              <div>
+                <div>
 
-                <p className="text-2xl font-bold text-pink-300">
-                  R$ {product.price}
-                </p>
+                  <p className="text-2xl font-bold text-pink-300">
+                    R$ {product.price}
+                  </p>
 
-                <span className="text-sm text-zinc-500">
-                  Estoque: {product.stock}
-                </span>
+                  <span className="text-sm text-zinc-500">
+                    Estoque: {product.stock}
+                  </span>
 
-              </div>
+                </div>
 
-              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3">
 
-                <button
-                  onClick={() =>
-                    setSelectedProduct(product)
-                  }
-                  className="rounded-full bg-violet-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-violet-400"
-                >
-                  Editar
-                </button>
+                  <button
+                    onClick={() => setSelectedProduct(product)}
+                    className="rounded-full bg-violet-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-violet-400"
+                  >
+                    Editar
+                  </button>
 
-                <button
-                  onClick={() =>
-                    handleDeleteProduct(product.id)
-                  }
-                  className="rounded-full bg-red-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-400"
-                >
-                  Excluir
-                </button>
+                  <button
+                    onClick={() => handleDeleteProduct(product.id)}
+                    className="rounded-full bg-red-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-400"
+                  >
+                    Excluir
+                  </button>
+
+                </div>
 
               </div>
 
             </div>
 
-          </div>
-
-        ))}
+          )
+        })}
 
       </div>
 

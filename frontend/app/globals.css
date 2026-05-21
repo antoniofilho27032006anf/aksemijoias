@@ -1,18 +1,22 @@
-﻿@import "tailwindcss";
+@import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #1f1f27;
-  --surface: rgba(255, 255, 255, 0.9);
-  --surface-strong: rgba(255, 255, 255, 1);
-  --border: rgba(148, 114, 255, 0.24);
-  --purple: #a572ff;
-  --pink: #ffafda;
-  --pink-soft: #ffd3ee;
-  --purple-soft: #d8b5ff;
-  --text-muted: #6b7280;
-  --text-strong: #111827;
-  --shadow: 0 24px 80px rgba(145, 92, 255, 0.12);
+  --background: #06040c;
+  --foreground: #f0eeff;
+  --surface: rgba(12, 8, 28, 0.92);
+  --surface-strong: rgba(16, 10, 36, 1);
+  --border-purple: rgba(120, 60, 220, 0.22);
+  --border-gold: rgba(201, 162, 39, 0.28);
+  --purple: #7c3aed;
+  --purple-light: #a78bfa;
+  --purple-soft: rgba(124, 58, 237, 0.15);
+  --gold: #c9a227;
+  --gold-light: #e8c94a;
+  --gold-soft: rgba(201, 162, 39, 0.12);
+  --text-muted: #7c6fa0;
+  --text-strong: #f0eeff;
+  --shadow-purple: 0 24px 80px rgba(124, 58, 237, 0.18);
+  --shadow-gold: 0 24px 60px rgba(201, 162, 39, 0.10);
 }
 
 @theme inline {
@@ -47,26 +51,86 @@ textarea {
 }
 
 ::selection {
-  background: rgba(155, 92, 255, 0.35);
+  background: rgba(124, 58, 237, 0.45);
   color: #ffffff;
 }
 
+/* Dark glass card */
 .glass-card {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(18px);
+  background: rgba(12, 8, 28, 0.75);
+  border: 1px solid rgba(120, 60, 220, 0.18);
+  backdrop-filter: blur(20px);
+}
+
+/* Gold gradient text */
+.text-gold {
+  background: linear-gradient(135deg, #c9a227 0%, #f0c040 55%, #c9a227 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Purple glow button */
+.btn-gold {
+  background: linear-gradient(135deg, #b8891e 0%, #e8c94a 50%, #b8891e 100%);
+  color: #0a0612;
+  font-weight: 700;
+  border: none;
+}
+
+.btn-gold:hover {
+  background: linear-gradient(135deg, #c9a227 0%, #f5d55a 50%, #c9a227 100%);
+}
+
+/* Subtle grid background pattern */
+.grid-bg {
+  background-image:
+    linear-gradient(rgba(124, 58, 237, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124, 58, 237, 0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
 }
 
 @keyframes slide-in {
   from {
     transform: translateX(100%);
   }
-
   to {
     transform: translateX(0);
   }
 }
 
 .animate-slide-in {
-  animation: slide-in 0.3s ease;
+  animation: slide-in 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+/* Purple/gold shimmer for skeleton */
+@keyframes skeleton-shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(40, 20, 80, 0.6) 25%,
+    rgba(80, 40, 140, 0.4) 50%,
+    rgba(40, 20, 80, 0.6) 75%
+  );
+  background-size: 800px 100%;
+  animation: skeleton-shimmer 1.6s infinite linear;
 }
