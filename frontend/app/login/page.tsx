@@ -87,10 +87,8 @@ export default function LoginPage() {
 
         {/* Logo/topo */}
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 inline-flex h-14 w-14 items-center justify-center rounded-full border border-amber-300 bg-amber-50">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 24 24" fill="none">
-              <path d="M12 2L9 8H3L8 12.5L6 19L12 15L18 19L16 12.5L21 8H15L12 2Z" stroke="#d97706" strokeWidth="1.5" strokeLinejoin="round" fill="rgba(217,119,6,0.12)" />
-            </svg>
+          <div className="mx-auto mb-4 h-20 w-20 overflow-hidden rounded-full border-2 border-amber-300 shadow-lg">
+            <img src="/logo.png" alt="Logo" className="h-full w-full object-cover" />
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-gray-900">Bem-vinda</h1>
           <p className="mt-1 text-sm text-gray-500">Acesse sua conta exclusiva</p>
