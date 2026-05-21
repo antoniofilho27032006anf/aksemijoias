@@ -101,12 +101,37 @@ button, input, textarea { font: inherit; }
   background-size: 48px 48px;
 }
 
-/* Subtle grid background pattern — gold */
+/* Gold grid background with animated glow */
 .grid-bg-gold {
+  position: relative;
   background-image:
-    linear-gradient(rgba(201, 162, 39, 0.10) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(201, 162, 39, 0.10) 1px, transparent 1px);
-  background-size: 48px 48px;
+    radial-gradient(ellipse 60% 55% at 50% 50%, rgba(201, 162, 39, 0.07), transparent 70%),
+    linear-gradient(rgba(201, 162, 39, 0.35) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201, 162, 39, 0.35) 1px, transparent 1px);
+  background-size: 100% 100%, 48px 48px, 48px 48px;
+}
+
+.grid-bg-gold::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 50% 45% at 50% 50%, rgba(232, 201, 74, 0.18), transparent 65%),
+    radial-gradient(ellipse 20% 20% at 8%  8%,  rgba(201, 162, 39, 0.10), transparent),
+    radial-gradient(ellipse 20% 20% at 92% 92%, rgba(201, 162, 39, 0.10), transparent);
+  animation: golden-pulse 4s ease-in-out infinite;
+}
+
+@keyframes golden-pulse {
+  0%, 100% { opacity: 0.55; }
+  50%       { opacity: 1;    }
+}
+
+.grid-bg-gold > * {
+  position: relative;
+  z-index: 1;
 }
 
 @keyframes slide-in {
