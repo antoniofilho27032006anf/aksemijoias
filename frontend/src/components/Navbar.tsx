@@ -112,11 +112,11 @@ export function Navbar({ onSearch }: NavbarProps) {
         </div>
         <button
           type="submit"
-          className="flex items-center gap-1.5 border-l border-gray-100 bg-gray-50 px-5 text-xs font-bold uppercase tracking-wider text-gray-600 transition hover:text-[#7C3D8E]"
+          className="flex items-center justify-center border-l border-gray-100 bg-gray-50 px-4"
+          aria-label="Buscar"
         >
-          PRODUTOS
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M6 9l6 6 6-6"/>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7C3D8E" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
           </svg>
         </button>
       </form>

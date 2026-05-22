@@ -25,39 +25,41 @@ export function CategoryBar() {
     router.push(`/search?term=${encodeURIComponent(term)}&sort=bestseller`)
   }
 
-  return (
-    <div ref={barRef} className="relative z-20 border-b border-gray-100 bg-white">
+  const activeSubs = open ? (CATEGORIES.find((c) => c.name === open)?.sub ?? []) : []
 
-      {/* Category tabs strip */}
+  return (
+    <div ref={barRef} className="relative z-20">
+
+      {/* Purple category strip */}
       <div
         className="flex overflow-x-auto"
-        style={{ scrollbarWidth: 'none' } as React.CSSProperties}
+        style={{ backgroundColor: '#7C3D8E', scrollbarWidth: 'none' } as React.CSSProperties}
       >
         {CATEGORIES.map((cat) => {
           const isOpen = open === cat.name
           return (
             <button
               key={cat.name}
-              onClick={() => {
-                if (cat.sub.length === 0) {
-                  navigate(cat.name)
-                } else {
-                  setOpen(isOpen ? null : cat.name)
-                }
-              }}
-              className="flex flex-none items-center gap-1 whitespace-nowrap px-5 py-3 text-[11px] font-bold uppercase tracking-wider transition"
+              onClick={() =>
+                cat.sub.length === 0
+                  ? navigate(cat.name)
+                  : setOpen(isOpen ? null : cat.name)
+              }
+              className="flex flex-none items-center gap-1 whitespace-nowrap px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest transition"
               style={{
-                color: isOpen ? '#7C3D8E' : '#555',
-                borderBottom: isOpen ? '2px solid #7C3D8E' : '2px solid transparent',
+                color: '#fff',
+                backgroundColor: isOpen ? 'rgba(0,0,0,0.20)' : 'transparent',
+                borderBottom: isOpen ? '2px solid #fff' : '2px solid transparent',
               }}
             >
               {cat.name}
               {cat.sub.length > 0 && (
                 <svg
-                  width="9" height="9" viewBox="0 0 24 24" fill="none"
+                  width="8" height="8" viewBox="0 0 24 24" fill="none"
                   stroke="currentColor" strokeWidth="3"
                   strokeLinecap="round" strokeLinejoin="round"
                   style={{
+                    opacity: 0.8,
                     transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
                     transition: 'transform 0.2s',
                   }}
@@ -71,26 +73,46 @@ export function CategoryBar() {
       </div>
 
       {/* Dropdown */}
-      {open && (() => {
-        const subs = CATEGORIES.find((c) => c.name === open)?.sub ?? []
-        if (subs.length === 0) return null
-        return (
-          <div className="absolute left-0 right-0 top-full border-t border-gray-100 bg-white shadow-xl">
-            <div className="flex flex-wrap gap-2 px-5 py-4">
-              {subs.map((sub) => (
+      {open && activeSubs.length > 0 && (
+        <div className="absolute left-0 right-0 top-full z-50 bg-white shadow-2xl">
+          {/* Purple accent top border */}
+          <div className="h-0.5 w-full" style={{ backgroundColor: '#7C3D8E' }} />
+
+          <div className="p-4 sm:p-5">
+            <p className="mb-3 text-[9px] font-bold uppercase tracking-[0.3em]" style={{ color: '#7C3D8E' }}>
+              {open}
+            </p>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
+              {activeSubs.map((sub) => (
                 <button
                   key={sub.name}
                   onClick={() => navigate(sub.name)}
-                  className="rounded-full border px-4 py-2 text-[11px] font-semibold uppercase tracking-wide transition hover:bg-[#7C3D8E] hover:text-white"
-                  style={{ borderColor: '#C4B0D4', color: '#7C3D8E' }}
+                  className="group relative overflow-hidden rounded-xl border px-3 py-3 text-left text-[10px] font-bold uppercase leading-tight tracking-wide transition-all duration-200 hover:scale-[1.02] hover:shadow-md active:scale-[0.98]"
+                  style={{
+                    borderColor: '#e8d8f5',
+                    backgroundColor: '#faf5ff',
+                    color: '#6B2F7D',
+                  }}
+                  onMouseEnter={(e) => {
+                    const el = e.currentTarget
+                    el.style.backgroundColor = '#7C3D8E'
+                    el.style.borderColor = '#7C3D8E'
+                    el.style.color = '#fff'
+                  }}
+                  onMouseLeave={(e) => {
+                    const el = e.currentTarget
+                    el.style.backgroundColor = '#faf5ff'
+                    el.style.borderColor = '#e8d8f5'
+                    el.style.color = '#6B2F7D'
+                  }}
                 >
-                  {sub.name}
+                  <span className="block leading-snug">{sub.name}</span>
                 </button>
               ))}
             </div>
           </div>
-        )
-      })()}
+        </div>
+      )}
     </div>
   )
 }
