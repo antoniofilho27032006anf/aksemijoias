@@ -6,6 +6,8 @@ import { useState } from 'react'
 
 import { useCart } from '../contexts/CartContext'
 import { useAuth } from '../contexts/AuthContext'
+import { CategoryBar } from './CategoryBar'
+import { CATEGORIES } from '../data/categories'
 
 interface NavbarProps {
   onSearch?: (term: string) => void
@@ -18,6 +20,7 @@ export function Navbar({ onSearch }: NavbarProps) {
 
   const [searchTerm, setSearchTerm] = useState('')
   const [menuOpen, setMenuOpen] = useState(false)
+  const [expandedCat, setExpandedCat] = useState<string | null>(null)
 
   const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0)
 
@@ -31,6 +34,12 @@ export function Navbar({ onSearch }: NavbarProps) {
       router.push(`/search?term=${encodeURIComponent(q)}&sort=bestseller`)
     }
     setMenuOpen(false)
+  }
+
+  function navigateTo(term: string) {
+    setMenuOpen(false)
+    setExpandedCat(null)
+    router.push(`/search?term=${encodeURIComponent(term)}&sort=bestseller`)
   }
 
   return (
@@ -85,10 +94,7 @@ export function Navbar({ onSearch }: NavbarProps) {
       </div>
 
       {/* Search row */}
-      <form
-        onSubmit={handleSearch}
-        className="flex border-t border-gray-100"
-      >
+      <form onSubmit={handleSearch} className="flex border-t border-gray-100">
         <div className="relative flex flex-1 items-center">
           <svg
             className="absolute left-4 text-gray-400"
@@ -106,7 +112,7 @@ export function Navbar({ onSearch }: NavbarProps) {
         </div>
         <button
           type="submit"
-          className="flex items-center gap-1.5 border-l border-gray-100 bg-gray-50 px-5 text-xs font-bold uppercase tracking-wider text-gray-600"
+          className="flex items-center gap-1.5 border-l border-gray-100 bg-gray-50 px-5 text-xs font-bold uppercase tracking-wider text-gray-600 transition hover:text-[#7C3D8E]"
         >
           PRODUTOS
           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
@@ -115,15 +121,19 @@ export function Navbar({ onSearch }: NavbarProps) {
         </button>
       </form>
 
+      {/* Category bar strip */}
+      <CategoryBar />
+
       {/* Mobile slide-down menu */}
       {menuOpen && (
-        <div className="absolute left-0 right-0 top-full z-40 border-t border-gray-100 bg-white shadow-xl">
-          <nav className="flex flex-col divide-y divide-gray-50 px-2 py-2">
+        <div className="absolute left-0 right-0 top-full z-40 max-h-[80vh] overflow-y-auto border-t border-gray-100 bg-white shadow-xl">
+
+          {/* Nav links */}
+          <nav className="divide-y divide-gray-50 px-2">
             {[
               { href: '/', label: 'Loja' },
               { href: '/favorites', label: 'Favoritas' },
               { href: '/orders', label: 'Meus pedidos' },
-              { href: '/search', label: 'Buscar produtos' },
               ...(user
                 ? [{ href: '/account', label: 'Minha conta' }]
                 : [{ href: '/login', label: 'Entrar' }]),
@@ -132,31 +142,89 @@ export function Navbar({ onSearch }: NavbarProps) {
                 key={link.href}
                 href={link.href}
                 onClick={() => setMenuOpen(false)}
-                className="px-4 py-3.5 text-sm font-medium text-gray-700 transition hover:text-[#7C3D8E]"
+                className="block px-4 py-3.5 text-sm font-medium text-gray-700 transition hover:text-[#7C3D8E]"
               >
                 {link.label}
               </Link>
             ))}
+          </nav>
 
-            {(user as any)?.role === 'ADMIN' && (
+          {/* Categories section */}
+          <div className="border-t border-gray-100 px-4 pt-3 pb-1">
+            <p className="mb-1 text-[10px] font-bold uppercase tracking-widest text-gray-400">
+              Categorias
+            </p>
+            {CATEGORIES.map((cat) => (
+              <div key={cat.name} className="border-b border-gray-50 last:border-0">
+
+                {/* Category header */}
+                <button
+                  onClick={() => {
+                    if (cat.sub.length === 0) {
+                      navigateTo(cat.name)
+                    } else {
+                      setExpandedCat(expandedCat === cat.name ? null : cat.name)
+                    }
+                  }}
+                  className="flex w-full items-center justify-between py-3.5 text-sm font-semibold text-gray-700 transition hover:text-[#7C3D8E]"
+                >
+                  {cat.name}
+                  {cat.sub.length > 0 && (
+                    <svg
+                      width="12" height="12" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" strokeWidth="2.5"
+                      strokeLinecap="round" strokeLinejoin="round"
+                      style={{
+                        transform: expandedCat === cat.name ? 'rotate(180deg)' : 'rotate(0deg)',
+                        transition: 'transform 0.2s',
+                        color: '#7C3D8E',
+                      }}
+                    >
+                      <path d="M6 9l6 6 6-6"/>
+                    </svg>
+                  )}
+                </button>
+
+                {/* Subcategories */}
+                {expandedCat === cat.name && cat.sub.length > 0 && (
+                  <div className="mb-2 flex flex-col gap-0.5 pl-3">
+                    {cat.sub.map((sub) => (
+                      <button
+                        key={sub.name}
+                        onClick={() => navigateTo(sub.name)}
+                        className="py-2 text-left text-xs font-medium text-gray-500 transition hover:text-[#C4509B]"
+                      >
+                        — {sub.name}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Admin + logout */}
+          {(user as any)?.role === 'ADMIN' && (
+            <div className="border-t border-gray-100 px-2 py-2">
               <Link
                 href="/admin"
                 onClick={() => setMenuOpen(false)}
-                className="px-4 py-3.5 text-sm font-bold text-[#7C3D8E]"
+                className="block px-4 py-3 text-sm font-bold text-[#7C3D8E]"
               >
                 Painel Admin
               </Link>
-            )}
-
-            {user && (
+            </div>
+          )}
+          {user && (
+            <div className="border-t border-gray-100 px-2 py-2">
               <button
                 onClick={() => { logout(); setMenuOpen(false) }}
-                className="px-4 py-3.5 text-left text-sm font-medium text-red-400 transition hover:text-red-600"
+                className="block w-full px-4 py-3 text-left text-sm font-medium text-red-400 transition hover:text-red-600"
               >
                 Sair
               </button>
-            )}
-          </nav>
+            </div>
+          )}
         </div>
       )}
     </header>
