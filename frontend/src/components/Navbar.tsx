@@ -6,229 +6,159 @@ import { useState } from 'react'
 
 import { useCart } from '../contexts/CartContext'
 import { useAuth } from '../contexts/AuthContext'
-import { ThemeToggle } from './ThemeToggle'
 
-export function Navbar() {
+interface NavbarProps {
+  onSearch?: (term: string) => void
+}
+
+export function Navbar({ onSearch }: NavbarProps) {
   const { cart, openCart } = useCart()
   const { user, logout } = useAuth()
   const router = useRouter()
 
   const [searchTerm, setSearchTerm] = useState('')
-  const [isOpen, setIsOpen] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
 
   const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0)
 
-  function handleSearch(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    const term = searchTerm.trim()
-    router.push(`/search?term=${encodeURIComponent(term)}&sort=bestseller`)
-    setIsOpen(false)
+  function handleSearch(e: { preventDefault: () => void }) {
+    e.preventDefault()
+    const q = searchTerm.trim()
+    if (onSearch) {
+      onSearch(q)
+      document.getElementById('produtos')?.scrollIntoView({ behavior: 'smooth' })
+    } else {
+      router.push(`/search?term=${encodeURIComponent(q)}&sort=bestseller`)
+    }
+    setMenuOpen(false)
   }
 
   return (
-    <header
-      className="sticky top-0 z-30 border-b backdrop-blur-2xl transition-colors duration-300"
-      style={{ borderColor: 'var(--c-border)', backgroundColor: 'var(--c-nav-bg)' }}
-    >
-      <div className="mx-auto flex max-w-[1320px] flex-col gap-3 px-4 py-4 sm:px-8 lg:flex-row lg:items-center lg:justify-between">
+    <header className="sticky top-0 z-30 bg-white shadow-sm">
 
-        {/* Logo + hamburger */}
-        <div className="flex items-center justify-between gap-4">
-          <Link href="/" className="group flex flex-col gap-0.5">
-            <span
-              className="text-2xl font-black tracking-tight"
-              style={{
-                background: 'linear-gradient(135deg, #5b21b6 0%, #a78bfa 60%, #7c3aed 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-              }}
-            >
-              AK Semij&oacute;ias &amp; Tals
-            </span>
-            <span className="text-[10px] uppercase tracking-[0.35em]" style={{ color: 'var(--c-dim)' }}>
-              J&oacute;ias Banhadas a Ouro 18K
-            </span>
-          </Link>
+      {/* Main nav row */}
+      <div className="flex items-center justify-between px-4 py-3 sm:px-6">
 
-          <button
-            type="button"
-            onClick={() => setIsOpen((state) => !state)}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-xl border transition hover:scale-105 md:hidden"
-            style={{ borderColor: 'var(--c-border-mid)', backgroundColor: 'var(--c-glass)', color: '#a78bfa' }}
-            aria-label="Abrir menu"
+        {/* Left: hamburger + MENU */}
+        <button
+          type="button"
+          onClick={() => setMenuOpen((v) => !v)}
+          className="flex items-center gap-2 text-[#7C3D8E]"
+          aria-label="Menu"
+        >
+          <svg width="22" height="18" viewBox="0 0 22 18" fill="none">
+            <rect width="22" height="2.5" rx="1.25" fill="currentColor"/>
+            <rect y="7.5" width="15" height="2.5" rx="1.25" fill="currentColor"/>
+            <rect y="15" width="22" height="2.5" rx="1.25" fill="currentColor"/>
+          </svg>
+          <span className="text-xs font-bold uppercase tracking-widest">MENU</span>
+        </button>
+
+        {/* Center: Logo */}
+        <Link href="/" className="absolute left-1/2 -translate-x-1/2 text-center">
+          <span className="text-lg font-black tracking-tight text-[#7C3D8E] sm:text-xl">
+            AK Semij&oacute;ias
+          </span>
+          <span className="block text-[9px] uppercase tracking-[0.3em] text-gray-400">
+            &amp; Tals
+          </span>
+        </Link>
+
+        {/* Right: cart */}
+        <button
+          onClick={openCart}
+          className="relative flex items-center gap-1 text-[#7C3D8E]"
+          aria-label="Carrinho"
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <path d="M16 10a4 4 0 0 1-8 0"/>
+          </svg>
+          <span
+            className="flex h-5 min-w-[20px] items-center justify-center rounded-full text-[11px] font-black text-white"
+            style={{ backgroundColor: '#C4509B' }}
           >
-            <svg width="18" height="14" viewBox="0 0 18 14" fill="none">
-              <rect width="18" height="2" rx="1" fill="currentColor"/>
-              <rect y="6" width="12" height="2" rx="1" fill="currentColor"/>
-              <rect y="12" width="18" height="2" rx="1" fill="currentColor"/>
-            </svg>
-          </button>
-        </div>
-
-        {/* Desktop nav links */}
-        <nav className="hidden items-center gap-1 md:flex">
-          {[
-            { href: '/', label: 'Loja' },
-            { href: '/favorites', label: 'Favoritas' },
-            { href: '/orders', label: 'Pedidos' },
-            { href: '/search', label: 'Buscar' },
-          ].map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="rounded-lg px-3 py-2 text-sm font-medium transition hover:text-[#7c3aed]"
-              style={{ color: 'var(--c-muted)' }}
-            >
-              {link.label}
-            </Link>
-          ))}
-          {user ? (
-            <Link
-              href="/account"
-              className="rounded-lg px-3 py-2 text-sm font-medium transition hover:text-[#7c3aed]"
-              style={{ color: 'var(--c-muted)' }}
-            >
-              Minha conta
-            </Link>
-          ) : null}
-          {(user as any)?.role === 'ADMIN' ? (
-            <Link
-              href="/admin"
-              className="rounded-lg border px-3 py-2 text-sm font-semibold text-[#7c3aed] transition"
-              style={{ borderColor: 'var(--c-border-mid)', backgroundColor: 'rgba(124,58,237,0.08)' }}
-            >
-              Admin
-            </Link>
-          ) : null}
-        </nav>
-
-        {/* Right actions */}
-        <div className="flex items-center gap-2">
-          {/* Theme toggle — desktop only */}
-          <div className="hidden md:block">
-            <ThemeToggle />
-          </div>
-
-          {/* Cart */}
-          <button
-            onClick={openCart}
-            className="relative flex h-10 items-center gap-2 rounded-xl px-4 text-sm font-bold text-white transition hover:opacity-90 active:scale-95"
-            style={{ background: 'linear-gradient(135deg, #5b21b6 0%, #7c3aed 50%, #5b21b6 100%)' }}
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-              <line x1="3" y1="6" x2="21" y2="6"/>
-              <path d="M16 10a4 4 0 0 1-8 0"/>
-            </svg>
-            {totalItems > 0 && (
-              <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-white px-1 text-xs font-black text-[#5b21b6]">
-                {totalItems}
-              </span>
-            )}
-          </button>
-
-          {user ? (
-            <div className="hidden items-center gap-2 md:flex">
-              <span className="text-xs" style={{ color: 'var(--c-muted)' }}>
-                Ol&aacute;, {user.name.split(' ')[0]}
-              </span>
-              <button
-                onClick={logout}
-                className="rounded-xl border px-3 py-2 text-xs font-semibold transition hover:text-[#7c3aed]"
-                style={{ borderColor: 'var(--c-border)', backgroundColor: 'var(--c-glass)', color: 'var(--c-muted)' }}
-              >
-                Sair
-              </button>
-            </div>
-          ) : (
-            <Link
-              href="/login"
-              className="hidden rounded-xl border px-4 py-2 text-xs font-semibold transition hover:text-[#7c3aed] md:inline-flex"
-              style={{ borderColor: 'var(--c-border)', backgroundColor: 'var(--c-glass)', color: 'var(--c-muted)' }}
-            >
-              Entrar
-            </Link>
-          )}
-        </div>
+            {totalItems}
+          </span>
+        </button>
       </div>
 
-      {/* Mobile menu */}
-      {isOpen ? (
-        <div
-          className="mx-4 mb-4 overflow-hidden rounded-2xl border shadow-[0_32px_80px_rgba(0,0,0,0.6)] md:hidden"
-          style={{ borderColor: 'var(--c-border)', backgroundColor: 'var(--c-glass-deep)' }}
-        >
-          <form
-            onSubmit={handleSearch}
-            className="flex gap-2 border-b p-4"
-            style={{ borderColor: 'var(--c-border)' }}
+      {/* Search row */}
+      <form
+        onSubmit={handleSearch}
+        className="flex border-t border-gray-100"
+      >
+        <div className="relative flex flex-1 items-center">
+          <svg
+            className="absolute left-4 text-gray-400"
+            width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
           >
-            <input
-              value={searchTerm}
-              onChange={(event) => setSearchTerm(event.target.value)}
-              placeholder="Buscar joias..."
-              className="min-w-0 flex-1 rounded-xl border px-4 py-2.5 text-sm outline-none"
-              style={{ borderColor: 'var(--c-border)', backgroundColor: 'var(--c-input)', color: 'var(--c-text)' }}
-            />
-            <button
-              type="submit"
-              className="rounded-xl px-4 py-2.5 text-sm font-bold text-white"
-              style={{ background: 'linear-gradient(135deg, #5b21b6 0%, #7c3aed 50%, #5b21b6 100%)' }}
-            >
-              Ir
-            </button>
-          </form>
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Buscar..."
+            className="w-full bg-gray-50 py-3 pl-10 pr-4 text-sm text-gray-700 outline-none placeholder:text-gray-400"
+          />
+        </div>
+        <button
+          type="submit"
+          className="flex items-center gap-1.5 border-l border-gray-100 bg-gray-50 px-5 text-xs font-bold uppercase tracking-wider text-gray-600"
+        >
+          PRODUTOS
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M6 9l6 6 6-6"/>
+          </svg>
+        </button>
+      </form>
 
-          <nav className="flex flex-col p-2">
+      {/* Mobile slide-down menu */}
+      {menuOpen && (
+        <div className="absolute left-0 right-0 top-full z-40 border-t border-gray-100 bg-white shadow-xl">
+          <nav className="flex flex-col divide-y divide-gray-50 px-2 py-2">
             {[
               { href: '/', label: 'Loja' },
               { href: '/favorites', label: 'Favoritas' },
               { href: '/orders', label: 'Meus pedidos' },
               { href: '/search', label: 'Buscar produtos' },
-              ...(user ? [{ href: '/account', label: 'Minha conta' }] : [{ href: '/login', label: 'Entrar' }]),
+              ...(user
+                ? [{ href: '/account', label: 'Minha conta' }]
+                : [{ href: '/login', label: 'Entrar' }]),
             ].map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                onClick={() => setIsOpen(false)}
-                className="rounded-xl px-4 py-3 text-sm font-medium transition hover:text-[#7c3aed]"
-                style={{ color: 'var(--c-muted)' }}
+                onClick={() => setMenuOpen(false)}
+                className="px-4 py-3.5 text-sm font-medium text-gray-700 transition hover:text-[#7C3D8E]"
               >
                 {link.label}
               </Link>
             ))}
-            {(user as any)?.role === 'ADMIN' ? (
+
+            {(user as any)?.role === 'ADMIN' && (
               <Link
                 href="/admin"
-                onClick={() => setIsOpen(false)}
-                className="mx-2 my-1 rounded-xl border px-4 py-3 text-sm font-semibold text-[#7c3aed]"
-                style={{ borderColor: 'var(--c-border-mid)', backgroundColor: 'rgba(124,58,237,0.08)' }}
+                onClick={() => setMenuOpen(false)}
+                className="px-4 py-3.5 text-sm font-bold text-[#7C3D8E]"
               >
                 Painel Admin
               </Link>
-            ) : null}
-            {user ? (
+            )}
+
+            {user && (
               <button
-                onClick={() => { logout(); setIsOpen(false) }}
-                className="rounded-xl px-4 py-3 text-left text-sm font-medium transition hover:text-red-400"
-                style={{ color: 'var(--c-dim)' }}
+                onClick={() => { logout(); setMenuOpen(false) }}
+                className="px-4 py-3.5 text-left text-sm font-medium text-red-400 transition hover:text-red-600"
               >
                 Sair
               </button>
-            ) : null}
+            )}
           </nav>
-
-          {/* Theme toggle — mobile menu footer */}
-          <div
-            className="flex items-center justify-between border-t px-4 py-3"
-            style={{ borderColor: 'var(--c-border)' }}
-          >
-            <span className="text-xs" style={{ color: 'var(--c-dim)' }}>Tema</span>
-            <ThemeToggle />
-          </div>
         </div>
-      ) : null}
+      )}
     </header>
   )
 }
