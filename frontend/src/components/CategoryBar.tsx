@@ -32,7 +32,7 @@ export function CategoryBar() {
 
       {/* Purple category strip */}
       <div
-        className="flex items-center gap-1.5 overflow-x-auto px-2 py-1.5"
+        className="flex items-center justify-start gap-1.5 overflow-x-auto px-2 py-1.5 sm:justify-center sm:px-4"
         style={{ backgroundColor: '#7C3D8E', scrollbarWidth: 'none' } as React.CSSProperties}
       >
         {CATEGORIES.map((cat) => {
@@ -82,7 +82,7 @@ export function CategoryBar() {
           {/* Top accent */}
           <div className="h-[2px] w-full" style={{ background: 'linear-gradient(to right, #7C3D8E, #C4509B)' }} />
 
-          <div className="px-4 py-3">
+          <div className="mx-auto max-w-4xl px-4 py-3">
 
             {/* Header */}
             <div className="mb-2.5 flex items-center gap-2">

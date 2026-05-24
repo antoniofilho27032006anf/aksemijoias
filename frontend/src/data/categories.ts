@@ -48,6 +48,13 @@ export const CATEGORIES: MainCategory[] = [
     ],
   },
   {
+    name: 'Relógios',
+    sub: [
+      { name: 'Relógios Masculinos' },
+      { name: 'Relógios Femininos' },
+    ],
+  },
+  {
     name: 'Correntes',
     sub: [
       { name: 'Correntes Femininas' },
