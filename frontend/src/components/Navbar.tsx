@@ -73,43 +73,24 @@ export function Navbar({ onSearch }: NavbarProps) {
           />
         </Link>
 
-        {/* Right: login + cart */}
-        <div className="flex items-center gap-3">
-
-          {/* Entrar / Cadastrar */}
-          <Link
-            href={user ? '/account' : '/login'}
-            className="flex flex-col items-center text-[#7C3D8E] transition hover:text-[#C4509B]"
-            aria-label={user ? 'Minha conta' : 'Entrar / Cadastrar'}
+        {/* Right: cart */}
+        <button
+          onClick={openCart}
+          className="relative flex items-center gap-1 text-[#7C3D8E]"
+          aria-label="Carrinho"
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <path d="M16 10a4 4 0 0 1-8 0"/>
+          </svg>
+          <span
+            className="flex h-5 min-w-[20px] items-center justify-center rounded-full text-[11px] font-black text-white"
+            style={{ backgroundColor: '#C4509B' }}
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="8" r="4"/>
-              <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
-            </svg>
-            <span className="text-[8px] font-bold uppercase tracking-wide leading-none mt-0.5">
-              {user ? 'Conta' : 'Entrar'}
-            </span>
-          </Link>
-
-          {/* Carrinho */}
-          <button
-            onClick={openCart}
-            className="relative flex items-center gap-1 text-[#7C3D8E]"
-            aria-label="Carrinho"
-          >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-              <line x1="3" y1="6" x2="21" y2="6"/>
-              <path d="M16 10a4 4 0 0 1-8 0"/>
-            </svg>
-            <span
-              className="flex h-5 min-w-[20px] items-center justify-center rounded-full text-[11px] font-black text-white"
-              style={{ backgroundColor: '#C4509B' }}
-            >
-              {totalItems}
-            </span>
-          </button>
-        </div>
+            {totalItems}
+          </span>
+        </button>
       </div>
 
       {/* Search row */}

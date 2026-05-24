@@ -32,7 +32,7 @@ export function CategoryBar() {
 
       {/* Purple category strip */}
       <div
-        className="flex overflow-x-auto"
+        className="flex items-center gap-1.5 overflow-x-auto px-2 py-1.5"
         style={{ backgroundColor: '#7C3D8E', scrollbarWidth: 'none' } as React.CSSProperties}
       >
         {CATEGORIES.map((cat) => {
@@ -45,21 +45,22 @@ export function CategoryBar() {
                   ? navigate(cat.name)
                   : setOpen(isOpen ? null : cat.name)
               }
-              className="flex flex-none items-center gap-0.5 whitespace-nowrap px-2.5 py-1.5 text-[8px] font-bold uppercase tracking-widest transition"
+              className="flex flex-none items-center gap-0.5 whitespace-nowrap rounded-sm px-2 py-0.5 text-[7.5px] font-bold uppercase tracking-widest transition-all duration-150"
               style={{
                 color: '#fff',
-                backgroundColor: isOpen ? 'rgba(0,0,0,0.20)' : 'transparent',
-                borderBottom: isOpen ? '2px solid #fff' : '2px solid transparent',
+                border: '1px solid',
+                borderColor: isOpen ? 'rgba(255,255,255,0.70)' : 'rgba(255,255,255,0.22)',
+                backgroundColor: isOpen ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.07)',
               }}
             >
               {cat.name}
               {cat.sub.length > 0 && (
                 <svg
-                  width="7" height="7" viewBox="0 0 24 24" fill="none"
+                  width="6" height="6" viewBox="0 0 24 24" fill="none"
                   stroke="currentColor" strokeWidth="3"
                   strokeLinecap="round" strokeLinejoin="round"
                   style={{
-                    opacity: 0.8,
+                    opacity: 0.75,
                     transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
                     transition: 'transform 0.2s',
                   }}
