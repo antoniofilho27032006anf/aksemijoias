@@ -12,85 +12,125 @@ export default function FavoritesPage() {
   const { favorites, removeFavorite } = useFavorites()
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(255,182,193,0.24),transparent_18%),radial-gradient(circle_at_bottom_right,_rgba(155,92,255,0.16),transparent_24%),linear-gradient(180deg,#ffffff_0%,#f7efff_100%)] text-slate-900">
+    <div className="min-h-screen bg-white">
       <Navbar />
 
-      <main className="mx-auto max-w-[1320px] px-6 pb-28 sm:px-10">
-        <section className="mt-12 rounded-[2rem] border border-pink-100/50 bg-white/85 p-8 shadow-[0_40px_120px_rgba(145,92,255,0.12)]">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-              <p className="text-sm uppercase tracking-[0.3em] text-pink-700">Favoritos</p>
-              <h1 className="mt-3 text-4xl font-black text-slate-900 sm:text-5xl">Sua seleção de joias preferidas</h1>
-              <p className="mt-4 max-w-2xl text-sm text-slate-600">
-                Veja aqui as peças que você guardou com carinho. Toque em qualquer item para ver mais detalhes ou remova da sua lista quando quiser.
-              </p>
-            </div>
+      <main className="mx-auto max-w-2xl px-3 pb-20 pt-5 sm:px-5">
 
-            <div className="rounded-full bg-slate-50 px-5 py-4 text-sm text-slate-700 shadow-sm">
-              {favorites.length} produto(s) salvo(s)
-            </div>
+        {/* Page header */}
+        <div className="mb-5 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="h-4 w-0.5 rounded-full" style={{ backgroundColor: '#7C3D8E' }} />
+            <h1 className="text-base font-black uppercase tracking-[0.2em]" style={{ color: '#7C3D8E' }}>
+              Favoritos
+            </h1>
           </div>
-        </section>
-
-        <section className="mt-10">
-          {!user ? (
-            <div className="rounded-[2rem] border border-dashed border-pink-300/40 bg-white/80 p-12 text-center text-slate-600 shadow-[0_40px_120px_rgba(145,92,255,0.08)]">
-              <p className="text-2xl font-semibold text-slate-900">Faça login para salvar favoritos</p>
-              <p className="mt-3 text-sm leading-7">Seu carrinho e favoritos ficam seguros em sua conta.</p>
-              <Link
-                href="/login"
-                className="mt-8 inline-flex rounded-full bg-gradient-to-r from-pink-500 via-fuchsia-500 to-violet-500 px-8 py-4 text-sm font-semibold text-white transition hover:opacity-95"
-              >
-                Entrar agora
-              </Link>
-            </div>
-          ) : favorites.length === 0 ? (
-            <div className="rounded-[2rem] border border-dashed border-pink-300/40 bg-white/80 p-12 text-center text-slate-600 shadow-[0_40px_120px_rgba(145,92,255,0.08)]">
-              <p className="text-2xl font-semibold text-slate-900">Ainda não há favoritos</p>
-              <p className="mt-3 text-sm leading-7">Navegue pela loja e marque suas peças prediletas para encontrá-las com facilidade.</p>
-              <Link
-                href="/"
-                className="mt-8 inline-flex rounded-full bg-gradient-to-r from-pink-500 via-fuchsia-500 to-violet-500 px-8 py-4 text-sm font-semibold text-white transition hover:opacity-95"
-              >
-                Voltar para a loja
-              </Link>
-            </div>
-          ) : (
-            <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-              {favorites.map((product) => (
-                <div key={product.id} className="group overflow-hidden rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-[0_24px_80px_rgba(0,0,0,0.14)] transition hover:-translate-y-1">
-                  <img src={product.image} alt={product.name} className="h-72 w-full rounded-[1.5rem] object-cover" />
-                  <div className="mt-6 space-y-3">
-                    <div className="flex items-center justify-between gap-4">
-                      <h2 className="text-2xl font-semibold text-slate-900">{product.name}</h2>
-                      <span className="rounded-full bg-pink-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.15em] text-pink-400">
-                        Favorito
-                      </span>
-                    </div>
-                    <p className="text-lg font-bold text-pink-500">R$ {product.price.toFixed(2)}</p>
-                    <div className="flex flex-wrap gap-3">
-                      <Link
-                        href={`/product/${product.id}`}
-                        className="rounded-full border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-900 transition hover:bg-slate-50"
-                      >
-                        Ver detalhes
-                      </Link>
-                      <button
-                        onClick={() => removeFavorite(product.id)}
-                        className="rounded-full bg-pink-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-pink-400"
-                      >
-                        Remover
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+          {user && (
+            <span
+              className="rounded-full px-3 py-1 text-[11px] font-bold"
+              style={{ backgroundColor: '#faf5ff', color: '#7C3D8E', border: '1px solid #e8d5f5' }}
+            >
+              {favorites.length} {favorites.length === 1 ? 'item' : 'itens'}
+            </span>
           )}
-        </section>
+        </div>
+
+        {/* Content */}
+        {!user ? (
+          <EmptyState
+            title="Faça login para ver seus favoritos"
+            subtitle="Salve suas joias preferidas e encontre-as com facilidade."
+            cta="Entrar agora"
+            href="/login"
+          />
+        ) : favorites.length === 0 ? (
+          <EmptyState
+            title="Ainda não há favoritos"
+            subtitle="Navegue pela loja e marque suas peças preferidas."
+            cta="Ver produtos"
+            href="/"
+          />
+        ) : (
+          <div className="flex flex-col gap-2">
+            {favorites.map((product) => (
+              <div
+                key={product.id}
+                className="flex items-center gap-3 rounded-xl border bg-white p-2.5"
+                style={{ borderColor: '#e8d5f5' }}
+              >
+                {/* Thumbnail */}
+                <Link href={`/product/${product.id}`} className="flex-none">
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="h-16 w-16 rounded-lg object-cover sm:h-20 sm:w-20"
+                  />
+                </Link>
+
+                {/* Details */}
+                <div className="min-w-0 flex-1">
+                  <Link href={`/product/${product.id}`}>
+                    <p className="truncate text-[13px] font-semibold text-gray-800 hover:text-[#7C3D8E] transition">
+                      {product.name}
+                    </p>
+                  </Link>
+                  <p className="mt-0.5 text-sm font-black" style={{ color: '#C4509B' }}>
+                    R$ {product.price.toFixed(2).replace('.', ',')}
+                  </p>
+                </div>
+
+                {/* Actions */}
+                <div className="flex flex-none items-center gap-1.5">
+                  <Link
+                    href={`/product/${product.id}`}
+                    className="rounded-lg border px-2.5 py-1.5 text-[11px] font-semibold transition hover:bg-gray-50"
+                    style={{ borderColor: '#e8d5f5', color: '#7C3D8E' }}
+                  >
+                    Ver
+                  </Link>
+                  <button
+                    onClick={() => removeFavorite(product.id)}
+                    className="flex h-7 w-7 items-center justify-center rounded-lg text-gray-300 transition hover:bg-red-50 hover:text-red-400"
+                    aria-label="Remover favorito"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="3 6 5 6 21 6"/>
+                      <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                      <path d="M10 11v6"/><path d="M14 11v6"/>
+                      <path d="M9 6V4h6v2"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </main>
 
       <CartSidebar />
+    </div>
+  )
+}
+
+function EmptyState({ title, subtitle, cta, href }: { title: string; subtitle: string; cta: string; href: string }) {
+  return (
+    <div className="flex flex-col items-center gap-4 rounded-2xl border py-14 text-center" style={{ borderColor: '#e8d5f5', backgroundColor: '#faf5ff' }}>
+      <div className="flex h-14 w-14 items-center justify-center rounded-2xl" style={{ backgroundColor: '#f3e8ff' }}>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C4B0D4" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+        </svg>
+      </div>
+      <div>
+        <p className="text-sm font-bold text-gray-700">{title}</p>
+        <p className="mt-1 text-xs text-gray-400">{subtitle}</p>
+      </div>
+      <Link
+        href={href}
+        className="rounded-xl px-5 py-2.5 text-sm font-bold text-white transition hover:opacity-90"
+        style={{ background: 'linear-gradient(135deg, #7C3D8E, #C4509B)' }}
+      >
+        {cta}
+      </Link>
     </div>
   )
 }
