@@ -10,10 +10,10 @@ const router = Router()
 
 const bannerSchema = z.object({
   label:    z.string().min(1),
-  title:    z.string().min(1),
+  title:    z.string().optional().default(''),
   imageUrl: z.string().url().optional().nullable(),
   color:    z.string().optional().default('#7C3D8E'),
-  cta:      z.string().optional().default('Ver mais'),
+  cta:      z.string().optional().default(''),
   active:   z.boolean().optional().default(true),
   position: z.number().int().optional().default(0),
 })

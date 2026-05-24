@@ -45,7 +45,7 @@ export function CategoryBar() {
                   ? navigate(cat.name)
                   : setOpen(isOpen ? null : cat.name)
               }
-              className="flex flex-none items-center gap-1 whitespace-nowrap px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest transition"
+              className="flex flex-none items-center gap-1 whitespace-nowrap px-3 py-2 text-[9px] font-bold uppercase tracking-widest transition"
               style={{
                 color: '#fff',
                 backgroundColor: isOpen ? 'rgba(0,0,0,0.20)' : 'transparent',
@@ -55,7 +55,7 @@ export function CategoryBar() {
               {cat.name}
               {cat.sub.length > 0 && (
                 <svg
-                  width="8" height="8" viewBox="0 0 24 24" fill="none"
+                  width="7" height="7" viewBox="0 0 24 24" fill="none"
                   stroke="currentColor" strokeWidth="3"
                   strokeLinecap="round" strokeLinejoin="round"
                   style={{
@@ -75,19 +75,18 @@ export function CategoryBar() {
       {/* Dropdown */}
       {open && activeSubs.length > 0 && (
         <div className="absolute left-0 right-0 top-full z-50 bg-white shadow-2xl">
-          {/* Purple accent top border */}
           <div className="h-0.5 w-full" style={{ backgroundColor: '#7C3D8E' }} />
 
-          <div className="p-4 sm:p-5">
-            <p className="mb-3 text-[9px] font-bold uppercase tracking-[0.3em]" style={{ color: '#7C3D8E' }}>
+          <div className="p-3">
+            <p className="mb-2 text-[9px] font-bold uppercase tracking-[0.3em]" style={{ color: '#7C3D8E' }}>
               {open}
             </p>
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
+            <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-4 md:grid-cols-5">
               {activeSubs.map((sub) => (
                 <button
                   key={sub.name}
                   onClick={() => navigate(sub.name)}
-                  className="group relative overflow-hidden rounded-xl border px-3 py-3 text-left text-[10px] font-bold uppercase leading-tight tracking-wide transition-all duration-200 hover:scale-[1.02] hover:shadow-md active:scale-[0.98]"
+                  className="overflow-hidden rounded-lg border px-2 py-2 text-left text-[9px] font-bold uppercase leading-tight tracking-wide transition-all duration-200 hover:scale-[1.02] hover:shadow-sm active:scale-[0.98]"
                   style={{
                     borderColor: '#e8d8f5',
                     backgroundColor: '#faf5ff',
@@ -106,7 +105,7 @@ export function CategoryBar() {
                     el.style.color = '#6B2F7D'
                   }}
                 >
-                  <span className="block leading-snug">{sub.name}</span>
+                  {sub.name}
                 </button>
               ))}
             </div>

@@ -57,7 +57,7 @@ export default function AdminPage() {
   const [newTag, setNewTag] = useState('')
 
   const [banners, setBanners] = useState<any[]>([])
-  const [bannerForm, setBannerForm] = useState({ label: '', title: '', imageUrl: '', color: '#7C3D8E', cta: 'Ver mais', position: 0, active: true })
+  const [bannerForm, setBannerForm] = useState({ label: '', imageUrl: '', position: 0, active: true })
   const [editingBanner, setEditingBanner] = useState<any | null>(null)
 
   useEffect(() => {
@@ -333,9 +333,10 @@ export default function AdminPage() {
 
   async function handleSaveBanner() {
     const payload = {
-      ...bannerForm,
+      label:    bannerForm.label || 'Banner',
       imageUrl: bannerForm.imageUrl.trim() || null,
       position: Number(bannerForm.position),
+      active:   bannerForm.active,
     }
     try {
       if (editingBanner) {
@@ -348,7 +349,7 @@ export default function AdminPage() {
         toast.success('Banner criado')
       }
       setEditingBanner(null)
-      setBannerForm({ label: '', title: '', imageUrl: '', color: '#7C3D8E', cta: 'Ver mais', position: 0, active: true })
+      setBannerForm({ label: '', imageUrl: '', position: 0, active: true })
     } catch {
       toast.error('Erro ao salvar banner')
     }
@@ -358,10 +359,7 @@ export default function AdminPage() {
     setEditingBanner(banner)
     setBannerForm({
       label:    banner.label,
-      title:    banner.title,
       imageUrl: banner.imageUrl ?? '',
-      color:    banner.color,
-      cta:      banner.cta,
       position: banner.position,
       active:   banner.active,
     })
@@ -404,7 +402,7 @@ export default function AdminPage() {
 
     return (
 
-      <div className="flex min-h-screen items-center justify-center bg-black text-white">
+      <div className="flex min-h-screen items-center justify-center bg-gray-50 text-gray-900">
 
         <h1 className="text-3xl font-bold">
           Acesso negado
@@ -417,7 +415,7 @@ export default function AdminPage() {
 
   return (
 
-    <div className="min-h-screen bg-[#09040f] p-4 sm:p-6 md:p-10 text-white">
+    <div className="min-h-screen bg-white p-4 sm:p-6 md:p-10">
 
       <div className="mx-auto max-w-7xl">
 
@@ -425,23 +423,23 @@ export default function AdminPage() {
 
           <div>
 
-            <p className="text-sm uppercase tracking-[0.3em] text-pink-400">
+            <p className="text-xs uppercase tracking-[0.3em] text-pink-500">
               Painel Administrativo
             </p>
 
-            <h1 className="mt-4 text-3xl font-black sm:text-5xl">
+            <h1 className="mt-3 text-2xl font-black text-gray-900 sm:text-4xl">
               Bem-vindo, {user.name}
             </h1>
 
           </div>
 
-          <div className="rounded-3xl border border-white/10 bg-white/5 px-6 py-4">
+          <div className="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 shadow-sm">
 
-            <p className="text-sm text-zinc-400">
+            <p className="text-xs text-gray-500">
               Status
             </p>
 
-            <p className="mt-1 font-semibold text-green-400">
+            <p className="mt-1 text-sm font-semibold text-green-600">
               Online
             </p>
 
@@ -449,107 +447,73 @@ export default function AdminPage() {
 
         </div>
 
-        <div className="mt-8 grid grid-cols-3 gap-3 md:mt-14 md:gap-6">
+        {/* ── Stat cards row 1 ── */}
+        <div className="mt-6 grid grid-cols-3 gap-2 md:mt-8 md:gap-4">
 
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-4 md:rounded-[2rem] md:p-8">
-
-            <p className="text-xs text-zinc-400 md:text-base">
-              Produtos
-            </p>
-
-            <h2 className="mt-2 text-2xl font-black md:mt-3 md:text-4xl">
+          <div className="rounded-xl border border-gray-200 bg-white p-3 shadow-sm md:rounded-2xl md:p-5">
+            <p className="text-xs text-gray-500">Produtos</p>
+            <h2 className="mt-1 text-xl font-black text-gray-900 md:mt-2 md:text-3xl">
               {stats.products}
             </h2>
-
           </div>
 
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-4 md:rounded-[2rem] md:p-8">
-
-            <p className="text-xs text-zinc-400 md:text-base">
-              Pedidos
-            </p>
-
-            <h2 className="mt-2 text-2xl font-black md:mt-3 md:text-4xl">
+          <div className="rounded-xl border border-gray-200 bg-white p-3 shadow-sm md:rounded-2xl md:p-5">
+            <p className="text-xs text-gray-500">Pedidos</p>
+            <h2 className="mt-1 text-xl font-black text-gray-900 md:mt-2 md:text-3xl">
               {stats.orders}
             </h2>
-
           </div>
 
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-4 md:rounded-[2rem] md:p-8">
-
-            <p className="text-xs text-zinc-400 md:text-base">
-              Clientes
-            </p>
-
-            <h2 className="mt-2 text-2xl font-black md:mt-3 md:text-4xl">
+          <div className="rounded-xl border border-gray-200 bg-white p-3 shadow-sm md:rounded-2xl md:p-5">
+            <p className="text-xs text-gray-500">Clientes</p>
+            <h2 className="mt-1 text-xl font-black text-gray-900 md:mt-2 md:text-3xl">
               {stats.users}
             </h2>
-
           </div>
 
         </div>
 
-        <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3 md:mt-6 md:gap-6">
+        {/* ── Stat cards row 2 ── */}
+        <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-3 md:mt-3 md:gap-4">
 
-          <div className="rounded-2xl border border-green-500/20 bg-green-500/10 p-4 md:rounded-[2rem] md:p-8">
-
-            <p className="text-sm text-green-300">
-              Faturamento
-            </p>
-
-            <h2 className="mt-2 text-2xl font-black text-white md:mt-3 md:text-4xl">
-
+          <div className="rounded-xl border border-green-200 bg-green-50 p-3 shadow-sm md:rounded-2xl md:p-5">
+            <p className="text-xs text-green-700">Faturamento</p>
+            <h2 className="mt-1 text-xl font-black text-gray-900 md:mt-2 md:text-3xl">
               R$ {Number(stats.revenue).toFixed(2)}
-
             </h2>
-
           </div>
 
-          <div className="rounded-2xl border border-blue-500/20 bg-blue-500/10 p-4 md:rounded-[2rem] md:p-8">
-
-            <p className="text-sm text-blue-300">
-              Pedidos Pagos
-            </p>
-
-            <h2 className="mt-2 text-2xl font-black text-white md:mt-3 md:text-4xl">
-
+          <div className="rounded-xl border border-blue-200 bg-blue-50 p-3 shadow-sm md:rounded-2xl md:p-5">
+            <p className="text-xs text-blue-700">Pedidos Pagos</p>
+            <h2 className="mt-1 text-xl font-black text-gray-900 md:mt-2 md:text-3xl">
               {stats.paidOrders}
-
             </h2>
-
           </div>
 
-          <div className="rounded-2xl border border-pink-500/20 bg-pink-500/10 p-4 md:rounded-[2rem] md:p-8">
-
-            <p className="text-sm text-pink-300">
-              Ticket Médio
-            </p>
-
-            <h2 className="mt-2 text-2xl font-black text-white md:mt-3 md:text-4xl">
-
+          <div className="rounded-xl border border-pink-200 bg-pink-50 p-3 shadow-sm md:rounded-2xl md:p-5">
+            <p className="text-xs text-pink-700">Ticket Médio</p>
+            <h2 className="mt-1 text-xl font-black text-gray-900 md:mt-2 md:text-3xl">
               R$ {Number(stats.averageTicket).toFixed(2)}
-
             </h2>
-
           </div>
 
         </div>
 
-        <div className="mt-12">
-
+        {/* ── Criar produto ── */}
+        <div className="mt-10">
           <CreateProductForm />
-
         </div>
 
+        {/* ── Editar produto ── */}
         {editingProduct && (
 
-          <div className="mt-12 rounded-[2rem] border border-pink-500 bg-white/5 p-8">
+          <div className="mt-10 rounded-2xl border border-pink-300 bg-white p-6 shadow-sm">
 
-            <h2 className="text-3xl font-black text-white">
+            <h2 className="text-2xl font-black text-gray-900">
               Editar Produto
             </h2>
 
-            <div className="mt-8 space-y-4">
+            <div className="mt-6 space-y-3">
 
               <input
                 value={editForm.name}
@@ -560,7 +524,7 @@ export default function AdminPage() {
                   })
                 }
                 placeholder="Nome"
-                className="w-full rounded-2xl bg-black/40 p-4 text-white outline-none"
+                className="w-full rounded-xl border border-gray-200 bg-gray-50 p-3 text-gray-900 outline-none"
               />
 
               <textarea
@@ -573,7 +537,7 @@ export default function AdminPage() {
                   })
                 }
                 placeholder="Descrição"
-                className="w-full rounded-2xl bg-black/40 p-4 text-white outline-none"
+                className="w-full rounded-xl border border-gray-200 bg-gray-50 p-3 text-gray-900 outline-none"
               />
 
               <input
@@ -585,7 +549,7 @@ export default function AdminPage() {
                   })
                 }
                 placeholder="Preço"
-                className="w-full rounded-2xl bg-black/40 p-4 text-white outline-none"
+                className="w-full rounded-xl border border-gray-200 bg-gray-50 p-3 text-gray-900 outline-none"
               />
 
               <input
@@ -597,7 +561,7 @@ export default function AdminPage() {
                   })
                 }
                 placeholder="Estoque"
-                className="w-full rounded-2xl bg-black/40 p-4 text-white outline-none"
+                className="w-full rounded-xl border border-gray-200 bg-gray-50 p-3 text-gray-900 outline-none"
               />
 
               <input
@@ -609,14 +573,14 @@ export default function AdminPage() {
                   })
                 }
                 placeholder="Imagem URL"
-                className="w-full rounded-2xl bg-black/40 p-4 text-white outline-none"
+                className="w-full rounded-xl border border-gray-200 bg-gray-50 p-3 text-gray-900 outline-none"
               />
 
-              <div className="flex gap-4">
+              <div className="flex gap-3">
 
                 <button
                   onClick={handleSaveEdit}
-                  className="rounded-full bg-green-500 px-6 py-3 font-semibold text-white"
+                  className="rounded-full bg-green-500 px-6 py-2.5 text-sm font-semibold text-white"
                 >
                   Salvar
                 </button>
@@ -625,7 +589,7 @@ export default function AdminPage() {
                   onClick={() =>
                     setEditingProduct(null)
                   }
-                  className="rounded-full bg-zinc-700 px-6 py-3 font-semibold text-white"
+                  className="rounded-full bg-gray-200 px-6 py-2.5 text-sm font-semibold text-gray-700"
                 >
                   Cancelar
                 </button>
@@ -638,54 +602,55 @@ export default function AdminPage() {
 
         )}
 
-        <div className="mt-16">
+        {/* ── Produtos ── */}
+        <div className="mt-12">
 
-          <h2 className="text-3xl font-black text-white">
+          <h2 className="text-2xl font-black text-gray-900">
             Produtos
           </h2>
 
-          <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+          <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
 
             {products.map((product) => (
 
               <div
                 key={product.id}
-                className="rounded-[2rem] border border-white/10 bg-white/5 p-5"
+                className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm"
               >
 
                 <img
                   src={product.image}
                   alt={product.name}
-                  className="h-60 w-full rounded-2xl object-cover"
+                  className="h-40 w-full rounded-xl object-cover"
                 />
 
-                <h3 className="mt-5 text-2xl font-bold text-white">
+                <h3 className="mt-3 text-lg font-bold text-gray-900">
                   {product.name}
                 </h3>
 
-                <p className="mt-2 text-sm text-zinc-400">
+                <p className="mt-1 text-sm text-gray-500 line-clamp-2">
                   {product.description}
                 </p>
 
-                <div className="mt-5 flex items-center justify-between">
+                <div className="mt-3 flex items-center justify-between">
 
-                  <p className="text-xl font-black text-pink-400">
+                  <p className="text-base font-black text-pink-500">
                     R$ {product.price.toFixed(2)}
                   </p>
 
-                  <p className="text-sm text-zinc-400">
+                  <p className="text-xs text-gray-400">
                     Estoque: {product.stock}
                   </p>
 
                 </div>
 
-                <div className="mt-6 flex gap-3">
+                <div className="mt-3 flex gap-2">
 
                   <button
                     onClick={() =>
                       handleEditProduct(product)
                     }
-                    className="w-full rounded-full bg-blue-500 px-4 py-3 font-semibold text-white transition hover:bg-blue-400"
+                    className="w-full rounded-full bg-blue-500 px-3 py-2 text-sm font-semibold text-white transition hover:bg-blue-400"
                   >
                     Editar
                   </button>
@@ -696,7 +661,7 @@ export default function AdminPage() {
                         product.id
                       )
                     }
-                    className="w-full rounded-full bg-red-500 px-4 py-3 font-semibold text-white transition hover:bg-red-400"
+                    className="w-full rounded-full bg-red-500 px-3 py-2 text-sm font-semibold text-white transition hover:bg-red-400"
                   >
                     Excluir
                   </button>
@@ -711,36 +676,37 @@ export default function AdminPage() {
 
         </div>
 
-        <div className="mt-20">
+        {/* ── Pedidos Recentes ── */}
+        <div className="mt-14">
 
-          <h2 className="text-3xl font-black text-white">
+          <h2 className="text-2xl font-black text-gray-900">
             Pedidos Recentes
           </h2>
 
-          <div className="mt-8 space-y-6">
+          <div className="mt-5 space-y-3">
 
             {orders.map((order) => (
 
               <div
                 key={order.id}
-                className="rounded-[2rem] border border-white/10 bg-white/5 p-6"
+                className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm"
               >
 
-                <div className="flex flex-col gap-6">
+                <div className="flex flex-col gap-4">
 
-                  <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                  <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
 
                     <div>
 
-                      <p className="text-sm text-zinc-400">
+                      <p className="text-xs text-gray-500">
                         Cliente
                       </p>
 
-                      <h3 className="text-xl font-bold text-white">
+                      <h3 className="text-base font-bold text-gray-900">
                         {order.user.name}
                       </h3>
 
-                      <p className="mt-1 text-sm text-zinc-500">
+                      <p className="mt-0.5 text-xs text-gray-400">
                         {order.user.email}
                       </p>
 
@@ -748,11 +714,11 @@ export default function AdminPage() {
 
                     <div>
 
-                      <p className="text-sm text-zinc-400">
+                      <p className="text-xs text-gray-500">
                         Status
                       </p>
 
-                      <p className="mt-1 font-semibold text-pink-400">
+                      <p className="mt-0.5 text-sm font-semibold text-pink-500">
 
                         {order.status === 'PENDING' && 'Pendente'}
 
@@ -768,11 +734,11 @@ export default function AdminPage() {
 
                     <div>
 
-                      <p className="text-sm text-zinc-400">
+                      <p className="text-xs text-gray-500">
                         Total
                       </p>
 
-                      <p className="mt-1 text-xl font-bold text-white">
+                      <p className="mt-0.5 text-base font-bold text-gray-900">
                         R$ {order.total.toFixed(2)}
                       </p>
 
@@ -780,7 +746,7 @@ export default function AdminPage() {
 
                   </div>
 
-                  <div className="flex flex-wrap gap-3">
+                  <div className="flex flex-wrap gap-2">
 
                     <button
                       onClick={() =>
@@ -789,7 +755,7 @@ export default function AdminPage() {
                           'PENDING'
                         )
                       }
-                      className="rounded-full bg-yellow-500 px-4 py-2 text-sm font-semibold text-white"
+                      className="rounded-full bg-yellow-500 px-3 py-1.5 text-xs font-semibold text-white"
                     >
                       Pendente
                     </button>
@@ -801,7 +767,7 @@ export default function AdminPage() {
                           'PAID'
                         )
                       }
-                      className="rounded-full bg-green-500 px-4 py-2 text-sm font-semibold text-white"
+                      className="rounded-full bg-green-500 px-3 py-1.5 text-xs font-semibold text-white"
                     >
                       Pago
                     </button>
@@ -813,7 +779,7 @@ export default function AdminPage() {
                           'SENT'
                         )
                       }
-                      className="rounded-full bg-blue-500 px-4 py-2 text-sm font-semibold text-white"
+                      className="rounded-full bg-blue-500 px-3 py-1.5 text-xs font-semibold text-white"
                     >
                       Enviado
                     </button>
@@ -825,7 +791,7 @@ export default function AdminPage() {
                           'DELIVERED'
                         )
                       }
-                      className="rounded-full bg-violet-500 px-4 py-2 text-sm font-semibold text-white"
+                      className="rounded-full bg-violet-500 px-3 py-1.5 text-xs font-semibold text-white"
                     >
                       Entregue
                     </button>
@@ -842,179 +808,169 @@ export default function AdminPage() {
 
         </div>
 
-        {/* Exportar CSV */}
-        <div className="mt-16 flex items-center justify-between">
-          <h2 className="text-3xl font-black text-white">Relatórios</h2>
+        {/* ── Exportar CSV ── */}
+        <div className="mt-12 flex items-center justify-between">
+          <h2 className="text-2xl font-black text-gray-900">Relatórios</h2>
           <button
             onClick={handleExportCSV}
-            className="rounded-full bg-green-500 px-6 py-3 font-semibold text-white transition hover:bg-green-400"
+            className="rounded-full bg-green-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-green-400"
           >
             Exportar pedidos CSV
           </button>
         </div>
 
-        {/* Categorias */}
-        <div className="mt-16">
-          <h2 className="text-3xl font-black text-white">Categorias</h2>
-          <div className="mt-6 flex gap-3">
+        {/* ── Categorias ── */}
+        <div className="mt-12">
+          <h2 className="text-2xl font-black text-gray-900">Categorias</h2>
+          <div className="mt-4 flex gap-3">
             <input
               value={newCategory}
               onChange={(e) => setNewCategory(e.target.value)}
               placeholder="Nome da categoria"
-              className="flex-1 rounded-full bg-white/10 px-5 py-3 text-white outline-none placeholder:text-zinc-500"
+              className="flex-1 rounded-full border border-gray-200 bg-gray-50 px-5 py-2.5 text-gray-900 outline-none placeholder:text-gray-400"
             />
             <button
               onClick={handleCreateCategory}
-              className="rounded-full bg-pink-500 px-6 py-3 font-semibold text-white transition hover:bg-pink-400"
+              className="rounded-full bg-pink-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-pink-400"
             >
               Criar
             </button>
           </div>
-          <div className="mt-4 flex flex-wrap gap-3">
+          <div className="mt-3 flex flex-wrap gap-2">
             {categories.map((cat) => (
-              <div key={cat.id} className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2">
-                <span className="text-sm text-white">{cat.name}</span>
+              <div key={cat.id} className="flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-4 py-1.5">
+                <span className="text-sm text-gray-700">{cat.name}</span>
                 <button
                   onClick={() => handleDeleteCategory(cat.id)}
-                  className="text-red-400 transition hover:text-red-300"
+                  className="text-red-400 transition hover:text-red-500"
                 >
                   ✕
                 </button>
               </div>
             ))}
             {categories.length === 0 && (
-              <p className="text-sm text-zinc-500">Nenhuma categoria cadastrada.</p>
+              <p className="text-sm text-gray-400">Nenhuma categoria cadastrada.</p>
             )}
           </div>
         </div>
 
-        {/* Tags */}
-        <div className="mt-16">
-          <h2 className="text-3xl font-black text-white">Tags</h2>
-          <div className="mt-6 flex gap-3">
+        {/* ── Tags ── */}
+        <div className="mt-12">
+          <h2 className="text-2xl font-black text-gray-900">Tags</h2>
+          <div className="mt-4 flex gap-3">
             <input
               value={newTag}
               onChange={(e) => setNewTag(e.target.value)}
               placeholder="Nome da tag"
-              className="flex-1 rounded-full bg-white/10 px-5 py-3 text-white outline-none placeholder:text-zinc-500"
+              className="flex-1 rounded-full border border-gray-200 bg-gray-50 px-5 py-2.5 text-gray-900 outline-none placeholder:text-gray-400"
             />
             <button
               onClick={handleCreateTag}
-              className="rounded-full bg-violet-500 px-6 py-3 font-semibold text-white transition hover:bg-violet-400"
+              className="rounded-full bg-violet-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-violet-400"
             >
               Criar
             </button>
           </div>
-          <div className="mt-4 flex flex-wrap gap-3">
+          <div className="mt-3 flex flex-wrap gap-2">
             {tags.map((tag) => (
-              <div key={tag.id} className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2">
-                <span className="text-sm text-white">{tag.name}</span>
+              <div key={tag.id} className="flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-4 py-1.5">
+                <span className="text-sm text-gray-700">{tag.name}</span>
                 <button
                   onClick={() => handleDeleteTag(tag.id)}
-                  className="text-red-400 transition hover:text-red-300"
+                  className="text-red-400 transition hover:text-red-500"
                 >
                   ✕
                 </button>
               </div>
             ))}
             {tags.length === 0 && (
-              <p className="text-sm text-zinc-500">Nenhuma tag cadastrada.</p>
+              <p className="text-sm text-gray-400">Nenhuma tag cadastrada.</p>
             )}
           </div>
         </div>
 
-        {/* Banners do carrossel */}
-        <div className="mt-16 pb-16">
-          <h2 className="text-3xl font-black text-white">Banners do Carrossel</h2>
-          <p className="mt-1 text-sm text-zinc-400">
+        {/* ── Banners do carrossel ── */}
+        <div className="mt-12 pb-16">
+          <h2 className="text-2xl font-black text-gray-900">Banners do Carrossel</h2>
+          <p className="mt-1 text-sm text-gray-500">
             Gerencie os slides do hero banner. Adicione uma URL de imagem para exibir foto de divulgação em datas comemorativas.
           </p>
 
           {/* Formulário */}
-          <div className="mt-6 rounded-2xl border border-violet-500/30 bg-white/5 p-6">
-            <h3 className="mb-4 font-bold text-violet-300">
+          <div className="mt-5 rounded-2xl border border-violet-200 bg-white p-5 shadow-sm">
+            <h3 className="mb-4 font-bold text-violet-600">
               {editingBanner ? 'Editar Banner' : 'Novo Banner'}
             </h3>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <input
-                value={bannerForm.label}
-                onChange={(e) => setBannerForm({ ...bannerForm, label: e.target.value })}
-                placeholder="Etiqueta (ex: Nova coleção)"
-                className="rounded-xl bg-white/10 px-4 py-3 text-sm text-white outline-none placeholder:text-zinc-500"
-              />
-              <input
-                value={bannerForm.title}
-                onChange={(e) => setBannerForm({ ...bannerForm, title: e.target.value })}
-                placeholder="Título do slide"
-                className="rounded-xl bg-white/10 px-4 py-3 text-sm text-white outline-none placeholder:text-zinc-500"
-              />
-              <input
-                value={bannerForm.imageUrl}
-                onChange={(e) => setBannerForm({ ...bannerForm, imageUrl: e.target.value })}
-                placeholder="URL da imagem (deixe vazio para usar gradiente)"
-                className="col-span-full rounded-xl bg-white/10 px-4 py-3 text-sm text-white outline-none placeholder:text-zinc-500"
-              />
-              <input
-                value={bannerForm.cta}
-                onChange={(e) => setBannerForm({ ...bannerForm, cta: e.target.value })}
-                placeholder="Texto do botão (ex: Ver coleção)"
-                className="rounded-xl bg-white/10 px-4 py-3 text-sm text-white outline-none placeholder:text-zinc-500"
-              />
-              <div className="flex items-center gap-3">
-                <label className="text-sm text-zinc-400">Cor de destaque</label>
+            <div className="space-y-3">
+              <div>
+                <label className="mb-1 block text-xs text-gray-500">Identificador (uso interno)</label>
                 <input
-                  type="color"
-                  value={bannerForm.color}
-                  onChange={(e) => setBannerForm({ ...bannerForm, color: e.target.value })}
-                  className="h-10 w-16 cursor-pointer rounded-lg border-0 bg-transparent"
+                  value={bannerForm.label}
+                  onChange={(e) => setBannerForm({ ...bannerForm, label: e.target.value })}
+                  placeholder="Ex: Dia dos Namorados, Promoção Maio..."
+                  className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 outline-none placeholder:text-gray-400"
                 />
-                <span className="text-xs text-zinc-500">{bannerForm.color}</span>
               </div>
-              <input
-                type="number"
-                value={bannerForm.position}
-                onChange={(e) => setBannerForm({ ...bannerForm, position: Number(e.target.value) })}
-                placeholder="Posição (0 = primeiro)"
-                className="rounded-xl bg-white/10 px-4 py-3 text-sm text-white outline-none placeholder:text-zinc-500"
-              />
-              <label className="flex items-center gap-2 text-sm text-zinc-300">
-                <input
-                  type="checkbox"
-                  checked={bannerForm.active}
-                  onChange={(e) => setBannerForm({ ...bannerForm, active: e.target.checked })}
-                  className="h-4 w-4 rounded"
-                />
-                Banner ativo (visível na loja)
-              </label>
-            </div>
 
-            {/* Preview da imagem */}
-            {bannerForm.imageUrl && (
-              <div className="mt-4">
-                <p className="mb-2 text-xs text-zinc-500">Pré-visualização:</p>
-                <img
-                  src={bannerForm.imageUrl}
-                  alt="preview"
-                  className="h-32 w-full rounded-xl object-cover"
-                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+              <div>
+                <label className="mb-1 block text-xs text-gray-500">URL da imagem do banner</label>
+                <input
+                  value={bannerForm.imageUrl}
+                  onChange={(e) => setBannerForm({ ...bannerForm, imageUrl: e.target.value })}
+                  placeholder="https://... (cole o link da imagem)"
+                  className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 outline-none placeholder:text-gray-400"
                 />
               </div>
-            )}
+
+              {/* Preview */}
+              {bannerForm.imageUrl && (
+                <div>
+                  <p className="mb-1 text-xs text-gray-400">Pré-visualização:</p>
+                  <img
+                    src={bannerForm.imageUrl}
+                    alt="preview"
+                    className="h-32 w-full rounded-xl object-cover"
+                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+                  />
+                </div>
+              )}
+
+              <div className="flex flex-wrap items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <label className="text-xs text-gray-500">Posição</label>
+                  <input
+                    type="number"
+                    value={bannerForm.position}
+                    onChange={(e) => setBannerForm({ ...bannerForm, position: Number(e.target.value) })}
+                    className="w-16 rounded-lg border border-gray-200 bg-gray-50 px-2 py-1.5 text-sm text-gray-900 outline-none"
+                  />
+                </div>
+                <label className="flex items-center gap-2 text-sm text-gray-600">
+                  <input
+                    type="checkbox"
+                    checked={bannerForm.active}
+                    onChange={(e) => setBannerForm({ ...bannerForm, active: e.target.checked })}
+                    className="h-4 w-4 rounded"
+                  />
+                  Ativo (visível na loja)
+                </label>
+              </div>
+            </div>
 
             <div className="mt-4 flex gap-3">
               <button
                 onClick={handleSaveBanner}
-                className="rounded-full bg-violet-500 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-violet-400"
+                className="rounded-full bg-violet-500 px-5 py-2 text-sm font-semibold text-white transition hover:bg-violet-400"
               >
-                {editingBanner ? 'Salvar alterações' : 'Criar banner'}
+                {editingBanner ? 'Salvar alterações' : 'Adicionar banner'}
               </button>
               {editingBanner && (
                 <button
                   onClick={() => {
                     setEditingBanner(null)
-                    setBannerForm({ label: '', title: '', imageUrl: '', color: '#7C3D8E', cta: 'Ver mais', position: 0, active: true })
+                    setBannerForm({ label: '', imageUrl: '', position: 0, active: true })
                   }}
-                  className="rounded-full bg-zinc-700 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-zinc-600"
+                  className="rounded-full bg-gray-200 px-5 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-300"
                 >
                   Cancelar
                 </button>
@@ -1023,34 +979,34 @@ export default function AdminPage() {
           </div>
 
           {/* Lista de banners */}
-          <div className="mt-6 space-y-3">
+          <div className="mt-4 space-y-3">
             {banners.map((banner) => (
-              <div key={banner.id} className="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/5 p-4">
+              <div key={banner.id} className="flex items-center gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
                 {banner.imageUrl ? (
-                  <img src={banner.imageUrl} alt={banner.label} className="h-16 w-24 flex-none rounded-xl object-cover" />
+                  <img src={banner.imageUrl} alt={banner.label} className="h-14 w-20 flex-none rounded-xl object-cover" />
                 ) : (
                   <div
-                    className="h-16 w-24 flex-none rounded-xl"
+                    className="h-14 w-20 flex-none rounded-xl"
                     style={{ background: `linear-gradient(135deg, ${banner.color}33, ${banner.color}66)`, border: `1px solid ${banner.color}44` }}
                   />
                 )}
                 <div className="min-w-0 flex-1">
                   <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: banner.color }}>{banner.label}</p>
-                  <p className="truncate text-sm font-bold text-white">{banner.title}</p>
-                  <p className="text-xs text-zinc-500">
-                    Pos. {banner.position} · {banner.active ? <span className="text-green-400">Ativo</span> : <span className="text-red-400">Inativo</span>}
+                  <p className="truncate text-sm font-bold text-gray-900">{banner.title}</p>
+                  <p className="text-xs text-gray-400">
+                    Pos. {banner.position} · {banner.active ? <span className="text-green-600">Ativo</span> : <span className="text-red-500">Inativo</span>}
                   </p>
                 </div>
                 <div className="flex gap-2">
                   <button
                     onClick={() => handleEditBanner(banner)}
-                    className="rounded-full bg-blue-500 px-4 py-2 text-xs font-semibold text-white transition hover:bg-blue-400"
+                    className="rounded-full bg-blue-500 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-blue-400"
                   >
                     Editar
                   </button>
                   <button
                     onClick={() => handleDeleteBanner(banner.id)}
-                    className="rounded-full bg-red-500 px-4 py-2 text-xs font-semibold text-white transition hover:bg-red-400"
+                    className="rounded-full bg-red-500 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-red-400"
                   >
                     Excluir
                   </button>
@@ -1058,7 +1014,7 @@ export default function AdminPage() {
               </div>
             ))}
             {banners.length === 0 && (
-              <p className="text-sm text-zinc-500">Nenhum banner cadastrado. Os slides padrão serão exibidos na loja.</p>
+              <p className="text-sm text-gray-400">Nenhum banner cadastrado. Os slides padrão serão exibidos na loja.</p>
             )}
           </div>
         </div>
