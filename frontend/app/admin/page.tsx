@@ -31,7 +31,7 @@ export default function AdminPage() {
   const [orders, setOrders] = useState<any[]>([])
   const [products, setProducts] = useState<any[]>([])
   const [editingProduct, setEditingProduct] = useState<any | null>(null)
-  const [editForm, setEditForm] = useState({ name: '', description: '', price: '', stock: '', image: '' })
+  const [editForm, setEditForm] = useState({ name: '', description: '', details: '', price: '', stock: '', image: '' })
 
   const [banners, setBanners] = useState<any[]>([])
   const [bannerForm, setBannerForm] = useState({ label: '', imageUrl: '', position: 0, active: true })
@@ -87,13 +87,14 @@ export default function AdminPage() {
 
   function handleEditProduct(product: any) {
     setEditingProduct(product)
-    setEditForm({ name: product.name, description: product.description, price: product.price, stock: product.stock, image: product.image })
+    setEditForm({ name: product.name, description: product.description, details: product.details ?? '', price: product.price, stock: product.stock, image: product.image })
   }
 
   async function handleSaveEdit() {
     try {
       const r = await api.put(`/admin/products/${editingProduct.id}`, {
         name: editForm.name, description: editForm.description,
+        details: editForm.details || null,
         price: Number(editForm.price), stock: Number(editForm.stock), image: editForm.image,
       })
       setProducts((prev) => prev.map((p) => p.id === editingProduct.id ? r.data : p))
@@ -271,7 +272,6 @@ export default function AdminPage() {
             <div className="flex flex-col gap-2">
               {[
                 { key: 'name', placeholder: 'Nome' },
-                { key: 'description', placeholder: 'Descrição' },
                 { key: 'price', placeholder: 'Preço' },
                 { key: 'stock', placeholder: 'Estoque' },
                 { key: 'image', placeholder: 'Imagem URL' },
@@ -285,6 +285,27 @@ export default function AdminPage() {
                   style={{ borderColor: 'var(--c-border)', background: 'var(--c-raised)', color: 'var(--c-text)' }}
                 />
               ))}
+              <textarea
+                value={editForm.description}
+                onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
+                placeholder="Descrição"
+                rows={3}
+                className="w-full rounded-lg border px-3 py-2 text-sm outline-none resize-none"
+                style={{ borderColor: 'var(--c-border)', background: 'var(--c-raised)', color: 'var(--c-text)' }}
+              />
+              <div>
+                <label className="mb-1 block text-[10px] font-bold uppercase tracking-wider" style={{ color: '#7C3D8E' }}>
+                  Detalhes da peça <span className="font-normal normal-case opacity-60">(uma por linha)</span>
+                </label>
+                <textarea
+                  value={editForm.details}
+                  onChange={(e) => setEditForm({ ...editForm, details: e.target.value })}
+                  placeholder={"Acabamento em prata 925\nDesign leve e confortável\nInspiração moderna e feminina"}
+                  rows={4}
+                  className="w-full rounded-lg border px-3 py-2 text-sm outline-none resize-none"
+                  style={{ borderColor: 'var(--c-border)', background: 'var(--c-raised)', color: 'var(--c-text)' }}
+                />
+              </div>
               <div className="flex gap-2 pt-1">
                 <button onClick={handleSaveEdit} className="rounded-lg bg-green-500 px-4 py-2 text-xs font-bold text-white hover:bg-green-400">Salvar</button>
                 <button onClick={() => setEditingProduct(null)} className="rounded-lg px-4 py-2 text-xs font-bold transition" style={{ background: 'var(--c-raised)', color: 'var(--c-muted)' }}>Cancelar</button>

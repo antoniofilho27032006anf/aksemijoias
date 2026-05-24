@@ -218,13 +218,14 @@ router.delete('/admin/products/:id', async (req, res) => {
 router.put('/admin/products/:id', async (req, res) => {
   try {
     const { id } = req.params
-    const { name, description, price, stock, image } = req.body
+    const { name, description, details, price, stock, image } = req.body
 
     const product = await prisma.product.update({
       where: { id },
       data: {
         name,
         description,
+        details: details ?? null,
         price: Number(price),
         stock: Number(stock),
         image

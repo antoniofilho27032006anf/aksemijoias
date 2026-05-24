@@ -66,7 +66,7 @@ const productSchema = z.object({
 
 router.post('/products', authMiddleware, adminMiddleware, upload.single('image'), validateBody(productSchema), async (req, res) => {
   try {
-    const { name, description, price, stock, categoryId, tags } = req.body
+    const { name, description, details, price, stock, categoryId, tags } = req.body
     const file = req.file as Express.Multer.File
 
     if (!file) return res.status(400).json({ error: 'Imagem obrigatória' })
@@ -79,6 +79,7 @@ router.post('/products', authMiddleware, adminMiddleware, upload.single('image')
         name,
         slug,
         description,
+        details: details ?? null,
         price: Number(price),
         stock: Number(stock),
         image,

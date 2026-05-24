@@ -23,6 +23,7 @@ interface Product {
   id: string
   name: string
   description: string
+  details?: string | null
   price: number
   image: string
   stock: number
@@ -260,26 +261,29 @@ export default function ProductPage() {
               </div>
 
               {/* Details card */}
-              <div
-                className="rounded-xl border p-3"
-                style={{ borderColor: 'var(--c-border)', background: 'var(--c-raised)' }}
-              >
-                <p className="mb-2.5 text-[11px] font-bold uppercase tracking-wider" style={{ color: '#7C3D8E' }}>
-                  Detalhes da peça
-                </p>
-                <ul className="flex flex-col gap-2">
-                  {[
-                    'Acabamento em prata 925 com banho hipoalergênico',
-                    'Design leve, confortável para uso prolongado',
-                    'Inspiração moderna e feminina em cada detalhe',
-                  ].map((item) => (
-                    <li key={item} className="flex items-start gap-2 text-xs" style={{ color: 'var(--c-muted)' }}>
-                      <span className="mt-0.5 h-1.5 w-1.5 flex-none rounded-full" style={{ background: '#C4509B' }} />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              {(() => {
+                const lines = product.details
+                  ? product.details.split('\n').map((l) => l.trim()).filter(Boolean)
+                  : ['Acabamento em prata 925 com banho hipoalergênico', 'Design leve, confortável para uso prolongado', 'Inspiração moderna e feminina em cada detalhe']
+                return (
+                  <div
+                    className="rounded-xl border p-3"
+                    style={{ borderColor: 'var(--c-border)', background: 'var(--c-raised)' }}
+                  >
+                    <p className="mb-2.5 text-[11px] font-bold uppercase tracking-wider" style={{ color: '#7C3D8E' }}>
+                      Detalhes da peça
+                    </p>
+                    <ul className="flex flex-col gap-2">
+                      {lines.map((item) => (
+                        <li key={item} className="flex items-start gap-2 text-xs" style={{ color: 'var(--c-muted)' }}>
+                          <span className="mt-0.5 h-1.5 w-1.5 flex-none rounded-full" style={{ background: '#C4509B' }} />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )
+              })()}
 
               {/* Back link */}
               <Link

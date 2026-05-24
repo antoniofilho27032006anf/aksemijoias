@@ -15,6 +15,7 @@ interface ApiCategory {
 export function CreateProductForm() {
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
+  const [details, setDetails] = useState('')
   const [price, setPrice] = useState('')
   const [stock, setStock] = useState('')
   const [image, setImage] = useState<File | null>(null)
@@ -44,6 +45,7 @@ export function CreateProductForm() {
       const formData = new FormData()
       formData.append('name', name)
       formData.append('description', description)
+      if (details.trim()) formData.append('details', details.trim())
       formData.append('price', price)
       formData.append('stock', stock)
 
@@ -58,6 +60,7 @@ export function CreateProductForm() {
       toast.success('Produto criado com sucesso!')
       setName('')
       setDescription('')
+      setDetails('')
       setPrice('')
       setStock('')
       setImage(null)
@@ -92,6 +95,18 @@ export function CreateProductForm() {
           onChange={(e) => setDescription(e.target.value)}
           className="h-20 w-full rounded-xl bg-white/95 px-4 py-3 font-semibold text-gray-900 outline-none placeholder:font-normal placeholder:text-gray-400"
         />
+
+        <div>
+          <p className="mb-1.5 text-[10px] font-bold uppercase tracking-widest text-white/70">
+            Detalhes da peça <span className="font-normal normal-case opacity-60">(uma por linha)</span>
+          </p>
+          <textarea
+            placeholder={"Acabamento em prata 925\nDesign leve e confortável\nInspirção moderna e feminina"}
+            value={details}
+            onChange={(e) => setDetails(e.target.value)}
+            className="h-24 w-full rounded-xl bg-white/95 px-4 py-3 text-sm text-gray-900 outline-none placeholder:text-gray-400"
+          />
+        </div>
 
         <div className="grid grid-cols-2 gap-3">
           <input

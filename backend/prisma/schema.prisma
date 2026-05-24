@@ -65,6 +65,7 @@ model Product {
   name        String
   slug        String   @unique
   description String
+  details     String?
   price       Float
   stock       Int
   image       String
