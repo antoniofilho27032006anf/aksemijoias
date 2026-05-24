@@ -32,6 +32,16 @@ const STATUS_MAP: Record<string, { label: string; color: string; bg: string }> =
   CANCELLED: { label: 'Cancelado', color: '#991b1b', bg: '#fee2e2' },
 }
 
+const AVATAR_OPTIONS = [
+  '👑', '💎', '🌸', '🦋', '✨', '💜', '🌺', '🦄',
+  '💫', '🌙', '🔮', '💐', '🌹', '💝', '👸', '🎀',
+  '🌟', '🍀', '🦚', '🌈', '🐚', '🌻', '🫧', '🪷',
+]
+
+function isEmoji(str: string) {
+  return str.length <= 4 && !str.startsWith('http')
+}
+
 export default function AccountPage() {
   const router = useRouter()
   const { user, updateProfile, changePassword } = useAuth() as any
@@ -57,7 +67,7 @@ export default function AccountPage() {
       .finally(() => setLoading(false))
   }, [router, user])
 
-  async function handleSaveProfile(e: React.FormEvent) {
+  async function handleSaveProfile(e: { preventDefault(): void }) {
     e.preventDefault()
     setMessage('')
     try {
@@ -71,7 +81,7 @@ export default function AccountPage() {
     }
   }
 
-  async function handleChangePassword(e: React.FormEvent) {
+  async function handleChangePassword(e: { preventDefault(): void }) {
     e.preventDefault()
     setPasswordMessage('')
     try {
@@ -90,8 +100,11 @@ export default function AccountPage() {
     { key: 'orders', label: `Pedidos${orders.length > 0 ? ` (${orders.length})` : ''}` },
   ] as const
 
+  const savedEmoji = user?.avatarUrl && isEmoji(user.avatarUrl) ? user.avatarUrl : null
+  const previewEmoji = avatarUrl && isEmoji(avatarUrl) ? avatarUrl : null
+
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen" style={{ background: 'var(--c-bg)' }}>
       <Navbar />
 
       <main className="mx-auto max-w-xl px-3 pb-20 pt-5 sm:px-5">
@@ -99,17 +112,20 @@ export default function AccountPage() {
         {/* Profile card */}
         <div
           className="mb-4 flex items-center gap-3 rounded-xl border p-3"
-          style={{ borderColor: '#e8d5f5', backgroundColor: '#faf5ff' }}
+          style={{ borderColor: 'var(--c-border)', backgroundColor: 'var(--c-raised)' }}
         >
           <div
-            className="flex h-12 w-12 flex-none items-center justify-center rounded-xl text-lg font-black text-white"
-            style={{ background: 'linear-gradient(135deg, #7C3D8E, #C4509B)' }}
+            className="flex h-12 w-12 flex-none items-center justify-center rounded-xl text-lg font-black"
+            style={savedEmoji
+              ? { background: 'var(--c-glass)', fontSize: '1.6rem', lineHeight: 1 }
+              : { background: 'linear-gradient(135deg, #7C3D8E, #C4509B)', color: '#fff' }
+            }
           >
-            {user?.name?.charAt(0)?.toUpperCase() ?? '?'}
+            {savedEmoji ?? (user?.name?.charAt(0)?.toUpperCase() ?? '?')}
           </div>
           <div className="min-w-0">
-            <p className="truncate text-sm font-bold text-gray-800">{user?.name}</p>
-            <p className="truncate text-[11px] text-gray-400">{user?.email}</p>
+            <p className="truncate text-sm font-bold" style={{ color: 'var(--c-text)' }}>{user?.name}</p>
+            <p className="truncate text-[11px]" style={{ color: 'var(--c-vdim)' }}>{user?.email}</p>
           </div>
           <span
             className="ml-auto flex-none rounded-full px-2.5 py-1 text-[10px] font-bold uppercase"
@@ -122,7 +138,7 @@ export default function AccountPage() {
         {/* Tab bar */}
         <div
           className="mb-4 flex rounded-xl border p-1"
-          style={{ borderColor: '#e8d5f5', backgroundColor: '#faf5ff' }}
+          style={{ borderColor: 'var(--c-border)', backgroundColor: 'var(--c-raised)' }}
         >
           {TABS.map((tab) => (
             <button
@@ -159,14 +175,65 @@ export default function AccountPage() {
                 className="input-base"
               />
             </Field>
-            <Field label="URL do avatar (opcional)">
-              <input
-                value={avatarUrl}
-                onChange={(e) => setAvatarUrl(e.target.value)}
-                placeholder="https://..."
-                className="input-base"
-              />
-            </Field>
+
+            {/* Avatar gallery */}
+            <div>
+              <label className="mb-2 block text-[11px] font-bold uppercase tracking-wider" style={{ color: '#7C3D8E' }}>
+                Avatar
+              </label>
+
+              {/* Preview */}
+              <div className="mb-3 flex items-center gap-3">
+                <div
+                  className="flex h-11 w-11 flex-none items-center justify-center rounded-xl border-2"
+                  style={{
+                    borderColor: '#7C3D8E',
+                    background: previewEmoji ? 'var(--c-raised)' : 'linear-gradient(135deg, #7C3D8E, #C4509B)',
+                    fontSize: previewEmoji ? '1.5rem' : undefined,
+                    color: previewEmoji ? undefined : '#fff',
+                    fontWeight: 900,
+                  }}
+                >
+                  {previewEmoji ?? (name?.charAt(0)?.toUpperCase() ?? '?')}
+                </div>
+                <div>
+                  <p className="text-xs font-semibold" style={{ color: 'var(--c-text)' }}>
+                    {previewEmoji ? 'Avatar selecionado' : 'Nenhum avatar selecionado'}
+                  </p>
+                  {previewEmoji && (
+                    <button
+                      type="button"
+                      onClick={() => setAvatarUrl('')}
+                      className="text-[10px] underline"
+                      style={{ color: 'var(--c-vdim)' }}
+                    >
+                      Remover
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Grid */}
+              <div
+                className="grid grid-cols-8 gap-1.5 rounded-xl border p-3"
+                style={{ borderColor: 'var(--c-border)', background: 'var(--c-raised)' }}
+              >
+                {AVATAR_OPTIONS.map((emoji) => (
+                  <button
+                    key={emoji}
+                    type="button"
+                    onClick={() => setAvatarUrl(avatarUrl === emoji ? '' : emoji)}
+                    className="flex aspect-square items-center justify-center rounded-lg text-xl transition"
+                    style={{
+                      outline: avatarUrl === emoji ? '2px solid #7C3D8E' : '2px solid transparent',
+                      background: avatarUrl === emoji ? '#f3e8ff' : 'var(--c-glass)',
+                    }}
+                  >
+                    {emoji}
+                  </button>
+                ))}
+              </div>
+            </div>
 
             {message && (
               <p
@@ -242,12 +309,12 @@ export default function AccountPage() {
             {loading ? (
               <div className="flex flex-col gap-2">
                 {Array.from({ length: 3 }).map((_, i) => (
-                  <div key={i} className="h-16 animate-pulse rounded-xl border" style={{ borderColor: '#e8d5f5', backgroundColor: '#faf5ff' }} />
+                  <div key={i} className="h-16 animate-pulse rounded-xl border" style={{ borderColor: 'var(--c-border)', backgroundColor: 'var(--c-raised)' }} />
                 ))}
               </div>
             ) : orders.length === 0 ? (
-              <div className="flex flex-col items-center gap-3 rounded-2xl border py-12 text-center" style={{ borderColor: '#e8d5f5', backgroundColor: '#faf5ff' }}>
-                <p className="text-sm font-bold text-gray-600">Nenhum pedido ainda</p>
+              <div className="flex flex-col items-center gap-3 rounded-2xl border py-12 text-center" style={{ borderColor: 'var(--c-border)', backgroundColor: 'var(--c-raised)' }}>
+                <p className="text-sm font-bold" style={{ color: 'var(--c-muted)' }}>Nenhum pedido ainda</p>
                 <Link
                   href="/"
                   className="rounded-xl px-5 py-2 text-sm font-bold text-white"
@@ -264,14 +331,14 @@ export default function AccountPage() {
                     <Link
                       key={order.id}
                       href={`/orders/${order.id}`}
-                      className="flex items-center gap-3 rounded-xl border bg-white px-3 py-2.5 transition hover:border-[#C4509B]"
-                      style={{ borderColor: '#e8d5f5' }}
+                      className="flex items-center gap-3 rounded-xl border px-3 py-2.5 transition hover:border-[#C4509B]"
+                      style={{ borderColor: 'var(--c-border)', background: 'var(--c-card)' }}
                     >
                       <div className="min-w-0 flex-1">
                         <p className="text-[11px] font-bold uppercase tracking-wide" style={{ color: '#7C3D8E' }}>
                           #{order.id.slice(0, 8).toUpperCase()}
                         </p>
-                        <p className="text-[11px] text-gray-400">
+                        <p className="text-[11px]" style={{ color: 'var(--c-vdim)' }}>
                           {new Date(order.createdAt).toLocaleDateString('pt-BR')}
                         </p>
                       </div>
@@ -303,20 +370,20 @@ export default function AccountPage() {
         .input-base {
           width: 100%;
           border-radius: 0.75rem;
-          border: 1px solid #e8d5f5;
-          background-color: #faf5ff;
+          border: 1px solid var(--c-border);
+          background-color: var(--c-raised);
           padding: 0.625rem 1rem;
           font-size: 0.875rem;
-          color: #1f2937;
+          color: var(--c-text);
           outline: none;
           transition: border-color 0.15s;
         }
         .input-base:focus {
           border-color: #7C3D8E;
-          background-color: #fff;
+          background-color: var(--c-card);
         }
         .input-base::placeholder {
-          color: #c4b5d4;
+          color: var(--c-vdim);
         }
       `}</style>
     </div>

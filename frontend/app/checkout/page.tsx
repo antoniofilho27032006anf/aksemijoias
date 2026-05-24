@@ -25,43 +25,28 @@ export default function CheckoutPage() {
     [cart]
   )
 
-  async function handleSubmit(event: React.FormEvent) {
-    event.preventDefault()
-
-    if (!user) {
-      router.push('/login')
-      return
-    }
-
-    if (cart.length === 0) {
-      setMessage('Seu carrinho está vazio.')
-      return
-    }
+  async function handleSubmit(e: { preventDefault(): void }) {
+    e.preventDefault()
+    if (!user) { router.push('/login'); return }
+    if (cart.length === 0) { setMessage('Seu carrinho está vazio.'); return }
 
     try {
       setLoading(true)
       setMessage('')
-
       const response = await api.post('/orders', {
-        items: cart.map((item) => ({
-          productId: item.id,
-          quantity: item.quantity
-        })),
+        items: cart.map((item) => ({ productId: item.id, quantity: item.quantity })),
         couponCode: couponCode.trim() || undefined,
-        paymentMethod: 'pix'
+        paymentMethod: 'pix',
       })
-
       if (response.data.pix) {
         setPixQr(response.data.pix.qr_code_base64)
         setPixCode(response.data.pix.qr_code)
         clearCart()
         return
       }
-
       clearCart()
       router.push('/checkout/success')
     } catch (error: any) {
-      console.log(error)
       setMessage(error?.response?.data?.error || 'Erro ao processar pagamento')
     } finally {
       setLoading(false)
@@ -79,147 +64,203 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(255,182,193,0.24),transparent_18%),radial-gradient(circle_at_bottom_right,_rgba(155,92,255,0.16),transparent_24%),linear-gradient(180deg,#ffffff_0%,#f7efff_100%)] text-slate-900">
+    <div className="min-h-screen" style={{ background: 'var(--c-bg)' }}>
       <Navbar />
 
-      <main className="mx-auto max-w-[1320px] px-6 py-12 sm:px-10">
-        <div className="grid gap-10 xl:grid-cols-[0.9fr,_0.6fr]">
-          <section className="rounded-[2rem] border border-pink-100/50 bg-white/85 p-8 shadow-[0_40px_120px_rgba(145,92,255,0.12)]">
-            <h1 className="text-4xl font-black text-slate-900">Checkout</h1>
-            <p className="mt-3 text-sm text-slate-600">Finalize sua compra com pagamento via PIX.</p>
+      <main className="mx-auto max-w-lg px-3 pb-16 pt-5 sm:px-5 lg:max-w-4xl">
 
-            <div className="mt-8 space-y-6">
-              <div className="rounded-[2rem] border border-white/10 bg-slate-950/5 p-6">
-                <h2 className="text-xl font-semibold text-slate-900">Resumo do pedido</h2>
-                <div className="mt-4 space-y-3">
-                  {cart.map((item) => (
-                    <div key={item.id} className="flex items-center justify-between gap-4 rounded-3xl border border-white/10 bg-white/70 p-4">
-                      <div>
-                        <p className="font-semibold text-slate-900">{item.name}</p>
-                        <p className="text-sm text-slate-500">Qtd: {item.quantity}</p>
-                      </div>
-                      <p className="font-bold text-pink-500">R$ {(item.price * item.quantity).toFixed(2)}</p>
-                    </div>
-                  ))}
-                </div>
-                <div className="mt-6 flex items-center justify-between border-t border-slate-200 pt-4 text-base font-semibold text-slate-900">
-                  <span>Total</span>
-                  <span className="text-2xl font-black text-pink-500">R$ {total.toFixed(2)}</span>
-                </div>
-              </div>
+        {/* Header */}
+        <div className="mb-4 flex items-center gap-2">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7C3D8E" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <path d="M16 10a4 4 0 0 1-8 0"/>
+          </svg>
+          <h1 className="text-base font-black" style={{ color: 'var(--c-text)' }}>Checkout</h1>
+        </div>
 
-              {!pixCode && (
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="rounded-3xl border border-green-200 bg-green-50 p-5 flex items-center gap-4">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-green-500 text-white text-xl font-bold">
-                      PIX
-                    </div>
-                    <div>
-                      <p className="font-semibold text-slate-900">Pagamento via PIX</p>
-                      <p className="text-sm text-slate-500">Aprovação imediata após o pagamento</p>
-                    </div>
-                  </div>
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:gap-5">
 
-                  <div className="rounded-3xl border border-white/10 bg-white/80 p-5">
-                    <label className="block text-sm font-semibold text-slate-700">Cupom de desconto</label>
-                    <input
-                      value={couponCode}
-                      onChange={(e) => setCouponCode(e.target.value)}
-                      placeholder="Código do cupom (opcional)"
-                      className="mt-3 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none"
-                    />
-                  </div>
+          {/* ── Main column ── */}
+          <div className="flex flex-col gap-3 lg:flex-1">
 
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full rounded-full bg-gradient-to-r from-green-500 to-emerald-500 px-6 py-4 text-sm font-semibold text-white shadow-lg shadow-green-500/20 transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60"
+            {/* Order summary */}
+            <div
+              className="rounded-xl border p-3"
+              style={{ borderColor: 'var(--c-border)', background: 'var(--c-raised)' }}
+            >
+              <p className="mb-2 text-[10px] font-bold uppercase tracking-widest" style={{ color: '#7C3D8E' }}>
+                Resumo do pedido
+              </p>
+              <div className="flex flex-col gap-1.5">
+                {cart.length === 0 ? (
+                  <p className="py-3 text-center text-xs" style={{ color: 'var(--c-vdim)' }}>Carrinho vazio</p>
+                ) : cart.map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex items-center gap-2 rounded-lg border px-2.5 py-2"
+                    style={{ borderColor: 'var(--c-border)', background: 'var(--c-card)' }}
                   >
-                    {loading ? 'Gerando PIX...' : 'Gerar QR Code PIX'}
-                  </button>
-                </form>
-              )}
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-xs font-semibold" style={{ color: 'var(--c-text)' }}>
+                        {item.name}
+                      </p>
+                      <p className="text-[10px]" style={{ color: 'var(--c-vdim)' }}>
+                        Qtd: {item.quantity}
+                      </p>
+                    </div>
+                    <p className="flex-none text-xs font-black" style={{ color: '#C4509B' }}>
+                      R$ {(item.price * item.quantity).toFixed(2).replace('.', ',')}
+                    </p>
+                  </div>
+                ))}
+              </div>
+              <div
+                className="mt-2.5 flex items-center justify-between border-t pt-2.5"
+                style={{ borderColor: 'var(--c-border)' }}
+              >
+                <span className="text-xs font-semibold" style={{ color: 'var(--c-muted)' }}>Total</span>
+                <span className="text-sm font-black" style={{ color: '#C4509B' }}>
+                  R$ {total.toFixed(2).replace('.', ',')}
+                </span>
+              </div>
+            </div>
 
-              {message && (
-                <div className="rounded-[2rem] border border-red-200 bg-red-50 p-5 text-red-700">
-                  <p>{message}</p>
+            {/* PIX form */}
+            {!pixCode && (
+              <form onSubmit={handleSubmit} className="flex flex-col gap-2.5">
+
+                {/* PIX badge */}
+                <div
+                  className="flex items-center gap-3 rounded-xl border px-3 py-2.5"
+                  style={{ borderColor: '#bbf7d0', background: '#f0fdf4' }}
+                >
+                  <span className="flex h-8 w-12 flex-none items-center justify-center rounded-lg bg-green-500 text-[11px] font-black text-white">
+                    PIX
+                  </span>
+                  <div>
+                    <p className="text-xs font-semibold text-slate-800">Pagamento via PIX</p>
+                    <p className="text-[10px] text-slate-500">Aprovação imediata após pagamento</p>
+                  </div>
                 </div>
-              )}
 
-              {pixCode && (
-                <div className="rounded-[2rem] border border-green-200 bg-green-50 p-6 space-y-5">
-                  <div className="text-center">
-                    <div className="inline-flex items-center gap-2 rounded-full bg-green-100 px-4 py-2 text-sm font-semibold text-green-700">
-                      ✓ PIX gerado com sucesso!
-                    </div>
-                    <p className="mt-3 text-sm text-slate-500">Escaneie o QR Code ou copie o código para pagar</p>
-                  </div>
+                {/* Coupon */}
+                <div
+                  className="rounded-xl border p-3"
+                  style={{ borderColor: 'var(--c-border)', background: 'var(--c-raised)' }}
+                >
+                  <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider" style={{ color: '#7C3D8E' }}>
+                    Cupom (opcional)
+                  </label>
+                  <input
+                    value={couponCode}
+                    onChange={(e) => setCouponCode(e.target.value)}
+                    placeholder="Código do cupom"
+                    className="w-full rounded-lg border px-3 py-2 text-sm outline-none transition"
+                    style={{ borderColor: 'var(--c-border)', background: 'var(--c-card)', color: 'var(--c-text)' }}
+                  />
+                </div>
 
-                  {pixQr && (
-                    <div className="flex justify-center">
-                      <img
-                        src={`data:image/png;base64,${pixQr}`}
-                        alt="QRCode PIX"
-                        className="h-56 w-56 rounded-3xl bg-white p-3 shadow-md"
-                      />
-                    </div>
-                  )}
+                {message && (
+                  <p className="rounded-xl px-3 py-2 text-xs font-semibold" style={{ background: '#fee2e2', color: '#991b1b' }}>
+                    {message}
+                  </p>
+                )}
 
-                  <div className="space-y-2">
-                    <p className="text-sm font-semibold text-slate-700">Código PIX copia e cola:</p>
-                    <div className="relative">
-                      <textarea
-                        readOnly
-                        value={pixCode}
-                        className="w-full rounded-2xl border border-slate-200 bg-white p-4 pr-14 text-xs text-slate-600 outline-none resize-none h-24"
-                      />
-                      <button
-                        onClick={handleCopy}
-                        title="Copiar código PIX"
-                        className="absolute right-3 top-3 flex items-center justify-center rounded-xl bg-green-500 p-2 text-white transition hover:bg-green-400"
-                      >
-                        {copied ? (
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                          </svg>
-                        ) : (
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                          </svg>
-                        )}
-                      </button>
-                    </div>
-                    {copied && (
-                      <p className="text-sm text-green-600 font-semibold">✓ Código copiado!</p>
-                    )}
-                  </div>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full rounded-xl py-3 text-sm font-bold text-white transition hover:opacity-90 disabled:opacity-60"
+                  style={{ background: 'linear-gradient(135deg, #22c55e, #16a34a)' }}
+                >
+                  {loading ? 'Gerando PIX...' : 'Gerar QR Code PIX'}
+                </button>
+              </form>
+            )}
 
-                  <p className="text-center text-xs text-slate-400">
-                    Após o pagamento, seu pedido será confirmado automaticamente.
+            {/* PIX result */}
+            {pixCode && (
+              <div
+                className="rounded-xl border p-4"
+                style={{ borderColor: '#bbf7d0', background: '#f0fdf4' }}
+              >
+                <div className="mb-3 text-center">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-green-100 px-3 py-1 text-xs font-bold text-green-700">
+                    ✓ PIX gerado com sucesso!
+                  </span>
+                  <p className="mt-1.5 text-[11px] text-slate-500">
+                    Escaneie o QR Code ou copie o código para pagar
                   </p>
                 </div>
-              )}
-            </div>
-          </section>
 
-          <aside className="space-y-6">
-            <div className="rounded-[2rem] border border-green-100 bg-white/90 p-6 shadow-[0_30px_80px_rgba(145,92,255,0.12)]">
-              <p className="text-sm uppercase tracking-[0.24em] text-green-600">Pagamento seguro</p>
-              <h2 className="mt-3 text-2xl font-bold text-slate-900">PIX</h2>
-              <p className="mt-4 text-sm text-slate-600">Pagamento instantâneo, seguro e sem taxas adicionais.</p>
-              <ul className="mt-6 space-y-3">
-                <li className="flex items-center gap-3 text-sm text-slate-600">
-                  <span className="text-green-500">✓</span> Aprovação imediata
+                {pixQr && (
+                  <div className="my-3 flex justify-center">
+                    <img
+                      src={`data:image/png;base64,${pixQr}`}
+                      alt="QRCode PIX"
+                      className="h-44 w-44 rounded-xl bg-white p-2 shadow-sm"
+                    />
+                  </div>
+                )}
+
+                <p className="mb-1.5 text-[10px] font-bold uppercase tracking-wider" style={{ color: '#4a3a6c' }}>
+                  Copia e cola:
+                </p>
+                <div className="relative">
+                  <textarea
+                    readOnly
+                    value={pixCode}
+                    className="h-16 w-full resize-none rounded-lg border p-3 pr-12 text-[10px] outline-none"
+                    style={{ borderColor: '#d1d5db', background: 'white', color: '#4a5568' }}
+                  />
+                  <button
+                    onClick={handleCopy}
+                    type="button"
+                    className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-lg bg-green-500 text-white transition hover:bg-green-400"
+                  >
+                    {copied ? (
+                      <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7"/>
+                      </svg>
+                    ) : (
+                      <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                      </svg>
+                    )}
+                  </button>
+                </div>
+                {copied && (
+                  <p className="mt-1 text-[11px] font-semibold text-green-600">✓ Copiado!</p>
+                )}
+                <p className="mt-3 text-center text-[10px] text-slate-400">
+                  Após o pagamento, seu pedido será confirmado automaticamente.
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* ── Sidebar: PIX info ── */}
+          <div
+            className="rounded-xl border p-4 lg:w-52 lg:flex-none"
+            style={{ borderColor: '#bbf7d0', background: 'var(--c-card)' }}
+          >
+            <p className="text-[10px] font-bold uppercase tracking-widest text-green-600">
+              Pagamento seguro
+            </p>
+            <p className="mt-1.5 text-sm font-black" style={{ color: 'var(--c-text)' }}>PIX</p>
+            <p className="mt-1.5 text-[11px]" style={{ color: 'var(--c-muted)' }}>
+              Instantâneo, seguro e sem taxas adicionais.
+            </p>
+            <ul className="mt-3 flex flex-col gap-2">
+              {['Aprovação imediata', 'Sem taxa extra', '100% seguro'].map((item) => (
+                <li key={item} className="flex items-center gap-2 text-[11px]" style={{ color: 'var(--c-muted)' }}>
+                  <span className="font-bold text-green-500">✓</span>
+                  {item}
                 </li>
-                <li className="flex items-center gap-3 text-sm text-slate-600">
-                  <span className="text-green-500">✓</span> Sem taxa extra
-                </li>
-                <li className="flex items-center gap-3 text-sm text-slate-600">
-                  <span className="text-green-500">✓</span> 100% seguro
-                </li>
-              </ul>
-            </div>
-          </aside>
+              ))}
+            </ul>
+          </div>
+
         </div>
       </main>
 

@@ -43,7 +43,7 @@ export function Navbar({ onSearch }: NavbarProps) {
   }
 
   return (
-    <header className="sticky top-0 z-30 bg-white shadow-sm">
+    <header className="sticky top-0 z-30 shadow-sm" style={{ background: 'var(--c-nav-bg)' }}>
 
       {/* Main nav row — 3-column grid keeps logo perfectly centered on all sizes */}
       <div className="grid grid-cols-3 items-center px-4 py-2.5 sm:px-6">
@@ -111,10 +111,11 @@ export function Navbar({ onSearch }: NavbarProps) {
       </div>
 
       {/* Search row */}
-      <form onSubmit={handleSearch} className="flex border-t border-gray-100">
+      <form onSubmit={handleSearch} className="flex border-t" style={{ borderColor: 'var(--c-border)' }}>
         <div className="relative flex flex-1 items-center">
           <svg
-            className="absolute left-4 text-gray-400"
+            className="absolute left-4"
+            style={{ color: 'var(--c-vdim)' }}
             width="16" height="16" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
           >
@@ -124,12 +125,14 @@ export function Navbar({ onSearch }: NavbarProps) {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Buscar..."
-            className="w-full bg-gray-50 py-3 pl-10 pr-4 text-sm text-gray-700 outline-none placeholder:text-gray-400"
+            className="w-full py-3 pl-10 pr-4 text-sm outline-none"
+            style={{ background: 'var(--c-input)', color: 'var(--c-text)' }}
           />
         </div>
         <button
           type="submit"
-          className="flex items-center justify-center border-l border-gray-100 bg-gray-50 px-4"
+          className="flex items-center justify-center border-l px-4"
+          style={{ borderColor: 'var(--c-border)', background: 'var(--c-input)' }}
           aria-label="Buscar"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7C3D8E" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -143,10 +146,10 @@ export function Navbar({ onSearch }: NavbarProps) {
 
       {/* Mobile slide-down menu */}
       {menuOpen && (
-        <div className="absolute left-0 right-0 top-full z-40 max-h-[80vh] overflow-y-auto border-t border-gray-100 bg-white shadow-xl">
+        <div className="absolute left-0 right-0 top-full z-40 max-h-[80vh] overflow-y-auto border-t shadow-xl" style={{ background: 'var(--c-nav-bg)', borderColor: 'var(--c-border)' }}>
 
           {/* Nav links */}
-          <nav className="divide-y divide-gray-50 px-2">
+          <nav className="divide-y px-2" style={{ borderColor: 'var(--c-border)' }}>
             {[
               { href: '/', label: 'Loja' },
               { href: '/favorites', label: 'Favoritas' },
@@ -159,7 +162,8 @@ export function Navbar({ onSearch }: NavbarProps) {
                 key={link.href}
                 href={link.href}
                 onClick={() => setMenuOpen(false)}
-                className="block px-4 py-3.5 text-sm font-medium text-gray-700 transition hover:text-[#7C3D8E]"
+                className="block px-4 py-3.5 text-sm font-medium transition hover:text-[#7C3D8E]"
+                style={{ color: 'var(--c-text)' }}
               >
                 {link.label}
               </Link>
@@ -167,12 +171,12 @@ export function Navbar({ onSearch }: NavbarProps) {
           </nav>
 
           {/* Categories section */}
-          <div className="border-t border-gray-100 px-4 pt-3 pb-1">
-            <p className="mb-1 text-[10px] font-bold uppercase tracking-widest text-gray-400">
+          <div className="border-t px-4 pt-3 pb-1" style={{ borderColor: 'var(--c-border)' }}>
+            <p className="mb-1 text-[10px] font-bold uppercase tracking-widest" style={{ color: 'var(--c-vdim)' }}>
               Categorias
             </p>
             {CATEGORIES.map((cat) => (
-              <div key={cat.name} className="border-b border-gray-50 last:border-0">
+              <div key={cat.name} className="border-b last:border-0" style={{ borderColor: 'var(--c-border)' }}>
 
                 {/* Category header */}
                 <button
@@ -183,7 +187,8 @@ export function Navbar({ onSearch }: NavbarProps) {
                       setExpandedCat(expandedCat === cat.name ? null : cat.name)
                     }
                   }}
-                  className="flex w-full items-center justify-between py-3.5 text-sm font-semibold text-gray-700 transition hover:text-[#7C3D8E]"
+                  className="flex w-full items-center justify-between py-3.5 text-sm font-semibold transition hover:text-[#7C3D8E]"
+                  style={{ color: 'var(--c-text)' }}
                 >
                   {cat.name}
                   {cat.sub.length > 0 && (
@@ -209,7 +214,8 @@ export function Navbar({ onSearch }: NavbarProps) {
                       <button
                         key={sub.name}
                         onClick={() => navigateTo(sub.name)}
-                        className="py-2 text-left text-xs font-medium text-gray-500 transition hover:text-[#C4509B]"
+                        className="py-2 text-left text-xs font-medium transition hover:text-[#C4509B]"
+                        style={{ color: 'var(--c-dim)' }}
                       >
                         — {sub.name}
                       </button>
@@ -222,7 +228,7 @@ export function Navbar({ onSearch }: NavbarProps) {
 
           {/* Admin + logout */}
           {(user as any)?.role === 'ADMIN' && (
-            <div className="border-t border-gray-100 px-2 py-2">
+            <div className="border-t px-2 py-2" style={{ borderColor: 'var(--c-border)' }}>
               <Link
                 href="/admin"
                 onClick={() => setMenuOpen(false)}
@@ -233,7 +239,7 @@ export function Navbar({ onSearch }: NavbarProps) {
             </div>
           )}
           {user && (
-            <div className="border-t border-gray-100 px-2 py-2">
+            <div className="border-t px-2 py-2" style={{ borderColor: 'var(--c-border)' }}>
               <button
                 onClick={() => { logout(); setMenuOpen(false) }}
                 className="block w-full px-4 py-3 text-left text-sm font-medium text-red-400 transition hover:text-red-600"

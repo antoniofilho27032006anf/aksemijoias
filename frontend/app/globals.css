@@ -102,8 +102,11 @@ body {
 }
 
 * { box-sizing: border-box; }
-a { color: inherit; }
 button, input, textarea { font: inherit; }
+
+@layer base {
+  a { color: inherit; }
+}
 
 ::selection {
   background: rgba(124, 58, 237, 0.45);
