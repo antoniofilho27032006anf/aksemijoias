@@ -1,60 +1,37 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 import { useAuth } from '@/src/contexts/AuthContext'
 import { CreateProductForm } from '@/src/components/CreateProductForm'
 import { api } from '@/src/services/api'
-
 import { toast } from 'sonner'
 
+type Panel = 'orders' | 'banners' | null
+
+const STATUS_LABEL: Record<string, string> = {
+  PENDING: 'Pendente', PAID: 'Pago', SENT: 'Enviado',
+  DELIVERED: 'Entregue', CANCELLED: 'Cancelado',
+}
+const STATUS_COLOR: Record<string, { color: string; bg: string }> = {
+  PENDING:   { color: '#92400e', bg: '#fef3c7' },
+  PAID:      { color: '#065f46', bg: '#d1fae5' },
+  SENT:      { color: '#1e40af', bg: '#dbeafe' },
+  DELIVERED: { color: '#5B2170', bg: '#f3e8ff' },
+  CANCELLED: { color: '#991b1b', bg: '#fee2e2' },
+}
+
 export default function AdminPage() {
-
   const { user } = useAuth() as any
-
   const router = useRouter()
 
-  const [loading, setLoading] =
-    useState(true)
-
-  const [stats, setStats] =
-    useState({
-
-      products: 0,
-      orders: 0,
-      users: 0,
-
-      revenue: 0,
-
-      paidOrders: 0,
-
-      averageTicket: 0
-
-    })
-
-  const [orders, setOrders] =
-    useState<any[]>([])
-
-  const [products, setProducts] =
-    useState<any[]>([])
-
-  const [editingProduct, setEditingProduct] =
-    useState<any | null>(null)
-
-  const [editForm, setEditForm] =
-    useState({
-      name: '',
-      description: '',
-      price: '',
-      stock: '',
-      image: ''
-    })
-
-  const [categories, setCategories] = useState<any[]>([])
-  const [newCategory, setNewCategory] = useState('')
-  const [tags, setTags] = useState<any[]>([])
-  const [newTag, setNewTag] = useState('')
+  const [loading, setLoading] = useState(true)
+  const [stats, setStats] = useState({ products: 0, orders: 0, users: 0, revenue: 0, paidOrders: 0, averageTicket: 0 })
+  const [orders, setOrders] = useState<any[]>([])
+  const [products, setProducts] = useState<any[]>([])
+  const [editingProduct, setEditingProduct] = useState<any | null>(null)
+  const [editForm, setEditForm] = useState({ name: '', description: '', price: '', stock: '', image: '' })
 
   const [banners, setBanners] = useState<any[]>([])
   const [bannerForm, setBannerForm] = useState({ label: '', imageUrl: '', position: 0, active: true })
@@ -62,274 +39,68 @@ export default function AdminPage() {
   const [bannerImagePreview, setBannerImagePreview] = useState('')
   const [bannerUploading, setBannerUploading] = useState(false)
 
+  const [activePanel, setActivePanel] = useState<Panel>(null)
+  const [dotsOpen, setDotsOpen] = useState(false)
+  const dotsRef = useRef<HTMLDivElement>(null)
+
   useEffect(() => {
-
-    const token =
-      localStorage.getItem('@ak-token')
-
-    if (!token) {
-
-      router.push('/login')
-
-    } else {
-
-      setLoading(false)
-
-      api
-        .get('/admin/dashboard')
-        .then((response) => {
-
-          setStats(response.data)
-
-        })
-        .catch((error) => {
-
-          console.log(error)
-
-        })
-
-      api
-        .get('/admin/orders')
-        .then((response) => {
-
-          setOrders(response.data)
-
-        })
-        .catch((error) => {
-
-          console.log(error)
-
-        })
-
-      api
-        .get('/admin/products')
-        .then((response) => {
-          setProducts(response.data)
-        })
-        .catch((error) => {
-          console.log(error)
-        })
-
-      api.get('/categories').then((r) => setCategories(r.data)).catch(() => {})
-      api.get('/tags').then((r) => setTags(r.data)).catch(() => {})
-      api.get('/admin/banners').then((r) => setBanners(r.data)).catch(() => {})
-    }
-
+    const token = localStorage.getItem('@ak-token')
+    if (!token) { router.push('/login'); return }
+    setLoading(false)
+    api.get('/admin/dashboard').then((r) => setStats(r.data)).catch(() => {})
+    api.get('/admin/orders').then((r) => setOrders(r.data)).catch(() => {})
+    api.get('/admin/products').then((r) => setProducts(r.data)).catch(() => {})
+    api.get('/admin/banners').then((r) => setBanners(r.data)).catch(() => {})
   }, [router])
 
-  async function handleUpdateStatus(
-    orderId: string,
-    status: string
-  ) {
+  // close dots menu when clicking outside
+  useEffect(() => {
+    function handler(e: MouseEvent) {
+      if (dotsRef.current && !dotsRef.current.contains(e.target as Node)) {
+        setDotsOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [])
 
+  async function handleUpdateStatus(orderId: string, status: string) {
     try {
-
-      await api.patch(
-
-        `/admin/orders/${orderId}`,
-
-        {
-          status
-        }
-
-      )
-
-      setOrders((prevOrders) =>
-
-        prevOrders.map((order) => {
-
-          if (order.id === orderId) {
-
-            return {
-              ...order,
-              status
-            }
-          }
-
-          return order
-
-        })
-
-      )
-
-    } catch (error) {
-
-      console.log(error)
-
+      await api.patch(`/admin/orders/${orderId}`, { status })
+      setOrders((prev) => prev.map((o) => o.id === orderId ? { ...o, status } : o))
+    } catch {
       toast.error('Erro ao atualizar status')
-
     }
-
   }
 
-  async function handleDeleteProduct(
-    productId: string
-  ) {
-
-    const confirmDelete =
-      confirm(
-        'Deseja realmente excluir este produto?'
-      )
-
-    if (!confirmDelete) {
-      return
-    }
-
+  async function handleDeleteProduct(productId: string) {
+    if (!confirm('Deseja realmente excluir este produto?')) return
     try {
-
-      await api.delete(
-        `/admin/products/${productId}`
-      )
-
-      setProducts((prevProducts) =>
-
-        prevProducts.filter(
-          (product) =>
-            product.id !== productId
-        )
-
-      )
-
-      setStats((prev) => ({
-        ...prev,
-        products:
-          prev.products - 1
-      }))
-
+      await api.delete(`/admin/products/${productId}`)
+      setProducts((prev) => prev.filter((p) => p.id !== productId))
+      setStats((prev) => ({ ...prev, products: prev.products - 1 }))
       toast.success('Produto excluído')
-
-    } catch (error) {
-
-      console.log(error)
-
+    } catch {
       toast.error('Erro ao excluir produto')
-
     }
-
   }
 
-  function handleEditProduct(
-    product: any
-  ) {
-
+  function handleEditProduct(product: any) {
     setEditingProduct(product)
-
-    setEditForm({
-
-      name: product.name,
-      description: product.description,
-      price: product.price,
-      stock: product.stock,
-      image: product.image
-
-    })
-
+    setEditForm({ name: product.name, description: product.description, price: product.price, stock: product.stock, image: product.image })
   }
 
   async function handleSaveEdit() {
-
     try {
-
-      const response =
-        await api.put(
-
-          `/admin/products/${editingProduct.id}`,
-
-          {
-
-            name: editForm.name,
-
-            description:
-              editForm.description,
-
-            price:
-              Number(editForm.price),
-
-            stock:
-              Number(editForm.stock),
-
-            image:
-              editForm.image
-
-          }
-
-        )
-
-      setProducts((prevProducts) =>
-
-        prevProducts.map((product) => {
-
-          if (
-            product.id ===
-            editingProduct.id
-          ) {
-
-            return response.data
-          }
-
-          return product
-
-        })
-
-      )
-
+      const r = await api.put(`/admin/products/${editingProduct.id}`, {
+        name: editForm.name, description: editForm.description,
+        price: Number(editForm.price), stock: Number(editForm.stock), image: editForm.image,
+      })
+      setProducts((prev) => prev.map((p) => p.id === editingProduct.id ? r.data : p))
       setEditingProduct(null)
-
       toast.success('Produto atualizado')
-
-    } catch (error) {
-
-      console.log(error)
-
+    } catch {
       toast.error('Erro ao editar produto')
-
-    }
-
-  }
-
-  async function handleCreateCategory() {
-    if (!newCategory.trim()) return
-    try {
-      const response = await api.post('/categories', { name: newCategory.trim() })
-      setCategories((prev) => [...prev, response.data])
-      setNewCategory('')
-      toast.success('Categoria criada')
-    } catch {
-      toast.error('Erro ao criar categoria')
-    }
-  }
-
-  async function handleDeleteCategory(id: string) {
-    if (!confirm('Excluir categoria?')) return
-    try {
-      await api.delete(`/categories/${id}`)
-      setCategories((prev) => prev.filter((c) => c.id !== id))
-      toast.success('Categoria removida')
-    } catch {
-      toast.error('Erro ao remover categoria')
-    }
-  }
-
-  async function handleCreateTag() {
-    if (!newTag.trim()) return
-    try {
-      const response = await api.post('/tags', { name: newTag.trim() })
-      setTags((prev) => [...prev, response.data])
-      setNewTag('')
-      toast.success('Tag criada')
-    } catch {
-      toast.error('Erro ao criar tag')
-    }
-  }
-
-  async function handleDeleteTag(id: string) {
-    if (!confirm('Excluir tag?')) return
-    try {
-      await api.delete(`/tags/${id}`)
-      setTags((prev) => prev.filter((t) => t.id !== id))
-      toast.success('Tag removida')
-    } catch {
-      toast.error('Erro ao remover tag')
     }
   }
 
@@ -339,9 +110,9 @@ export default function AdminPage() {
     setBannerImagePreview(URL.createObjectURL(file))
     setBannerUploading(true)
     try {
-      const formData = new FormData()
-      formData.append('image', file)
-      const r = await api.post('/upload', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+      const fd = new FormData()
+      fd.append('image', file)
+      const r = await api.post('/upload', fd, { headers: { 'Content-Type': 'multipart/form-data' } })
       setBannerForm((prev) => ({ ...prev, imageUrl: r.data.url }))
       toast.success('Imagem enviada')
     } catch {
@@ -352,12 +123,7 @@ export default function AdminPage() {
   }
 
   async function handleSaveBanner() {
-    const payload = {
-      label:    bannerForm.label || 'Banner',
-      imageUrl: bannerForm.imageUrl.trim() || null,
-      position: Number(bannerForm.position),
-      active:   bannerForm.active,
-    }
+    const payload = { label: bannerForm.label || 'Banner', imageUrl: bannerForm.imageUrl.trim() || null, position: Number(bannerForm.position), active: bannerForm.active }
     try {
       if (editingBanner) {
         const r = await api.put(`/banners/${editingBanner.id}`, payload)
@@ -379,12 +145,7 @@ export default function AdminPage() {
   function handleEditBanner(banner: any) {
     setEditingBanner(banner)
     setBannerImagePreview('')
-    setBannerForm({
-      label:    banner.label,
-      imageUrl: banner.imageUrl ?? '',
-      position: banner.position,
-      active:   banner.active,
-    })
+    setBannerForm({ label: banner.label, imageUrl: banner.imageUrl ?? '', position: banner.position, active: banner.active })
   }
 
   async function handleDeleteBanner(id: string) {
@@ -400,660 +161,390 @@ export default function AdminPage() {
 
   async function handleExportCSV() {
     try {
-      const response = await api.get('/admin/reports/export', { responseType: 'blob' })
-      const url = window.URL.createObjectURL(new Blob([response.data]))
+      const r = await api.get('/admin/reports/export', { responseType: 'blob' })
+      const url = window.URL.createObjectURL(new Blob([r.data]))
       const a = document.createElement('a')
-      a.href = url
-      a.download = 'relatorio-pedidos.csv'
-      a.click()
+      a.href = url; a.download = 'relatorio-pedidos.csv'; a.click()
       window.URL.revokeObjectURL(url)
     } catch {
       toast.error('Erro ao exportar relatório')
     }
   }
 
-  if (loading) {
-    return null
-  }
-
-  if (!user) {
-    return null
-  }
+  if (loading || !user) return null
 
   if (user.role !== 'ADMIN') {
-
     return (
-
-      <div className="flex min-h-screen items-center justify-center bg-gray-50 text-gray-900">
-
-        <h1 className="text-3xl font-bold">
-          Acesso negado
-        </h1>
-
+      <div className="flex min-h-screen items-center justify-center" style={{ background: 'var(--c-bg)' }}>
+        <h1 className="text-2xl font-black" style={{ color: 'var(--c-text)' }}>Acesso negado</h1>
       </div>
-
     )
   }
 
   return (
+    <div className="min-h-screen" style={{ background: 'var(--c-bg)' }}>
+      <div className="mx-auto max-w-4xl px-4 pb-16 pt-6 sm:px-6">
 
-    <div className="min-h-screen bg-white p-4 sm:p-6 md:p-10">
-
-      <div className="mx-auto max-w-7xl">
-
-        <div className="flex items-center justify-between">
-
+        {/* ── Header ── */}
+        <div className="mb-5 flex items-center justify-between">
           <div>
-
-            <p className="text-xs uppercase tracking-[0.3em] text-pink-500">
+            <p className="text-[10px] font-bold uppercase tracking-[0.3em]" style={{ color: '#C4509B' }}>
               Painel Administrativo
             </p>
-
-            <h1 className="mt-3 text-2xl font-black text-gray-900 sm:text-4xl">
-              Bem-vindo, {user.name}
+            <h1 className="mt-1 text-xl font-black sm:text-2xl" style={{ color: 'var(--c-text)' }}>
+              {user.name}
             </h1>
-
           </div>
 
-          <div className="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 shadow-sm">
+          {/* 3 dots menu */}
+          <div className="relative" ref={dotsRef}>
+            <button
+              onClick={() => setDotsOpen((v) => !v)}
+              className="flex h-9 w-9 items-center justify-center rounded-xl border transition hover:opacity-80"
+              style={{ borderColor: 'var(--c-border)', background: 'var(--c-raised)' }}
+              aria-label="Mais opções"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="5"  r="1.5" fill="#7C3D8E"/>
+                <circle cx="12" cy="12" r="1.5" fill="#7C3D8E"/>
+                <circle cx="12" cy="19" r="1.5" fill="#7C3D8E"/>
+              </svg>
+            </button>
 
-            <p className="text-xs text-gray-500">
-              Status
-            </p>
-
-            <p className="mt-1 text-sm font-semibold text-green-600">
-              Online
-            </p>
-
+            {dotsOpen && (
+              <div
+                className="absolute right-0 top-11 z-50 w-56 overflow-hidden rounded-xl border shadow-xl"
+                style={{ borderColor: 'var(--c-border)', background: 'var(--c-card)' }}
+              >
+                <button
+                  onClick={() => { setActivePanel('orders'); setDotsOpen(false) }}
+                  className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm font-semibold transition hover:opacity-80"
+                  style={{ color: 'var(--c-text)', borderBottom: `1px solid var(--c-border)` }}
+                >
+                  <span className="flex h-7 w-7 items-center justify-center rounded-lg" style={{ background: '#dbeafe' }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1e40af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/>
+                      <rect x="9" y="3" width="6" height="4" rx="1"/>
+                      <line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/>
+                    </svg>
+                  </span>
+                  Pedidos & Relatório
+                </button>
+                <button
+                  onClick={() => { setActivePanel('banners'); setDotsOpen(false) }}
+                  className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm font-semibold transition hover:opacity-80"
+                  style={{ color: 'var(--c-text)' }}
+                >
+                  <span className="flex h-7 w-7 items-center justify-center rounded-lg" style={{ background: '#f3e8ff' }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7C3D8E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="3" width="18" height="18" rx="2"/>
+                      <circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+                    </svg>
+                  </span>
+                  Banners do Carrossel
+                </button>
+              </div>
+            )}
           </div>
-
         </div>
 
-        {/* ── Stat cards row 1 ── */}
-        <div className="mt-6 grid grid-cols-3 gap-2 md:mt-8 md:gap-4">
-
-          <div className="rounded-xl border border-gray-200 bg-white p-3 shadow-sm md:rounded-2xl md:p-5">
-            <p className="text-xs text-gray-500">Produtos</p>
-            <h2 className="mt-1 text-xl font-black text-gray-900 md:mt-2 md:text-3xl">
-              {stats.products}
-            </h2>
-          </div>
-
-          <div className="rounded-xl border border-gray-200 bg-white p-3 shadow-sm md:rounded-2xl md:p-5">
-            <p className="text-xs text-gray-500">Pedidos</p>
-            <h2 className="mt-1 text-xl font-black text-gray-900 md:mt-2 md:text-3xl">
-              {stats.orders}
-            </h2>
-          </div>
-
-          <div className="rounded-xl border border-gray-200 bg-white p-3 shadow-sm md:rounded-2xl md:p-5">
-            <p className="text-xs text-gray-500">Clientes</p>
-            <h2 className="mt-1 text-xl font-black text-gray-900 md:mt-2 md:text-3xl">
-              {stats.users}
-            </h2>
-          </div>
-
+        {/* ── Stats: Faturamento ── */}
+        <div className="mb-6 grid grid-cols-3 gap-2 sm:gap-3">
+          <StatCard label="Faturamento" value={`R$ ${Number(stats.revenue).toFixed(2).replace('.', ',')}`} accent="#d1fae5" labelColor="#065f46" />
+          <StatCard label="Pedidos Pagos" value={String(stats.paidOrders)} accent="#dbeafe" labelColor="#1e40af" />
+          <StatCard label="Ticket Médio" value={`R$ ${Number(stats.averageTicket).toFixed(2).replace('.', ',')}`} accent="#fce7f3" labelColor="#9d174d" />
         </div>
 
-        {/* ── Stat cards row 2 ── */}
-        <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-3 md:mt-3 md:gap-4">
-
-          <div className="rounded-xl border border-green-200 bg-green-50 p-3 shadow-sm md:rounded-2xl md:p-5">
-            <p className="text-xs text-green-700">Faturamento</p>
-            <h2 className="mt-1 text-xl font-black text-gray-900 md:mt-2 md:text-3xl">
-              R$ {Number(stats.revenue).toFixed(2)}
-            </h2>
-          </div>
-
-          <div className="rounded-xl border border-blue-200 bg-blue-50 p-3 shadow-sm md:rounded-2xl md:p-5">
-            <p className="text-xs text-blue-700">Pedidos Pagos</p>
-            <h2 className="mt-1 text-xl font-black text-gray-900 md:mt-2 md:text-3xl">
-              {stats.paidOrders}
-            </h2>
-          </div>
-
-          <div className="rounded-xl border border-pink-200 bg-pink-50 p-3 shadow-sm md:rounded-2xl md:p-5">
-            <p className="text-xs text-pink-700">Ticket Médio</p>
-            <h2 className="mt-1 text-xl font-black text-gray-900 md:mt-2 md:text-3xl">
-              R$ {Number(stats.averageTicket).toFixed(2)}
-            </h2>
-          </div>
-
+        <div className="mb-4 grid grid-cols-3 gap-2 sm:gap-3">
+          <StatCard label="Produtos" value={String(stats.products)} accent="var(--c-raised)" labelColor="var(--c-dim)" />
+          <StatCard label="Pedidos" value={String(stats.orders)} accent="var(--c-raised)" labelColor="var(--c-dim)" />
+          <StatCard label="Clientes" value={String(stats.users)} accent="var(--c-raised)" labelColor="var(--c-dim)" />
         </div>
 
         {/* ── Criar produto ── */}
-        <div className="mt-10">
-          <CreateProductForm />
-        </div>
+        <CreateProductForm />
 
         {/* ── Editar produto ── */}
         {editingProduct && (
-
-          <div className="mt-10 rounded-2xl border border-pink-300 bg-white p-6 shadow-sm">
-
-            <h2 className="text-2xl font-black text-gray-900">
-              Editar Produto
-            </h2>
-
-            <div className="mt-6 space-y-3">
-
-              <input
-                value={editForm.name}
-                onChange={(e) =>
-                  setEditForm({
-                    ...editForm,
-                    name: e.target.value
-                  })
-                }
-                placeholder="Nome"
-                className="w-full rounded-xl border border-gray-200 bg-gray-50 p-3 text-gray-900 outline-none"
-              />
-
-              <textarea
-                value={editForm.description}
-                onChange={(e) =>
-                  setEditForm({
-                    ...editForm,
-                    description:
-                      e.target.value
-                  })
-                }
-                placeholder="Descrição"
-                className="w-full rounded-xl border border-gray-200 bg-gray-50 p-3 text-gray-900 outline-none"
-              />
-
-              <input
-                value={editForm.price}
-                onChange={(e) =>
-                  setEditForm({
-                    ...editForm,
-                    price: e.target.value
-                  })
-                }
-                placeholder="Preço"
-                className="w-full rounded-xl border border-gray-200 bg-gray-50 p-3 text-gray-900 outline-none"
-              />
-
-              <input
-                value={editForm.stock}
-                onChange={(e) =>
-                  setEditForm({
-                    ...editForm,
-                    stock: e.target.value
-                  })
-                }
-                placeholder="Estoque"
-                className="w-full rounded-xl border border-gray-200 bg-gray-50 p-3 text-gray-900 outline-none"
-              />
-
-              <input
-                value={editForm.image}
-                onChange={(e) =>
-                  setEditForm({
-                    ...editForm,
-                    image: e.target.value
-                  })
-                }
-                placeholder="Imagem URL"
-                className="w-full rounded-xl border border-gray-200 bg-gray-50 p-3 text-gray-900 outline-none"
-              />
-
-              <div className="flex gap-3">
-
-                <button
-                  onClick={handleSaveEdit}
-                  className="rounded-full bg-green-500 px-6 py-2.5 text-sm font-semibold text-white"
-                >
-                  Salvar
-                </button>
-
-                <button
-                  onClick={() =>
-                    setEditingProduct(null)
-                  }
-                  className="rounded-full bg-gray-200 px-6 py-2.5 text-sm font-semibold text-gray-700"
-                >
-                  Cancelar
-                </button>
-
+          <div className="mt-6 rounded-xl border p-4" style={{ borderColor: '#C4509B55', background: 'var(--c-card)' }}>
+            <p className="mb-3 text-sm font-black" style={{ color: '#C4509B' }}>Editar Produto</p>
+            <div className="flex flex-col gap-2">
+              {[
+                { key: 'name', placeholder: 'Nome' },
+                { key: 'description', placeholder: 'Descrição' },
+                { key: 'price', placeholder: 'Preço' },
+                { key: 'stock', placeholder: 'Estoque' },
+                { key: 'image', placeholder: 'Imagem URL' },
+              ].map(({ key, placeholder }) => (
+                <input
+                  key={key}
+                  value={(editForm as any)[key]}
+                  onChange={(e) => setEditForm({ ...editForm, [key]: e.target.value })}
+                  placeholder={placeholder}
+                  className="w-full rounded-lg border px-3 py-2 text-sm outline-none"
+                  style={{ borderColor: 'var(--c-border)', background: 'var(--c-raised)', color: 'var(--c-text)' }}
+                />
+              ))}
+              <div className="flex gap-2 pt-1">
+                <button onClick={handleSaveEdit} className="rounded-lg bg-green-500 px-4 py-2 text-xs font-bold text-white hover:bg-green-400">Salvar</button>
+                <button onClick={() => setEditingProduct(null)} className="rounded-lg px-4 py-2 text-xs font-bold transition" style={{ background: 'var(--c-raised)', color: 'var(--c-muted)' }}>Cancelar</button>
               </div>
-
             </div>
-
           </div>
-
         )}
 
-        {/* ── Produtos ── */}
-        <div className="mt-12">
-
-          <h2 className="text-2xl font-black text-gray-900">
-            Produtos
-          </h2>
-
-          <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-
-            {products.map((product) => (
-
-              <div
-                key={product.id}
-                className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm"
-              >
-
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="h-40 w-full rounded-xl object-cover"
-                />
-
-                <h3 className="mt-3 text-lg font-bold text-gray-900">
-                  {product.name}
-                </h3>
-
-                <p className="mt-1 text-sm text-gray-500 line-clamp-2">
-                  {product.description}
-                </p>
-
-                <div className="mt-3 flex items-center justify-between">
-
-                  <p className="text-base font-black text-pink-500">
-                    R$ {product.price.toFixed(2)}
-                  </p>
-
-                  <p className="text-xs text-gray-400">
-                    Estoque: {product.stock}
-                  </p>
-
-                </div>
-
-                <div className="mt-3 flex gap-2">
-
-                  <button
-                    onClick={() =>
-                      handleEditProduct(product)
-                    }
-                    className="w-full rounded-full bg-blue-500 px-3 py-2 text-sm font-semibold text-white transition hover:bg-blue-400"
-                  >
-                    Editar
-                  </button>
-
-                  <button
-                    onClick={() =>
-                      handleDeleteProduct(
-                        product.id
-                      )
-                    }
-                    className="w-full rounded-full bg-red-500 px-3 py-2 text-sm font-semibold text-white transition hover:bg-red-400"
-                  >
-                    Excluir
-                  </button>
-
-                </div>
-
-              </div>
-
-            ))}
-
-          </div>
-
-        </div>
-
-        {/* ── Pedidos Recentes ── */}
-        <div className="mt-14">
-
-          <h2 className="text-2xl font-black text-gray-900">
-            Pedidos Recentes
-          </h2>
-
-          <div className="mt-5 space-y-3">
-
-            {orders.map((order) => (
-
-              <div
-                key={order.id}
-                className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm"
-              >
-
-                <div className="flex flex-col gap-4">
-
-                  <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-
-                    <div>
-
-                      <p className="text-xs text-gray-500">
-                        Cliente
-                      </p>
-
-                      <h3 className="text-base font-bold text-gray-900">
-                        {order.user.name}
-                      </h3>
-
-                      <p className="mt-0.5 text-xs text-gray-400">
-                        {order.user.email}
-                      </p>
-
-                    </div>
-
-                    <div>
-
-                      <p className="text-xs text-gray-500">
-                        Status
-                      </p>
-
-                      <p className="mt-0.5 text-sm font-semibold text-pink-500">
-
-                        {order.status === 'PENDING' && 'Pendente'}
-
-                        {order.status === 'PAID' && 'Pago'}
-
-                        {order.status === 'SENT' && 'Enviado'}
-
-                        {order.status === 'DELIVERED' && 'Entregue'}
-
-                      </p>
-
-                    </div>
-
-                    <div>
-
-                      <p className="text-xs text-gray-500">
-                        Total
-                      </p>
-
-                      <p className="mt-0.5 text-base font-bold text-gray-900">
-                        R$ {order.total.toFixed(2)}
-                      </p>
-
-                    </div>
-
-                  </div>
-
-                  <div className="flex flex-wrap gap-2">
-
-                    <button
-                      onClick={() =>
-                        handleUpdateStatus(
-                          order.id,
-                          'PENDING'
-                        )
-                      }
-                      className="rounded-full bg-yellow-500 px-3 py-1.5 text-xs font-semibold text-white"
-                    >
-                      Pendente
-                    </button>
-
-                    <button
-                      onClick={() =>
-                        handleUpdateStatus(
-                          order.id,
-                          'PAID'
-                        )
-                      }
-                      className="rounded-full bg-green-500 px-3 py-1.5 text-xs font-semibold text-white"
-                    >
-                      Pago
-                    </button>
-
-                    <button
-                      onClick={() =>
-                        handleUpdateStatus(
-                          order.id,
-                          'SENT'
-                        )
-                      }
-                      className="rounded-full bg-blue-500 px-3 py-1.5 text-xs font-semibold text-white"
-                    >
-                      Enviado
-                    </button>
-
-                    <button
-                      onClick={() =>
-                        handleUpdateStatus(
-                          order.id,
-                          'DELIVERED'
-                        )
-                      }
-                      className="rounded-full bg-violet-500 px-3 py-1.5 text-xs font-semibold text-white"
-                    >
-                      Entregue
-                    </button>
-
-                  </div>
-
-                </div>
-
-              </div>
-
-            ))}
-
-          </div>
-
-        </div>
-
-        {/* ── Exportar CSV ── */}
-        <div className="mt-12 flex items-center justify-between">
-          <h2 className="text-2xl font-black text-gray-900">Relatórios</h2>
-          <button
-            onClick={handleExportCSV}
-            className="rounded-full bg-green-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-green-400"
-          >
-            Exportar pedidos CSV
-          </button>
-        </div>
-
-        {/* ── Categorias ── */}
-        <div className="mt-12">
-          <h2 className="text-2xl font-black text-gray-900">Categorias</h2>
-          <div className="mt-4 flex gap-3">
-            <input
-              value={newCategory}
-              onChange={(e) => setNewCategory(e.target.value)}
-              placeholder="Nome da categoria"
-              className="flex-1 rounded-full border border-gray-200 bg-gray-50 px-5 py-2.5 text-gray-900 outline-none placeholder:text-gray-400"
-            />
-            <button
-              onClick={handleCreateCategory}
-              className="rounded-full bg-pink-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-pink-400"
-            >
-              Criar
-            </button>
-          </div>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {categories.map((cat) => (
-              <div key={cat.id} className="flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-4 py-1.5">
-                <span className="text-sm text-gray-700">{cat.name}</span>
-                <button
-                  onClick={() => handleDeleteCategory(cat.id)}
-                  className="text-red-400 transition hover:text-red-500"
-                >
-                  ✕
-                </button>
-              </div>
-            ))}
-            {categories.length === 0 && (
-              <p className="text-sm text-gray-400">Nenhuma categoria cadastrada.</p>
-            )}
-          </div>
-        </div>
-
-        {/* ── Tags ── */}
-        <div className="mt-12">
-          <h2 className="text-2xl font-black text-gray-900">Tags</h2>
-          <div className="mt-4 flex gap-3">
-            <input
-              value={newTag}
-              onChange={(e) => setNewTag(e.target.value)}
-              placeholder="Nome da tag"
-              className="flex-1 rounded-full border border-gray-200 bg-gray-50 px-5 py-2.5 text-gray-900 outline-none placeholder:text-gray-400"
-            />
-            <button
-              onClick={handleCreateTag}
-              className="rounded-full bg-violet-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-violet-400"
-            >
-              Criar
-            </button>
-          </div>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {tags.map((tag) => (
-              <div key={tag.id} className="flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-4 py-1.5">
-                <span className="text-sm text-gray-700">{tag.name}</span>
-                <button
-                  onClick={() => handleDeleteTag(tag.id)}
-                  className="text-red-400 transition hover:text-red-500"
-                >
-                  ✕
-                </button>
-              </div>
-            ))}
-            {tags.length === 0 && (
-              <p className="text-sm text-gray-400">Nenhuma tag cadastrada.</p>
-            )}
-          </div>
-        </div>
-
-        {/* ── Banners do carrossel ── */}
-        <div className="mt-12 pb-16">
-          <h2 className="text-2xl font-black text-gray-900">Banners do Carrossel</h2>
-          <p className="mt-1 text-sm text-gray-500">
-            Gerencie os slides do hero banner. Adicione uma URL de imagem para exibir foto de divulgação em datas comemorativas.
+        {/* ── Lista de produtos ── */}
+        <div className="mt-6">
+          <p className="mb-3 text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--c-vdim)' }}>
+            Produtos cadastrados ({products.length})
           </p>
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+            {products.map((product) => (
+              <div key={product.id} className="rounded-xl border p-2.5" style={{ borderColor: 'var(--c-border)', background: 'var(--c-card)' }}>
+                <img src={product.image} alt={product.name} className="h-24 w-full rounded-lg object-cover" />
+                <p className="mt-2 truncate text-xs font-bold" style={{ color: 'var(--c-text)' }}>{product.name}</p>
+                <p className="text-xs font-black" style={{ color: '#C4509B' }}>R$ {product.price.toFixed(2).replace('.', ',')}</p>
+                <p className="text-[10px]" style={{ color: 'var(--c-vdim)' }}>Estoque: {product.stock}</p>
+                <div className="mt-2 flex gap-1.5">
+                  <button onClick={() => handleEditProduct(product)} className="flex-1 rounded-lg bg-blue-500 py-1 text-[10px] font-bold text-white hover:bg-blue-400">Editar</button>
+                  <button onClick={() => handleDeleteProduct(product.id)} className="flex-1 rounded-lg bg-red-500 py-1 text-[10px] font-bold text-white hover:bg-red-400">Excluir</button>
+                </div>
+              </div>
+            ))}
+          </div>
+          {products.length === 0 && (
+            <p className="text-center text-sm" style={{ color: 'var(--c-vdim)' }}>Nenhum produto cadastrado.</p>
+          )}
+        </div>
+      </div>
 
-          {/* Formulário */}
-          <div className="mt-5 rounded-2xl border border-violet-200 bg-white p-5 shadow-sm">
-            <h3 className="mb-4 font-bold text-violet-600">
-              {editingBanner ? 'Editar Banner' : 'Novo Banner'}
-            </h3>
-            <div className="space-y-3">
+      {/* ════════════════════════════════════════
+          Panel: Pedidos & Relatório
+      ════════════════════════════════════════ */}
+      {activePanel === 'orders' && (
+        <SlidePanel title="Pedidos & Relatório" onClose={() => setActivePanel(null)}>
+          <div className="flex flex-col gap-4">
+
+            {/* Export */}
+            <div className="flex items-center justify-between rounded-xl border p-3" style={{ borderColor: 'var(--c-border)', background: 'var(--c-raised)' }}>
               <div>
-                <label className="mb-1 block text-xs text-gray-500">Identificador (uso interno)</label>
+                <p className="text-xs font-bold" style={{ color: 'var(--c-text)' }}>Relatório de Pedidos</p>
+                <p className="text-[10px]" style={{ color: 'var(--c-vdim)' }}>Exportar todos os pedidos em CSV</p>
+              </div>
+              <button
+                onClick={handleExportCSV}
+                className="flex items-center gap-1.5 rounded-lg bg-green-500 px-3 py-2 text-xs font-bold text-white hover:bg-green-400"
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                CSV
+              </button>
+            </div>
+
+            {/* Orders list */}
+            <div className="flex flex-col gap-2">
+              {orders.length === 0 && (
+                <p className="text-center text-sm" style={{ color: 'var(--c-vdim)' }}>Nenhum pedido encontrado.</p>
+              )}
+              {orders.map((order) => {
+                const s = STATUS_COLOR[order.status] ?? { color: '#555', bg: '#f3f4f6' }
+                return (
+                  <div key={order.id} className="rounded-xl border p-3" style={{ borderColor: 'var(--c-border)', background: 'var(--c-card)' }}>
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <p className="text-xs font-black uppercase tracking-wide" style={{ color: '#7C3D8E' }}>
+                          #{order.id.slice(0, 8).toUpperCase()}
+                        </p>
+                        <p className="text-xs font-semibold" style={{ color: 'var(--c-text)' }}>{order.user?.name}</p>
+                        <p className="text-[10px]" style={{ color: 'var(--c-vdim)' }}>{order.user?.email}</p>
+                      </div>
+                      <div className="flex flex-col items-end gap-1">
+                        <span className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ color: s.color, background: s.bg }}>
+                          {STATUS_LABEL[order.status] ?? order.status}
+                        </span>
+                        <p className="text-xs font-black" style={{ color: '#C4509B' }}>
+                          R$ {order.total.toFixed(2).replace('.', ',')}
+                        </p>
+                      </div>
+                    </div>
+                    {/* Status buttons */}
+                    <div className="mt-2.5 flex flex-wrap gap-1.5">
+                      {[
+                        { key: 'PENDING', label: 'Pendente', color: 'bg-yellow-500' },
+                        { key: 'PAID',    label: 'Pago',     color: 'bg-green-500' },
+                        { key: 'SENT',    label: 'Enviado',  color: 'bg-blue-500' },
+                        { key: 'DELIVERED', label: 'Entregue', color: 'bg-violet-500' },
+                        { key: 'CANCELLED', label: 'Cancelar', color: 'bg-red-500' },
+                      ].map((btn) => (
+                        <button
+                          key={btn.key}
+                          onClick={() => handleUpdateStatus(order.id, btn.key)}
+                          className={`rounded-lg px-2.5 py-1 text-[10px] font-bold text-white transition hover:opacity-80 ${btn.color} ${order.status === btn.key ? 'ring-2 ring-offset-1 ring-current' : ''}`}
+                        >
+                          {btn.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </SlidePanel>
+      )}
+
+      {/* ════════════════════════════════════════
+          Panel: Banners do Carrossel
+      ════════════════════════════════════════ */}
+      {activePanel === 'banners' && (
+        <SlidePanel title="Banners do Carrossel" onClose={() => setActivePanel(null)}>
+          <div className="flex flex-col gap-4">
+
+            {/* Form */}
+            <div className="rounded-xl border p-3" style={{ borderColor: 'var(--c-border)', background: 'var(--c-card)' }}>
+              <p className="mb-3 text-xs font-black uppercase tracking-wide" style={{ color: '#7C3D8E' }}>
+                {editingBanner ? 'Editar Banner' : 'Novo Banner'}
+              </p>
+              <div className="flex flex-col gap-2">
                 <input
                   value={bannerForm.label}
                   onChange={(e) => setBannerForm({ ...bannerForm, label: e.target.value })}
-                  placeholder="Ex: Dia dos Namorados, Promoção Maio..."
-                  className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 outline-none placeholder:text-gray-400"
+                  placeholder="Identificador (ex: Dia das Mães)"
+                  className="w-full rounded-lg border px-3 py-2 text-sm outline-none"
+                  style={{ borderColor: 'var(--c-border)', background: 'var(--c-raised)', color: 'var(--c-text)' }}
                 />
-              </div>
 
-              <div>
-                <label className="mb-2 block text-xs text-gray-500">Imagem do banner</label>
-                <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-violet-300 bg-violet-50 py-5 transition hover:bg-violet-100">
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#7C3D8E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
-                    <polyline points="21 15 16 10 5 21"/>
+                {/* Upload */}
+                <label className="flex cursor-pointer flex-col items-center justify-center gap-1.5 rounded-xl border-2 border-dashed py-4 transition hover:opacity-80" style={{ borderColor: '#7C3D8E55', background: 'var(--c-raised)' }}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7C3D8E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
                   </svg>
-                  <span className="text-sm font-bold text-[#7C3D8E]">
-                    {bannerUploading ? 'Enviando...' : 'Selecionar imagem da galeria'}
+                  <span className="text-xs font-bold" style={{ color: '#7C3D8E' }}>
+                    {bannerUploading ? 'Enviando...' : 'Selecionar imagem'}
                   </span>
-                  <span className="text-xs text-gray-400">JPG, PNG ou WebP</span>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={handleBannerImageSelect}
-                  />
+                  <input type="file" accept="image/*" className="hidden" onChange={handleBannerImageSelect} />
                 </label>
 
-                {/* Preview */}
                 {(bannerImagePreview || bannerForm.imageUrl) && (
-                  <div className="mt-3">
-                    <p className="mb-1 text-xs text-gray-400">Pré-visualização:</p>
-                    <img
-                      src={bannerImagePreview || bannerForm.imageUrl}
-                      alt="preview"
-                      className="h-32 w-full rounded-xl object-cover"
+                  <img src={bannerImagePreview || bannerForm.imageUrl} alt="preview" className="h-28 w-full rounded-lg object-cover" />
+                )}
+
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <label className="text-[10px]" style={{ color: 'var(--c-vdim)' }}>Posição</label>
+                    <input
+                      type="number"
+                      value={bannerForm.position}
+                      onChange={(e) => setBannerForm({ ...bannerForm, position: Number(e.target.value) })}
+                      className="w-14 rounded-lg border px-2 py-1 text-sm outline-none"
+                      style={{ borderColor: 'var(--c-border)', background: 'var(--c-raised)', color: 'var(--c-text)' }}
                     />
                   </div>
-                )}
-              </div>
-
-              <div className="flex flex-wrap items-center gap-4">
-                <div className="flex items-center gap-2">
-                  <label className="text-xs text-gray-500">Posição</label>
-                  <input
-                    type="number"
-                    value={bannerForm.position}
-                    onChange={(e) => setBannerForm({ ...bannerForm, position: Number(e.target.value) })}
-                    className="w-16 rounded-lg border border-gray-200 bg-gray-50 px-2 py-1.5 text-sm text-gray-900 outline-none"
-                  />
+                  <label className="flex items-center gap-1.5 text-xs" style={{ color: 'var(--c-muted)' }}>
+                    <input
+                      type="checkbox"
+                      checked={bannerForm.active}
+                      onChange={(e) => setBannerForm({ ...bannerForm, active: e.target.checked })}
+                      className="h-3.5 w-3.5"
+                    />
+                    Ativo
+                  </label>
                 </div>
-                <label className="flex items-center gap-2 text-sm text-gray-600">
-                  <input
-                    type="checkbox"
-                    checked={bannerForm.active}
-                    onChange={(e) => setBannerForm({ ...bannerForm, active: e.target.checked })}
-                    className="h-4 w-4 rounded"
-                  />
-                  Ativo (visível na loja)
-                </label>
+
+                <div className="flex gap-2 pt-1">
+                  <button onClick={handleSaveBanner} className="rounded-lg px-4 py-2 text-xs font-bold text-white" style={{ background: 'linear-gradient(135deg, #7C3D8E, #C4509B)' }}>
+                    {editingBanner ? 'Salvar' : 'Adicionar'}
+                  </button>
+                  {editingBanner && (
+                    <button
+                      onClick={() => { setEditingBanner(null); setBannerForm({ label: '', imageUrl: '', position: 0, active: true }); setBannerImagePreview('') }}
+                      className="rounded-lg px-4 py-2 text-xs font-bold"
+                      style={{ background: 'var(--c-raised)', color: 'var(--c-muted)' }}
+                    >
+                      Cancelar
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
 
-            <div className="mt-4 flex gap-3">
-              <button
-                onClick={handleSaveBanner}
-                className="rounded-full bg-violet-500 px-5 py-2 text-sm font-semibold text-white transition hover:bg-violet-400"
-              >
-                {editingBanner ? 'Salvar alterações' : 'Adicionar banner'}
-              </button>
-              {editingBanner && (
-                <button
-                  onClick={() => {
-                    setEditingBanner(null)
-                    setBannerForm({ label: '', imageUrl: '', position: 0, active: true })
-                    setBannerImagePreview('')
-                  }}
-                  className="rounded-full bg-gray-200 px-5 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-300"
-                >
-                  Cancelar
-                </button>
+            {/* Banner list */}
+            <div className="flex flex-col gap-2">
+              {banners.length === 0 && (
+                <p className="text-center text-sm" style={{ color: 'var(--c-vdim)' }}>Nenhum banner cadastrado.</p>
               )}
+              {banners.map((banner) => (
+                <div key={banner.id} className="flex items-center gap-3 rounded-xl border p-2.5" style={{ borderColor: 'var(--c-border)', background: 'var(--c-card)' }}>
+                  {banner.imageUrl ? (
+                    <img src={banner.imageUrl} alt={banner.label} className="h-12 w-16 flex-none rounded-lg object-cover" />
+                  ) : (
+                    <div className="h-12 w-16 flex-none rounded-lg" style={{ background: 'var(--c-raised)' }} />
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-xs font-bold" style={{ color: 'var(--c-text)' }}>{banner.label}</p>
+                    <p className="text-[10px]" style={{ color: 'var(--c-vdim)' }}>
+                      Pos. {banner.position} · {banner.active
+                        ? <span style={{ color: '#16a34a' }}>Ativo</span>
+                        : <span style={{ color: '#dc2626' }}>Inativo</span>}
+                    </p>
+                  </div>
+                  <div className="flex gap-1.5">
+                    <button onClick={() => handleEditBanner(banner)} className="rounded-lg bg-blue-500 px-2.5 py-1 text-[10px] font-bold text-white hover:bg-blue-400">Editar</button>
+                    <button onClick={() => handleDeleteBanner(banner.id)} className="rounded-lg bg-red-500 px-2.5 py-1 text-[10px] font-bold text-white hover:bg-red-400">Excluir</button>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
+        </SlidePanel>
+      )}
+    </div>
+  )
+}
 
-          {/* Lista de banners */}
-          <div className="mt-4 space-y-3">
-            {banners.map((banner) => (
-              <div key={banner.id} className="flex items-center gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
-                {banner.imageUrl ? (
-                  <img src={banner.imageUrl} alt={banner.label} className="h-14 w-20 flex-none rounded-xl object-cover" />
-                ) : (
-                  <div
-                    className="h-14 w-20 flex-none rounded-xl"
-                    style={{ background: `linear-gradient(135deg, ${banner.color}33, ${banner.color}66)`, border: `1px solid ${banner.color}44` }}
-                  />
-                )}
-                <div className="min-w-0 flex-1">
-                  <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: banner.color }}>{banner.label}</p>
-                  <p className="truncate text-sm font-bold text-gray-900">{banner.title}</p>
-                  <p className="text-xs text-gray-400">
-                    Pos. {banner.position} · {banner.active ? <span className="text-green-600">Ativo</span> : <span className="text-red-500">Inativo</span>}
-                  </p>
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => handleEditBanner(banner)}
-                    className="rounded-full bg-blue-500 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-blue-400"
-                  >
-                    Editar
-                  </button>
-                  <button
-                    onClick={() => handleDeleteBanner(banner.id)}
-                    className="rounded-full bg-red-500 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-red-400"
-                  >
-                    Excluir
-                  </button>
-                </div>
-              </div>
-            ))}
-            {banners.length === 0 && (
-              <p className="text-sm text-gray-400">Nenhum banner cadastrado. Os slides padrão serão exibidos na loja.</p>
-            )}
-          </div>
+/* ── Subcomponents ── */
+
+function StatCard({ label, value, accent, labelColor }: { label: string; value: string; accent: string; labelColor: string }) {
+  return (
+    <div className="rounded-xl border p-3 sm:p-4" style={{ borderColor: 'var(--c-border)', background: accent }}>
+      <p className="text-[10px] font-bold uppercase tracking-wide" style={{ color: labelColor }}>{label}</p>
+      <p className="mt-1 text-base font-black sm:text-xl" style={{ color: 'var(--c-text)' }}>{value}</p>
+    </div>
+  )
+}
+
+function SlidePanel({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
+  return (
+    <>
+      {/* Backdrop */}
+      <div className="fixed inset-0 z-40" style={{ background: 'rgba(0,0,0,0.4)' }} onClick={onClose} />
+
+      {/* Panel */}
+      <div
+        className="fixed inset-y-0 right-0 z-50 flex w-full max-w-sm flex-col overflow-hidden shadow-2xl sm:max-w-md"
+        style={{ background: 'var(--c-bg)' }}
+      >
+        {/* Panel header */}
+        <div className="flex items-center justify-between border-b px-4 py-3" style={{ borderColor: 'var(--c-border)', background: 'var(--c-raised)' }}>
+          <p className="text-sm font-black" style={{ color: 'var(--c-text)' }}>{title}</p>
+          <button
+            onClick={onClose}
+            className="flex h-8 w-8 items-center justify-center rounded-lg transition hover:opacity-70"
+            style={{ background: 'var(--c-glass)', color: 'var(--c-text)' }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
         </div>
 
+        {/* Panel body */}
+        <div className="flex-1 overflow-y-auto p-4">
+          {children}
+        </div>
       </div>
-
-    </div>
-
+    </>
   )
 }

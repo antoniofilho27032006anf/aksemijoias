@@ -28,7 +28,7 @@ const refreshSchema = z.object({
 const updateUserSchema = z.object({
   name: z.string().min(3),
   email: z.string().email(),
-  avatarUrl: z.string().url().optional()
+  avatarUrl: z.string().optional()
 })
 
 const passwordSchema = z.object({
