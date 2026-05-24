@@ -8,6 +8,7 @@ import { ProductCard } from '../src/components/ProductCard'
 import { CartSidebar } from '../src/components/CartSidebar'
 import { HeroBanner } from '../src/components/HeroBanner'
 import { ProductSkeleton } from '../src/components/ProductSkeleton'
+import { CategoryCarousel } from '../src/components/CategoryCarousel'
 
 interface Product {
   id: string
@@ -84,6 +85,9 @@ export default function Home() {
 
       {/* Hero banner */}
       <HeroBanner />
+
+      {/* Category carousel */}
+      <CategoryCarousel />
 
       {/* Installment strip */}
       <div className="border-b border-gray-100 py-5">

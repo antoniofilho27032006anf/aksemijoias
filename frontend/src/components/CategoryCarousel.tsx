@@ -1,101 +1,66 @@
 'use client'
 
 import { useRef, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { CATEGORIES } from '../data/categories'
 
-interface Category {
-  name: string
-  slug: string
-  description: string
-  icon: React.ReactNode
+const CATEGORY_ICONS: Record<string, React.ReactNode> = {
+  'Brincos': (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="5" r="2"/>
+      <path d="M12 7 L10.5 13 Q9.5 18 12 19.5 Q14.5 18 13.5 13 Z"/>
+    </svg>
+  ),
+  'Argolas': (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <ellipse cx="12" cy="12" rx="7" ry="8"/>
+      <ellipse cx="12" cy="12" rx="3.5" ry="4.5"/>
+    </svg>
+  ),
+  'Anéis': (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="7"/>
+      <circle cx="12" cy="12" r="3"/>
+    </svg>
+  ),
+  'Correntes': (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+    </svg>
+  ),
+  'Pulseiras': (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="6"/>
+      <circle cx="12" cy="6" r="1.5" fill="currentColor" stroke="none"/>
+      <circle cx="18" cy="12" r="1.5" fill="currentColor" stroke="none"/>
+      <circle cx="12" cy="18" r="1.5" fill="currentColor" stroke="none"/>
+      <circle cx="6" cy="12" r="1.5" fill="currentColor" stroke="none"/>
+    </svg>
+  ),
+  'Alianças': (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="9" cy="12" r="5"/>
+      <circle cx="15" cy="12" r="5"/>
+    </svg>
+  ),
+  'Kits Brincos': (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="10" width="18" height="11" rx="1.5"/>
+      <rect x="3" y="7" width="18" height="3" rx="1"/>
+      <line x1="12" y1="7" x2="12" y2="21"/>
+      <path d="M12 7 C11 5.5 8.5 5 8.5 7"/>
+      <path d="M12 7 C13 5.5 15.5 5 15.5 7"/>
+    </svg>
+  ),
 }
 
-const categories: Category[] = [
-  {
-    name: 'Anéis',
-    slug: 'aneis',
-    description: 'Delicados e únicos',
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="12" r="7"/>
-        <circle cx="12" cy="12" r="3.5"/>
-      </svg>
-    ),
-  },
-  {
-    name: 'Colares',
-    slug: 'colares',
-    description: 'Elegância ao colo',
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M5 5 Q12 9 19 5"/>
-        <path d="M8.5 8 Q10 14 12 15 Q14 14 15.5 8"/>
-        <circle cx="12" cy="17" r="2"/>
-      </svg>
-    ),
-  },
-  {
-    name: 'Relógios',
-    slug: 'relogios',
-    description: 'Estilo no pulso',
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="12" r="7"/>
-        <polyline points="12 8 12 12 15 13"/>
-        <rect x="9" y="2" width="6" height="2.5" rx="1"/>
-        <rect x="9" y="19.5" width="6" height="2.5" rx="1"/>
-      </svg>
-    ),
-  },
-  {
-    name: 'Pulseiras',
-    slug: 'pulseiras',
-    description: 'Brilho no pulso',
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="12" r="6"/>
-        <circle cx="12" cy="6" r="1.5" fill="currentColor" stroke="none"/>
-        <circle cx="18" cy="12" r="1.5" fill="currentColor" stroke="none"/>
-        <circle cx="12" cy="18" r="1.5" fill="currentColor" stroke="none"/>
-        <circle cx="6" cy="12" r="1.5" fill="currentColor" stroke="none"/>
-      </svg>
-    ),
-  },
-  {
-    name: 'Perfumes',
-    slug: 'perfumes',
-    description: 'Fragrâncias únicas',
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="7" y="9" width="10" height="12" rx="2"/>
-        <rect x="9" y="6" width="6" height="3" rx="1"/>
-        <line x1="12" y1="3" x2="12" y2="6"/>
-        <line x1="10.5" y1="4.5" x2="13.5" y2="4.5"/>
-        <line x1="12" y1="13" x2="12" y2="16"/>
-        <line x1="10.5" y1="14.5" x2="13.5" y2="14.5"/>
-      </svg>
-    ),
-  },
-  {
-    name: 'Kits',
-    slug: 'kits',
-    description: 'Presentes especiais',
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="3" y="10" width="18" height="11" rx="1.5"/>
-        <rect x="3" y="7" width="18" height="3" rx="1"/>
-        <line x1="12" y1="7" x2="12" y2="21"/>
-        <path d="M12 7 C11 5.5 8.5 5 8.5 7"/>
-        <path d="M12 7 C13 5.5 15.5 5 15.5 7"/>
-      </svg>
-    ),
-  },
-]
-
 interface Props {
-  onCategorySelect?: (slug: string) => void
+  onCategorySelect?: (name: string) => void
 }
 
 export function CategoryCarousel({ onCategorySelect }: Props) {
+  const router = useRouter()
   const scrollRef = useRef<HTMLDivElement>(null)
   const [canScrollLeft, setCanScrollLeft] = useState(false)
   const [canScrollRight, setCanScrollRight] = useState(true)
@@ -103,7 +68,7 @@ export function CategoryCarousel({ onCategorySelect }: Props) {
   function scroll(dir: 'left' | 'right') {
     const el = scrollRef.current
     if (!el) return
-    el.scrollBy({ left: dir === 'left' ? -220 : 220, behavior: 'smooth' })
+    el.scrollBy({ left: dir === 'left' ? -170 : 170, behavior: 'smooth' })
   }
 
   function updateScrollState() {
@@ -113,67 +78,100 @@ export function CategoryCarousel({ onCategorySelect }: Props) {
     setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 4)
   }
 
+  function navigate(name: string) {
+    if (onCategorySelect) {
+      onCategorySelect(name)
+    } else {
+      router.push(`/search?term=${encodeURIComponent(name)}&sort=bestseller`)
+    }
+  }
+
   return (
-    <section className="mt-12 sm:mt-16">
-      <div className="mb-6 flex items-end justify-between">
-        <div>
-          <p className="text-[10px] uppercase tracking-[0.35em] text-[#7c3aed]">Navegue</p>
-          <h2 className="mt-1 text-2xl font-black sm:text-3xl" style={{ color: 'var(--c-text)' }}>
-            Explore por categoria
-          </h2>
+    <section className="mt-6 px-3 sm:px-5">
+
+      {/* Header */}
+      <div className="mb-3 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className="h-3.5 w-0.5 rounded-full" style={{ backgroundColor: '#7C3D8E' }} />
+          <span className="text-[10px] font-black uppercase tracking-[0.3em]" style={{ color: '#7C3D8E' }}>
+            Categorias
+          </span>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-1">
           <button
             onClick={() => scroll('left')}
             disabled={!canScrollLeft}
-            className="flex h-9 w-9 items-center justify-center rounded-xl border transition disabled:opacity-30"
-            style={{ borderColor: 'var(--c-border)', backgroundColor: 'var(--c-glass)', color: 'var(--c-muted)' }}
+            className="flex h-6 w-6 items-center justify-center rounded-md border transition disabled:opacity-30"
+            style={{ borderColor: '#d4b8e8', backgroundColor: '#faf5ff', color: '#7C3D8E' }}
             aria-label="Anterior"
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M15 18l-6-6 6-6"/>
             </svg>
           </button>
           <button
             onClick={() => scroll('right')}
             disabled={!canScrollRight}
-            className="flex h-9 w-9 items-center justify-center rounded-xl border transition disabled:opacity-30"
-            style={{ borderColor: 'var(--c-border)', backgroundColor: 'var(--c-glass)', color: 'var(--c-muted)' }}
+            className="flex h-6 w-6 items-center justify-center rounded-md border transition disabled:opacity-30"
+            style={{ borderColor: '#d4b8e8', backgroundColor: '#faf5ff', color: '#7C3D8E' }}
             aria-label="Próximo"
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M9 18l6-6-6-6"/>
             </svg>
           </button>
         </div>
       </div>
 
+      {/* Cards */}
       <div
         ref={scrollRef}
         onScroll={updateScrollState}
-        className="flex gap-4 overflow-x-auto pb-2"
+        className="flex gap-2.5 overflow-x-auto pb-1"
         style={{ scrollSnapType: 'x mandatory', scrollbarWidth: 'none' } as React.CSSProperties}
       >
-        {categories.map((cat) => (
+        {CATEGORIES.map((cat) => (
           <button
-            key={cat.slug}
-            onClick={() => onCategorySelect?.(cat.slug)}
-            className="group flex-none rounded-2xl border p-5 text-center transition hover:scale-[1.03] active:scale-95"
+            key={cat.name}
+            onClick={() => navigate(cat.name)}
+            className="group flex-none flex flex-col items-center justify-center rounded-xl border text-center transition-all duration-150 active:scale-95"
             style={{
-              width: '152px',
+              width: '76px',
+              height: '76px',
               scrollSnapAlign: 'start',
-              borderColor: 'var(--c-border)',
-              backgroundColor: 'var(--c-glass)',
-            } as React.CSSProperties}
+              borderColor: '#e8d5f5',
+              backgroundColor: '#faf5ff',
+              boxShadow: '0 1px 4px rgba(124,61,142,0.06)',
+            }}
+            onMouseEnter={(e) => {
+              const el = e.currentTarget
+              el.style.background = 'linear-gradient(145deg, #7C3D8E18, #C4509B12)'
+              el.style.borderColor = '#C4509B'
+              el.style.boxShadow = '0 4px 12px rgba(196,80,155,0.18)'
+            }}
+            onMouseLeave={(e) => {
+              const el = e.currentTarget
+              el.style.background = '#faf5ff'
+              el.style.borderColor = '#e8d5f5'
+              el.style.boxShadow = '0 1px 4px rgba(124,61,142,0.06)'
+            }}
           >
             <div
-              className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl transition group-hover:scale-110"
-              style={{ backgroundColor: 'rgba(124, 58, 237, 0.10)', color: '#7c3aed' }}
+              className="mb-1.5 flex h-9 w-9 items-center justify-center rounded-lg transition-transform duration-150 group-hover:scale-110"
+              style={{ backgroundColor: 'rgba(124,61,142,0.10)', color: '#7C3D8E' }}
             >
-              {cat.icon}
+              {CATEGORY_ICONS[cat.name] ?? (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                  <circle cx="12" cy="12" r="7"/>
+                </svg>
+              )}
             </div>
-            <p className="font-bold text-sm" style={{ color: 'var(--c-text)' }}>{cat.name}</p>
-            <p className="mt-1 text-[11px]" style={{ color: 'var(--c-dim)' }}>{cat.description}</p>
+            <p
+              className="text-[9px] font-bold leading-tight px-1"
+              style={{ color: '#5B2170' }}
+            >
+              {cat.name}
+            </p>
           </button>
         ))}
       </div>
