@@ -8,7 +8,7 @@ export function Footer() {
 
         {/* Brand */}
         <div className="max-w-xs space-y-4">
-          <span className="text-2xl font-black tracking-tight text-white drop-shadow-sm">
+          <span className="text-2xl font-black tracking-tight text-[#7C3D8E]">
             AK Semij&oacute;ias &amp; Tals
           </span>
           <p className="text-sm leading-relaxed text-gray-700">

@@ -59,6 +59,8 @@ export default function AdminPage() {
   const [banners, setBanners] = useState<any[]>([])
   const [bannerForm, setBannerForm] = useState({ label: '', imageUrl: '', position: 0, active: true })
   const [editingBanner, setEditingBanner] = useState<any | null>(null)
+  const [bannerImagePreview, setBannerImagePreview] = useState('')
+  const [bannerUploading, setBannerUploading] = useState(false)
 
   useEffect(() => {
 
@@ -331,6 +333,24 @@ export default function AdminPage() {
     }
   }
 
+  async function handleBannerImageSelect(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setBannerImagePreview(URL.createObjectURL(file))
+    setBannerUploading(true)
+    try {
+      const formData = new FormData()
+      formData.append('image', file)
+      const r = await api.post('/upload', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+      setBannerForm((prev) => ({ ...prev, imageUrl: r.data.url }))
+      toast.success('Imagem enviada')
+    } catch {
+      toast.error('Erro ao enviar imagem')
+    } finally {
+      setBannerUploading(false)
+    }
+  }
+
   async function handleSaveBanner() {
     const payload = {
       label:    bannerForm.label || 'Banner',
@@ -350,6 +370,7 @@ export default function AdminPage() {
       }
       setEditingBanner(null)
       setBannerForm({ label: '', imageUrl: '', position: 0, active: true })
+      setBannerImagePreview('')
     } catch {
       toast.error('Erro ao salvar banner')
     }
@@ -357,6 +378,7 @@ export default function AdminPage() {
 
   function handleEditBanner(banner: any) {
     setEditingBanner(banner)
+    setBannerImagePreview('')
     setBannerForm({
       label:    banner.label,
       imageUrl: banner.imageUrl ?? '',
@@ -913,27 +935,36 @@ export default function AdminPage() {
               </div>
 
               <div>
-                <label className="mb-1 block text-xs text-gray-500">URL da imagem do banner</label>
-                <input
-                  value={bannerForm.imageUrl}
-                  onChange={(e) => setBannerForm({ ...bannerForm, imageUrl: e.target.value })}
-                  placeholder="https://... (cole o link da imagem)"
-                  className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 outline-none placeholder:text-gray-400"
-                />
-              </div>
-
-              {/* Preview */}
-              {bannerForm.imageUrl && (
-                <div>
-                  <p className="mb-1 text-xs text-gray-400">Pré-visualização:</p>
-                  <img
-                    src={bannerForm.imageUrl}
-                    alt="preview"
-                    className="h-32 w-full rounded-xl object-cover"
-                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+                <label className="mb-2 block text-xs text-gray-500">Imagem do banner</label>
+                <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-violet-300 bg-violet-50 py-5 transition hover:bg-violet-100">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#7C3D8E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+                    <polyline points="21 15 16 10 5 21"/>
+                  </svg>
+                  <span className="text-sm font-bold text-[#7C3D8E]">
+                    {bannerUploading ? 'Enviando...' : 'Selecionar imagem da galeria'}
+                  </span>
+                  <span className="text-xs text-gray-400">JPG, PNG ou WebP</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleBannerImageSelect}
                   />
-                </div>
-              )}
+                </label>
+
+                {/* Preview */}
+                {(bannerImagePreview || bannerForm.imageUrl) && (
+                  <div className="mt-3">
+                    <p className="mb-1 text-xs text-gray-400">Pré-visualização:</p>
+                    <img
+                      src={bannerImagePreview || bannerForm.imageUrl}
+                      alt="preview"
+                      className="h-32 w-full rounded-xl object-cover"
+                    />
+                  </div>
+                )}
+              </div>
 
               <div className="flex flex-wrap items-center gap-4">
                 <div className="flex items-center gap-2">
@@ -969,6 +1000,7 @@ export default function AdminPage() {
                   onClick={() => {
                     setEditingBanner(null)
                     setBannerForm({ label: '', imageUrl: '', position: 0, active: true })
+                    setBannerImagePreview('')
                   }}
                   className="rounded-full bg-gray-200 px-5 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-300"
                 >
