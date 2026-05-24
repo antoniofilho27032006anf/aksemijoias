@@ -30,10 +30,6 @@ interface Product {
   category?: { name: string }
 }
 
-function getPopularityScore(id: string) {
-  return id.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0) % 100
-}
-
 export default function ProductPage() {
   const params = useParams()
   const productId = params?.id as string
@@ -44,6 +40,7 @@ export default function ProductPage() {
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedVariations, setSelectedVariations] = useState<Record<string, string>>({})
+  const [added, setAdded] = useState(false)
 
   useEffect(() => {
     async function loadProduct() {
@@ -51,7 +48,7 @@ export default function ProductPage() {
       try {
         const [productRes, relatedRes] = await Promise.all([
           api.get(`/products/${productId}`),
-          api.get('/products?limit=4')
+          api.get('/products?limit=4'),
         ])
         setProduct(productRes.data)
         setRelatedProducts(
@@ -74,143 +71,258 @@ export default function ProductPage() {
     return acc
   }, {}) ?? {}
 
+  function handleAddToCart() {
+    if (!product) return
+    addToCart({ id: product.id, name: product.name, price: product.price, image: product.image })
+    setAdded(true)
+    setTimeout(() => setAdded(false), 2000)
+  }
+
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(255,182,193,0.24),transparent_18%),radial-gradient(circle_at_bottom_right,_rgba(155,92,255,0.16),transparent_24%),linear-gradient(180deg,#ffffff_0%,#f7efff_100%)] text-slate-900">
+    <div className="min-h-screen" style={{ background: 'var(--c-bg)' }}>
       <Navbar />
 
-      <main className="mx-auto max-w-[1320px] px-6 pb-28 sm:px-10">
-        {loading ? (
-          <div className="mt-12 rounded-[2rem] border border-white/10 bg-white/5 p-10 shadow-[0_40px_120px_rgba(145,92,255,0.12)] animate-pulse">
-            <div className="h-8 w-1/3 rounded-full bg-slate-300/60" />
-            <div className="mt-8 grid gap-6 lg:grid-cols-[1.1fr,_0.9fr]">
-              <div className="h-[420px] rounded-[2rem] bg-slate-300/40" />
-              <div className="space-y-4">
-                <div className="h-8 w-2/3 rounded-full bg-slate-300/40" />
-                <div className="h-6 w-full rounded-full bg-slate-300/40" />
-                <div className="h-6 w-5/6 rounded-full bg-slate-300/40" />
-                <div className="h-14 w-full rounded-full bg-slate-300/40" />
-              </div>
+      <main className="mx-auto max-w-lg px-3 pb-20 pt-4 sm:px-5 lg:max-w-5xl">
+
+        {/* Breadcrumb */}
+        <div className="mb-4 flex items-center gap-1.5 text-[11px]" style={{ color: 'var(--c-vdim)' }}>
+          <Link href="/" className="transition hover:underline" style={{ color: 'var(--c-dim)' }}>Loja</Link>
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M9 18l6-6-6-6"/>
+          </svg>
+          <span className="truncate max-w-[180px]">{loading ? '...' : (product?.name ?? 'Produto')}</span>
+        </div>
+
+        {/* Loading skeleton */}
+        {loading && (
+          <div className="flex flex-col gap-3 lg:flex-row lg:gap-6">
+            <div className="skeleton h-72 w-full rounded-xl lg:h-96 lg:w-80 lg:flex-none" />
+            <div className="flex flex-1 flex-col gap-3">
+              <div className="skeleton h-4 w-1/3 rounded-lg" />
+              <div className="skeleton h-6 w-3/4 rounded-lg" />
+              <div className="skeleton h-5 w-full rounded-lg" />
+              <div className="skeleton h-5 w-5/6 rounded-lg" />
+              <div className="skeleton h-10 w-1/3 rounded-xl" />
+              <div className="skeleton h-11 w-full rounded-xl" />
             </div>
           </div>
-        ) : !product ? (
-          <div className="mt-12 rounded-[2rem] border border-dashed border-pink-300/40 bg-white/80 p-12 text-center text-slate-600 shadow-[0_40px_120px_rgba(145,92,255,0.08)]">
-            <p className="text-2xl font-semibold text-slate-900">Não encontramos essa peça</p>
-            <p className="mt-3 text-sm leading-7">O produto pode ter sido removido ou o link está incorreto.</p>
+        )}
+
+        {/* Not found */}
+        {!loading && !product && (
+          <div
+            className="flex flex-col items-center gap-4 rounded-xl border px-6 py-14 text-center"
+            style={{ borderColor: 'var(--c-border)', background: 'var(--c-raised)' }}
+          >
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#C4509B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <p className="text-sm font-bold" style={{ color: 'var(--c-text)' }}>Produto não encontrado</p>
+            <p className="text-xs" style={{ color: 'var(--c-vdim)' }}>O produto pode ter sido removido ou o link está incorreto.</p>
             <Link
               href="/"
-              className="mt-8 inline-flex rounded-full bg-gradient-to-r from-pink-500 via-fuchsia-500 to-violet-500 px-8 py-4 text-sm font-semibold text-white transition hover:opacity-95"
+              className="rounded-xl px-5 py-2.5 text-sm font-bold text-white"
+              style={{ background: 'linear-gradient(135deg, #7C3D8E, #C4509B)' }}
             >
               Voltar à loja
             </Link>
           </div>
-        ) : (
-          <section className="mt-12 grid gap-10 lg:grid-cols-[1.1fr,_0.9fr]">
-            <div className="rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-[0_40px_120px_rgba(145,92,255,0.12)]">
-              <img src={product.image} alt={product.name} className="h-[520px] w-full rounded-[2rem] object-cover" />
-              <div className="mt-8 grid gap-3">
-                <span className="inline-flex rounded-full bg-pink-500/10 px-4 py-2 text-xs uppercase tracking-[0.3em] text-pink-300">
-                  Produto premium
-                </span>
-                <h1 className="text-4xl font-black text-slate-900">{product.name}</h1>
-                <p className="max-w-2xl text-sm leading-7 text-slate-600">{product.description}</p>
-                <div className="mt-6 flex flex-wrap items-center gap-4">
-                  <span className="text-4xl font-bold text-pink-500">R$ {product.price.toFixed(2)}</span>
-                  <span className={`rounded-full px-3 py-1 text-xs font-semibold uppercase ${product.stock > 0 ? 'bg-emerald-500/10 text-emerald-200' : 'bg-rose-500/10 text-rose-200'}`}>
-                    {product.stock > 0 ? 'Em estoque' : 'Esgotado'}
-                  </span>
-                </div>
-                {Object.entries(variationGroups).map(([groupName, options]) => (
-                  <div key={groupName} className="mt-6">
-                    <p className="text-sm font-semibold text-slate-700">{groupName}</p>
-                    <div className="mt-2 flex flex-wrap gap-2">
-                      {options.map((v) => (
-                        <button
-                          key={v.id}
-                          onClick={() => setSelectedVariations((prev) => ({ ...prev, [groupName]: v.value }))}
-                          disabled={v.stock === 0}
-                          className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${selectedVariations[groupName] === v.value ? 'border-pink-500 bg-pink-50 text-pink-700' : 'border-slate-200 bg-white text-slate-700 hover:border-pink-300'} disabled:cursor-not-allowed disabled:opacity-40`}
-                        >
-                          {v.value}
-                          {v.price ? ` (+R$ ${v.price.toFixed(2)})` : ''}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-
-                <div className="mt-8 flex flex-wrap gap-4">
-                  <button
-                    onClick={() => addToCart({ id: product.id, name: product.name, price: product.price, image: product.image })}
-                    className="rounded-full bg-gradient-to-r from-pink-500 via-fuchsia-500 to-violet-500 px-6 py-4 text-sm font-semibold text-white transition hover:opacity-95"
-                  >
-                    Adicionar ao carrinho
-                  </button>
-                  <button
-                    onClick={() => {
-                      if (isFavorite(product.id)) {
-                        removeFavorite(product.id)
-                      } else {
-                        addFavorite({ id: product.id, name: product.name, image: product.image, price: product.price })
-                      }
-                    }}
-                    className="rounded-full border border-white/10 bg-white/5 px-6 py-4 text-sm font-semibold text-slate-900 transition hover:bg-white/10"
-                  >
-                    {isFavorite(product.id) ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-8">
-              <div className="rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-[0_40px_120px_rgba(145,92,255,0.12)]">
-                <h2 className="text-2xl font-bold text-slate-900">Detalhes da peça</h2>
-                <ul className="mt-6 space-y-4 text-sm text-slate-600">
-                  <li className="flex items-start gap-3">
-                    <span className="mt-1 inline-block h-2.5 w-2.5 rounded-full bg-pink-500" />
-                    Acabamento em prata 925 com banho hipoalergênico.
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="mt-1 inline-block h-2.5 w-2.5 rounded-full bg-pink-500" />
-                    Design leve, confortável para uso prolongado.
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="mt-1 inline-block h-2.5 w-2.5 rounded-full bg-pink-500" />
-                    Inspiração moderna e feminina em cada detalhe.
-                  </li>
-                </ul>
-                <Link
-                  href="/"
-                  className="mt-8 inline-flex rounded-full border border-slate-200 bg-white px-6 py-4 text-sm font-semibold text-slate-900 transition hover:bg-slate-50"
-                >
-                  Voltar para a loja
-                </Link>
-              </div>
-
-              <div className="rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-[0_40px_120px_rgba(145,92,255,0.12)]">
-                <div className="flex items-center justify-between gap-4">
-                  <div>
-                    <span className="text-sm uppercase tracking-[0.3em] text-pink-700">Sugestões</span>
-                    <h2 className="mt-3 text-2xl font-bold text-slate-900">Produtos relacionados</h2>
-                  </div>
-                  <span className="text-sm text-slate-500">Baseado na sua escolha</span>
-                </div>
-                <div className="mt-6 grid gap-5">
-                  {relatedProducts.map((suggestion) => (
-                    <ProductCard
-                      key={suggestion.id}
-                      id={suggestion.id}
-                      name={suggestion.name}
-                      description={suggestion.description}
-                      price={suggestion.price}
-                      image={suggestion.image}
-                      stock={suggestion.stock}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
-          </section>
         )}
+
+        {/* Product */}
+        {!loading && product && (
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:gap-6">
+
+            {/* ── Image ── */}
+            <div className="lg:w-80 lg:flex-none">
+              <div
+                className="relative overflow-hidden rounded-xl border"
+                style={{ borderColor: 'var(--c-border)', background: 'var(--c-raised)' }}
+              >
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="h-72 w-full object-cover lg:h-96"
+                />
+                {/* Favorite button overlay */}
+                <button
+                  onClick={() => isFavorite(product.id)
+                    ? removeFavorite(product.id)
+                    : addFavorite({ id: product.id, name: product.name, image: product.image, price: product.price })
+                  }
+                  className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-xl shadow-sm transition hover:scale-110"
+                  style={{ background: 'var(--c-glass)', backdropFilter: 'blur(8px)' }}
+                  aria-label="Favoritar"
+                >
+                  <svg
+                    width="18" height="18" viewBox="0 0 24 24"
+                    fill={isFavorite(product.id) ? '#C4509B' : 'none'}
+                    stroke="#C4509B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                  >
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                  </svg>
+                </button>
+
+                {/* Stock badge */}
+                <div
+                  className="absolute bottom-3 left-3 rounded-lg px-2.5 py-1 text-[10px] font-bold backdrop-blur-sm"
+                  style={product.stock > 0
+                    ? { background: '#d1fae5cc', color: '#065f46' }
+                    : { background: '#fee2e2cc', color: '#991b1b' }
+                  }
+                >
+                  {product.stock > 0 ? `${product.stock} em estoque` : 'Esgotado'}
+                </div>
+              </div>
+            </div>
+
+            {/* ── Info ── */}
+            <div className="flex flex-1 flex-col gap-3">
+
+              {/* Category + name */}
+              <div>
+                {product.category && (
+                  <span
+                    className="mb-1.5 inline-block rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest"
+                    style={{ background: '#f3e8ff', color: '#7C3D8E' }}
+                  >
+                    {product.category.name}
+                  </span>
+                )}
+                <h1 className="text-lg font-black leading-tight sm:text-xl" style={{ color: 'var(--c-text)' }}>
+                  {product.name}
+                </h1>
+              </div>
+
+              {/* Price */}
+              <div className="flex items-baseline gap-2">
+                <span className="text-2xl font-black" style={{ color: '#C4509B' }}>
+                  R$ {product.price.toFixed(2).replace('.', ',')}
+                </span>
+              </div>
+
+              {/* Description */}
+              <p className="text-sm leading-relaxed" style={{ color: 'var(--c-muted)' }}>
+                {product.description}
+              </p>
+
+              {/* Variations */}
+              {Object.entries(variationGroups).map(([groupName, options]) => (
+                <div key={groupName}>
+                  <p className="mb-2 text-[11px] font-bold uppercase tracking-wider" style={{ color: '#7C3D8E' }}>
+                    {groupName}
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {options.map((v) => (
+                      <button
+                        key={v.id}
+                        onClick={() => setSelectedVariations((prev) => ({ ...prev, [groupName]: v.value }))}
+                        disabled={v.stock === 0}
+                        className="rounded-lg border px-3 py-1.5 text-xs font-semibold transition disabled:cursor-not-allowed disabled:opacity-40"
+                        style={selectedVariations[groupName] === v.value
+                          ? { borderColor: '#7C3D8E', background: '#f3e8ff', color: '#7C3D8E' }
+                          : { borderColor: 'var(--c-border)', background: 'var(--c-raised)', color: 'var(--c-muted)' }
+                        }
+                      >
+                        {v.value}{v.price ? ` +R$ ${v.price.toFixed(2).replace('.', ',')}` : ''}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))}
+
+              {/* Actions */}
+              <div className="flex gap-2 pt-1">
+                <button
+                  onClick={handleAddToCart}
+                  disabled={product.stock === 0}
+                  className="flex flex-1 items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold text-white transition hover:opacity-90 disabled:opacity-50"
+                  style={{ background: added ? 'linear-gradient(135deg, #16a34a, #15803d)' : 'linear-gradient(135deg, #7C3D8E, #C4509B)' }}
+                >
+                  {added ? (
+                    <>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M20 6L9 17l-5-5"/>
+                      </svg>
+                      Adicionado!
+                    </>
+                  ) : (
+                    <>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                        <path d="M16 10a4 4 0 0 1-8 0"/>
+                      </svg>
+                      Adicionar ao carrinho
+                    </>
+                  )}
+                </button>
+              </div>
+
+              {/* Details card */}
+              <div
+                className="rounded-xl border p-3"
+                style={{ borderColor: 'var(--c-border)', background: 'var(--c-raised)' }}
+              >
+                <p className="mb-2.5 text-[11px] font-bold uppercase tracking-wider" style={{ color: '#7C3D8E' }}>
+                  Detalhes da peça
+                </p>
+                <ul className="flex flex-col gap-2">
+                  {[
+                    'Acabamento em prata 925 com banho hipoalergênico',
+                    'Design leve, confortável para uso prolongado',
+                    'Inspiração moderna e feminina em cada detalhe',
+                  ].map((item) => (
+                    <li key={item} className="flex items-start gap-2 text-xs" style={{ color: 'var(--c-muted)' }}>
+                      <span className="mt-0.5 h-1.5 w-1.5 flex-none rounded-full" style={{ background: '#C4509B' }} />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Back link */}
+              <Link
+                href="/"
+                className="flex items-center gap-1.5 text-xs font-semibold transition hover:underline"
+                style={{ color: 'var(--c-dim)' }}
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M15 18l-6-6 6-6"/>
+                </svg>
+                Voltar para a loja
+              </Link>
+            </div>
+          </div>
+        )}
+
+        {/* ── Related products ── */}
+        {!loading && product && relatedProducts.length > 0 && (
+          <div className="mt-8">
+            <div className="mb-3 flex items-center justify-between">
+              <p className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--c-vdim)' }}>
+                Produtos relacionados
+              </p>
+              <Link href="/" className="text-[11px] font-semibold transition hover:underline" style={{ color: '#7C3D8E' }}>
+                Ver mais
+              </Link>
+            </div>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+              {relatedProducts.map((p) => (
+                <ProductCard
+                  key={p.id}
+                  id={p.id}
+                  name={p.name}
+                  description={p.description}
+                  price={p.price}
+                  image={p.image}
+                  stock={p.stock}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
       </main>
 
       <CartSidebar />
