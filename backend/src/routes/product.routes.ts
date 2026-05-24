@@ -27,6 +27,19 @@ function generateSlug(name: string): string {
     .replace(/\s+/g, '-')
 }
 
+async function uniqueSlug(base: string, excludeId?: string): Promise<string> {
+  let slug = base
+  let i = 1
+  while (true) {
+    const existing = await prisma.product.findFirst({
+      where: { slug, ...(excludeId ? { id: { not: excludeId } } : {}) },
+      select: { id: true }
+    })
+    if (!existing) return slug
+    slug = `${base}-${i++}`
+  }
+}
+
 async function uploadToCloudinary(buffer: Buffer): Promise<string> {
   return new Promise((resolve, reject) => {
     cloudinary.uploader
@@ -59,7 +72,7 @@ router.post('/products', authMiddleware, adminMiddleware, upload.single('image')
     if (!file) return res.status(400).json({ error: 'Imagem obrigatória' })
 
     const image = await uploadToCloudinary(file.buffer)
-    const slug = generateSlug(name)
+    const slug = await uniqueSlug(generateSlug(name))
 
     const product = await prisma.product.create({
       data: {
@@ -171,7 +184,7 @@ router.put('/products/:id', authMiddleware, adminMiddleware, upload.single('imag
       image = await uploadToCloudinary(file.buffer)
     }
 
-    const slug = generateSlug(name)
+    const slug = await uniqueSlug(generateSlug(name), id)
 
     await prisma.productTag.deleteMany({ where: { productId: id } })
 

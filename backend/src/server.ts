@@ -16,6 +16,7 @@ import categoryRoutes from './routes/category.routes'
 import tagRoutes from './routes/tag.routes'
 import variationRoutes from './routes/variation.routes'
 import webhookRoutes from './routes/webhook.routes'
+import bannerRoutes from './routes/banner.routes'
 
 import { prisma } from './lib/prisma'
 import { sendOrderStatusEmail } from './services/email'
@@ -108,6 +109,7 @@ app.use(categoryRoutes)
 app.use(tagRoutes)
 app.use(variationRoutes)
 app.use(webhookRoutes)
+app.use(bannerRoutes)
 
 app.get('/', (_req, res) => {
   return res.json({ message: 'API AKsemijoias funcionando' })

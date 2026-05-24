@@ -56,6 +56,10 @@ export default function AdminPage() {
   const [tags, setTags] = useState<any[]>([])
   const [newTag, setNewTag] = useState('')
 
+  const [banners, setBanners] = useState<any[]>([])
+  const [bannerForm, setBannerForm] = useState({ label: '', title: '', imageUrl: '', color: '#7C3D8E', cta: 'Ver mais', position: 0, active: true })
+  const [editingBanner, setEditingBanner] = useState<any | null>(null)
+
   useEffect(() => {
 
     const token =
@@ -106,6 +110,7 @@ export default function AdminPage() {
 
       api.get('/categories').then((r) => setCategories(r.data)).catch(() => {})
       api.get('/tags').then((r) => setTags(r.data)).catch(() => {})
+      api.get('/admin/banners').then((r) => setBanners(r.data)).catch(() => {})
     }
 
   }, [router])
@@ -326,6 +331,53 @@ export default function AdminPage() {
     }
   }
 
+  async function handleSaveBanner() {
+    const payload = {
+      ...bannerForm,
+      imageUrl: bannerForm.imageUrl.trim() || null,
+      position: Number(bannerForm.position),
+    }
+    try {
+      if (editingBanner) {
+        const r = await api.put(`/banners/${editingBanner.id}`, payload)
+        setBanners((prev) => prev.map((b) => b.id === editingBanner.id ? r.data : b))
+        toast.success('Banner atualizado')
+      } else {
+        const r = await api.post('/banners', payload)
+        setBanners((prev) => [...prev, r.data])
+        toast.success('Banner criado')
+      }
+      setEditingBanner(null)
+      setBannerForm({ label: '', title: '', imageUrl: '', color: '#7C3D8E', cta: 'Ver mais', position: 0, active: true })
+    } catch {
+      toast.error('Erro ao salvar banner')
+    }
+  }
+
+  function handleEditBanner(banner: any) {
+    setEditingBanner(banner)
+    setBannerForm({
+      label:    banner.label,
+      title:    banner.title,
+      imageUrl: banner.imageUrl ?? '',
+      color:    banner.color,
+      cta:      banner.cta,
+      position: banner.position,
+      active:   banner.active,
+    })
+  }
+
+  async function handleDeleteBanner(id: string) {
+    if (!confirm('Excluir banner?')) return
+    try {
+      await api.delete(`/banners/${id}`)
+      setBanners((prev) => prev.filter((b) => b.id !== id))
+      toast.success('Banner removido')
+    } catch {
+      toast.error('Erro ao remover banner')
+    }
+  }
+
   async function handleExportCSV() {
     try {
       const response = await api.get('/admin/reports/export', { responseType: 'blob' })
@@ -365,7 +417,7 @@ export default function AdminPage() {
 
   return (
 
-    <div className="min-h-screen bg-[#09040f] p-10 text-white">
+    <div className="min-h-screen bg-[#09040f] p-4 sm:p-6 md:p-10 text-white">
 
       <div className="mx-auto max-w-7xl">
 
@@ -377,7 +429,7 @@ export default function AdminPage() {
               Painel Administrativo
             </p>
 
-            <h1 className="mt-4 text-5xl font-black">
+            <h1 className="mt-4 text-3xl font-black sm:text-5xl">
               Bem-vindo, {user.name}
             </h1>
 
@@ -397,39 +449,39 @@ export default function AdminPage() {
 
         </div>
 
-        <div className="mt-14 grid grid-cols-1 gap-6 md:grid-cols-3">
+        <div className="mt-8 grid grid-cols-3 gap-3 md:mt-14 md:gap-6">
 
-          <div className="rounded-[2rem] border border-white/10 bg-white/5 p-8">
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-4 md:rounded-[2rem] md:p-8">
 
-            <p className="text-zinc-400">
+            <p className="text-xs text-zinc-400 md:text-base">
               Produtos
             </p>
 
-            <h2 className="mt-3 text-4xl font-black">
+            <h2 className="mt-2 text-2xl font-black md:mt-3 md:text-4xl">
               {stats.products}
             </h2>
 
           </div>
 
-          <div className="rounded-[2rem] border border-white/10 bg-white/5 p-8">
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-4 md:rounded-[2rem] md:p-8">
 
-            <p className="text-zinc-400">
+            <p className="text-xs text-zinc-400 md:text-base">
               Pedidos
             </p>
 
-            <h2 className="mt-3 text-4xl font-black">
+            <h2 className="mt-2 text-2xl font-black md:mt-3 md:text-4xl">
               {stats.orders}
             </h2>
 
           </div>
 
-          <div className="rounded-[2rem] border border-white/10 bg-white/5 p-8">
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-4 md:rounded-[2rem] md:p-8">
 
-            <p className="text-zinc-400">
+            <p className="text-xs text-zinc-400 md:text-base">
               Clientes
             </p>
 
-            <h2 className="mt-3 text-4xl font-black">
+            <h2 className="mt-2 text-2xl font-black md:mt-3 md:text-4xl">
               {stats.users}
             </h2>
 
@@ -437,15 +489,15 @@ export default function AdminPage() {
 
         </div>
 
-        <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-3">
+        <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3 md:mt-6 md:gap-6">
 
-          <div className="rounded-[2rem] border border-green-500/20 bg-green-500/10 p-8">
+          <div className="rounded-2xl border border-green-500/20 bg-green-500/10 p-4 md:rounded-[2rem] md:p-8">
 
-            <p className="text-green-300">
+            <p className="text-sm text-green-300">
               Faturamento
             </p>
 
-            <h2 className="mt-3 text-4xl font-black text-white">
+            <h2 className="mt-2 text-2xl font-black text-white md:mt-3 md:text-4xl">
 
               R$ {Number(stats.revenue).toFixed(2)}
 
@@ -453,13 +505,13 @@ export default function AdminPage() {
 
           </div>
 
-          <div className="rounded-[2rem] border border-blue-500/20 bg-blue-500/10 p-8">
+          <div className="rounded-2xl border border-blue-500/20 bg-blue-500/10 p-4 md:rounded-[2rem] md:p-8">
 
-            <p className="text-blue-300">
+            <p className="text-sm text-blue-300">
               Pedidos Pagos
             </p>
 
-            <h2 className="mt-3 text-4xl font-black text-white">
+            <h2 className="mt-2 text-2xl font-black text-white md:mt-3 md:text-4xl">
 
               {stats.paidOrders}
 
@@ -467,13 +519,13 @@ export default function AdminPage() {
 
           </div>
 
-          <div className="rounded-[2rem] border border-pink-500/20 bg-pink-500/10 p-8">
+          <div className="rounded-2xl border border-pink-500/20 bg-pink-500/10 p-4 md:rounded-[2rem] md:p-8">
 
-            <p className="text-pink-300">
+            <p className="text-sm text-pink-300">
               Ticket Médio
             </p>
 
-            <h2 className="mt-3 text-4xl font-black text-white">
+            <h2 className="mt-2 text-2xl font-black text-white md:mt-3 md:text-4xl">
 
               R$ {Number(stats.averageTicket).toFixed(2)}
 
@@ -837,7 +889,7 @@ export default function AdminPage() {
         </div>
 
         {/* Tags */}
-        <div className="mt-16 pb-16">
+        <div className="mt-16">
           <h2 className="text-3xl font-black text-white">Tags</h2>
           <div className="mt-6 flex gap-3">
             <input
@@ -867,6 +919,146 @@ export default function AdminPage() {
             ))}
             {tags.length === 0 && (
               <p className="text-sm text-zinc-500">Nenhuma tag cadastrada.</p>
+            )}
+          </div>
+        </div>
+
+        {/* Banners do carrossel */}
+        <div className="mt-16 pb-16">
+          <h2 className="text-3xl font-black text-white">Banners do Carrossel</h2>
+          <p className="mt-1 text-sm text-zinc-400">
+            Gerencie os slides do hero banner. Adicione uma URL de imagem para exibir foto de divulgação em datas comemorativas.
+          </p>
+
+          {/* Formulário */}
+          <div className="mt-6 rounded-2xl border border-violet-500/30 bg-white/5 p-6">
+            <h3 className="mb-4 font-bold text-violet-300">
+              {editingBanner ? 'Editar Banner' : 'Novo Banner'}
+            </h3>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <input
+                value={bannerForm.label}
+                onChange={(e) => setBannerForm({ ...bannerForm, label: e.target.value })}
+                placeholder="Etiqueta (ex: Nova coleção)"
+                className="rounded-xl bg-white/10 px-4 py-3 text-sm text-white outline-none placeholder:text-zinc-500"
+              />
+              <input
+                value={bannerForm.title}
+                onChange={(e) => setBannerForm({ ...bannerForm, title: e.target.value })}
+                placeholder="Título do slide"
+                className="rounded-xl bg-white/10 px-4 py-3 text-sm text-white outline-none placeholder:text-zinc-500"
+              />
+              <input
+                value={bannerForm.imageUrl}
+                onChange={(e) => setBannerForm({ ...bannerForm, imageUrl: e.target.value })}
+                placeholder="URL da imagem (deixe vazio para usar gradiente)"
+                className="col-span-full rounded-xl bg-white/10 px-4 py-3 text-sm text-white outline-none placeholder:text-zinc-500"
+              />
+              <input
+                value={bannerForm.cta}
+                onChange={(e) => setBannerForm({ ...bannerForm, cta: e.target.value })}
+                placeholder="Texto do botão (ex: Ver coleção)"
+                className="rounded-xl bg-white/10 px-4 py-3 text-sm text-white outline-none placeholder:text-zinc-500"
+              />
+              <div className="flex items-center gap-3">
+                <label className="text-sm text-zinc-400">Cor de destaque</label>
+                <input
+                  type="color"
+                  value={bannerForm.color}
+                  onChange={(e) => setBannerForm({ ...bannerForm, color: e.target.value })}
+                  className="h-10 w-16 cursor-pointer rounded-lg border-0 bg-transparent"
+                />
+                <span className="text-xs text-zinc-500">{bannerForm.color}</span>
+              </div>
+              <input
+                type="number"
+                value={bannerForm.position}
+                onChange={(e) => setBannerForm({ ...bannerForm, position: Number(e.target.value) })}
+                placeholder="Posição (0 = primeiro)"
+                className="rounded-xl bg-white/10 px-4 py-3 text-sm text-white outline-none placeholder:text-zinc-500"
+              />
+              <label className="flex items-center gap-2 text-sm text-zinc-300">
+                <input
+                  type="checkbox"
+                  checked={bannerForm.active}
+                  onChange={(e) => setBannerForm({ ...bannerForm, active: e.target.checked })}
+                  className="h-4 w-4 rounded"
+                />
+                Banner ativo (visível na loja)
+              </label>
+            </div>
+
+            {/* Preview da imagem */}
+            {bannerForm.imageUrl && (
+              <div className="mt-4">
+                <p className="mb-2 text-xs text-zinc-500">Pré-visualização:</p>
+                <img
+                  src={bannerForm.imageUrl}
+                  alt="preview"
+                  className="h-32 w-full rounded-xl object-cover"
+                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+                />
+              </div>
+            )}
+
+            <div className="mt-4 flex gap-3">
+              <button
+                onClick={handleSaveBanner}
+                className="rounded-full bg-violet-500 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-violet-400"
+              >
+                {editingBanner ? 'Salvar alterações' : 'Criar banner'}
+              </button>
+              {editingBanner && (
+                <button
+                  onClick={() => {
+                    setEditingBanner(null)
+                    setBannerForm({ label: '', title: '', imageUrl: '', color: '#7C3D8E', cta: 'Ver mais', position: 0, active: true })
+                  }}
+                  className="rounded-full bg-zinc-700 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-zinc-600"
+                >
+                  Cancelar
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Lista de banners */}
+          <div className="mt-6 space-y-3">
+            {banners.map((banner) => (
+              <div key={banner.id} className="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/5 p-4">
+                {banner.imageUrl ? (
+                  <img src={banner.imageUrl} alt={banner.label} className="h-16 w-24 flex-none rounded-xl object-cover" />
+                ) : (
+                  <div
+                    className="h-16 w-24 flex-none rounded-xl"
+                    style={{ background: `linear-gradient(135deg, ${banner.color}33, ${banner.color}66)`, border: `1px solid ${banner.color}44` }}
+                  />
+                )}
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: banner.color }}>{banner.label}</p>
+                  <p className="truncate text-sm font-bold text-white">{banner.title}</p>
+                  <p className="text-xs text-zinc-500">
+                    Pos. {banner.position} · {banner.active ? <span className="text-green-400">Ativo</span> : <span className="text-red-400">Inativo</span>}
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleEditBanner(banner)}
+                    className="rounded-full bg-blue-500 px-4 py-2 text-xs font-semibold text-white transition hover:bg-blue-400"
+                  >
+                    Editar
+                  </button>
+                  <button
+                    onClick={() => handleDeleteBanner(banner.id)}
+                    className="rounded-full bg-red-500 px-4 py-2 text-xs font-semibold text-white transition hover:bg-red-400"
+                  >
+                    Excluir
+                  </button>
+                </div>
+              </div>
+            ))}
+            {banners.length === 0 && (
+              <p className="text-sm text-zinc-500">Nenhum banner cadastrado. Os slides padrão serão exibidos na loja.</p>
             )}
           </div>
         </div>

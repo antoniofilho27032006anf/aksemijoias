@@ -133,13 +133,13 @@ button, input, textarea { font: inherit; }
   background-size: 48px 48px;
 }
 
-/* Gold grid background with animated glow */
+/* Purple grid background with animated glow (login/register pages) */
 .grid-bg-gold {
   position: relative;
   background-image:
-    radial-gradient(ellipse 60% 55% at 50% 50%, rgba(201, 162, 39, 0.07), transparent 70%),
-    linear-gradient(rgba(201, 162, 39, 0.35) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(201, 162, 39, 0.35) 1px, transparent 1px);
+    radial-gradient(ellipse 60% 55% at 50% 50%, rgba(124, 58, 237, 0.08), transparent 70%),
+    linear-gradient(rgba(124, 58, 237, 0.30) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124, 58, 237, 0.30) 1px, transparent 1px);
   background-size: 100% 100%, 48px 48px, 48px 48px;
 }
 
@@ -150,9 +150,9 @@ button, input, textarea { font: inherit; }
   z-index: 0;
   pointer-events: none;
   background:
-    radial-gradient(ellipse 50% 45% at 50% 50%, rgba(232, 201, 74, 0.18), transparent 65%),
-    radial-gradient(ellipse 20% 20% at 8%  8%,  rgba(201, 162, 39, 0.10), transparent),
-    radial-gradient(ellipse 20% 20% at 92% 92%, rgba(201, 162, 39, 0.10), transparent);
+    radial-gradient(ellipse 50% 45% at 50% 50%, rgba(167, 139, 250, 0.18), transparent 65%),
+    radial-gradient(ellipse 20% 20% at 8%  8%,  rgba(124, 58, 237, 0.12), transparent),
+    radial-gradient(ellipse 20% 20% at 92% 92%, rgba(124, 58, 237, 0.12), transparent);
   animation: golden-pulse 4s ease-in-out infinite;
 }
 
@@ -172,13 +172,13 @@ button, input, textarea { font: inherit; }
   pointer-events: none;
   background: linear-gradient(
     to bottom,
-    transparent       0%,
-    transparent       44%,
-    rgba(201,162,39,0.04) 47%,
-    rgba(232,201,74,0.13) 50%,
-    rgba(201,162,39,0.04) 53%,
-    transparent       56%,
-    transparent       100%
+    transparent            0%,
+    transparent            44%,
+    rgba(124,58,237,0.04)  47%,
+    rgba(167,139,250,0.13) 50%,
+    rgba(124,58,237,0.04)  53%,
+    transparent            56%,
+    transparent            100%
   );
   animation: gold-scan 10s linear infinite;
 }

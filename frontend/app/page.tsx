@@ -77,7 +77,7 @@ export default function Home() {
 
       {/* Promotional banner */}
       <div className="bg-[#7C3D8E] px-4 py-2 text-center text-xs font-semibold text-white sm:text-sm">
-        Pague no PIX e ganhe 10% de desconto! Vem!
+        Pague no PIX e ganhe 5% de desconto! Vem!
       </div>
 
       <Navbar onSearch={setSearchTerm} />

@@ -163,3 +163,15 @@ model OrderEvent {
   createdAt   DateTime @default(now())
 }
 
+model Banner {
+  id        String   @id @default(uuid())
+  label     String
+  title     String
+  imageUrl  String?
+  color     String   @default("#7C3D8E")
+  cta       String   @default("Ver mais")
+  active    Boolean  @default(true)
+  position  Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
