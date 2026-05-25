@@ -81,15 +81,14 @@ export default function OrderDetailPage() {
         {/* Header */}
         <div className="mb-5 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="h-4 w-0.5 rounded-full" style={{ backgroundColor: '#7C3D8E' }} />
-            <h1 className="text-base font-black uppercase tracking-[0.2em]" style={{ color: '#7C3D8E' }}>
+            <div className="h-4 w-0.5 rounded-full bg-brand" />
+            <h1 className="text-base font-black uppercase tracking-[0.2em] text-brand">
               Detalhes do Pedido
             </h1>
           </div>
           <Link
             href="/orders"
-            className="rounded-lg px-2.5 py-1.5 text-[11px] font-semibold transition hover:bg-gray-50"
-            style={{ color: '#7C3D8E', border: '1px solid #e8d5f5' }}
+            className="rounded-lg border border-brand-200 px-2.5 py-1.5 text-[11px] font-semibold text-brand transition hover:bg-brand-50"
           >
             ← Voltar
           </Link>
@@ -98,14 +97,11 @@ export default function OrderDetailPage() {
         {loading ? (
           <div className="flex flex-col gap-2">
             {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="h-24 animate-pulse rounded-xl border" style={{ borderColor: '#e8d5f5', backgroundColor: '#faf5ff' }} />
+              <div key={i} className="h-24 animate-pulse rounded-xl border border-brand-200 bg-brand-50" />
             ))}
           </div>
         ) : !order ? (
-          <div
-            className="flex flex-col items-center gap-3 rounded-2xl border py-14 text-center"
-            style={{ borderColor: '#e8d5f5', backgroundColor: '#faf5ff' }}
-          >
+          <div className="flex flex-col items-center gap-3 rounded-2xl border border-brand-200 bg-brand-50 py-14 text-center">
             <p className="text-sm font-bold text-gray-700">Pedido não encontrado.</p>
             <Link
               href="/orders"
@@ -119,13 +115,10 @@ export default function OrderDetailPage() {
           <div className="flex flex-col gap-3">
 
             {/* Order summary */}
-            <div
-              className="overflow-hidden rounded-xl border bg-white"
-              style={{ borderColor: '#e8d5f5' }}
-            >
+            <div className="overflow-hidden rounded-xl border border-brand-200 bg-white">
               <div className="flex items-center justify-between gap-2 px-3 py-2.5">
                 <div className="min-w-0">
-                  <p className="text-[11px] font-bold uppercase tracking-wide" style={{ color: '#7C3D8E' }}>
+                  <p className="text-[11px] font-bold uppercase tracking-wide text-brand">
                     #{order.id.slice(0, 8).toUpperCase()}
                   </p>
                   <p className="text-[11px] text-gray-400">
@@ -145,32 +138,26 @@ export default function OrderDetailPage() {
                   )
                 })()}
 
-                <p className="text-sm font-black" style={{ color: '#C4509B' }}>
+                <p className="text-sm font-black text-brand-pink">
                   R$ {order.total.toFixed(2).replace('.', ',')}
                 </p>
 
-                <span
-                  className="rounded-lg px-2.5 py-1.5 text-[11px] font-semibold"
-                  style={{ color: '#7C3D8E', border: '1px solid #e8d5f5', backgroundColor: '#faf5ff' }}
-                >
+                <span className="rounded-lg border border-brand-200 bg-brand-50 px-2.5 py-1.5 text-[11px] font-semibold text-brand">
                   {order.items.length} {order.items.length === 1 ? 'item' : 'itens'}
                 </span>
               </div>
             </div>
 
             {/* Items */}
-            <div
-              className="overflow-hidden rounded-xl border bg-white"
-              style={{ borderColor: '#e8d5f5' }}
-            >
-              <div className="px-3 py-2 border-b" style={{ borderColor: '#f3e8ff' }}>
-                <p className="text-[11px] font-bold uppercase tracking-wide" style={{ color: '#7C3D8E' }}>
+            <div className="overflow-hidden rounded-xl border border-brand-200 bg-white">
+              <div className="border-b border-brand-100 px-3 py-2">
+                <p className="text-[11px] font-bold uppercase tracking-wide text-brand">
                   Itens do pedido
                 </p>
               </div>
-              <div className="divide-y" style={{ borderColor: '#f3e8ff' }}>
+              <div className="divide-y divide-brand-100">
                 {order.items.map((item) => (
-                  <div key={item.id} className="flex items-center gap-2.5 px-3 py-2" style={{ borderColor: '#f3e8ff' }}>
+                  <div key={item.id} className="flex items-center gap-2.5 px-3 py-2">
                     <img
                       src={item.product.image}
                       alt={item.product.name}
@@ -180,7 +167,7 @@ export default function OrderDetailPage() {
                       <p className="truncate text-[12px] font-semibold text-gray-700">{item.product.name}</p>
                       <p className="text-[11px] text-gray-400">Qtd: {item.quantity}</p>
                     </div>
-                    <p className="flex-none text-[12px] font-bold" style={{ color: '#7C3D8E' }}>
+                    <p className="flex-none text-[12px] font-bold text-brand">
                       R$ {(item.price * item.quantity).toFixed(2).replace('.', ',')}
                     </p>
                   </div>
@@ -190,16 +177,13 @@ export default function OrderDetailPage() {
 
             {/* Timeline */}
             {order.orderEvents.length > 0 && (
-              <div
-                className="overflow-hidden rounded-xl border bg-white"
-                style={{ borderColor: '#e8d5f5' }}
-              >
-                <div className="px-3 py-2 border-b" style={{ borderColor: '#f3e8ff' }}>
-                  <p className="text-[11px] font-bold uppercase tracking-wide" style={{ color: '#7C3D8E' }}>
+              <div className="overflow-hidden rounded-xl border border-brand-200 bg-white">
+                <div className="border-b border-brand-100 px-3 py-2">
+                  <p className="text-[11px] font-bold uppercase tracking-wide text-brand">
                     Linha do tempo
                   </p>
                 </div>
-                <div className="divide-y" style={{ borderColor: '#f3e8ff' }}>
+                <div className="divide-y divide-brand-100">
                   {order.orderEvents.map((event) => (
                     <div key={event.id} className="px-3 py-2.5">
                       <p className="text-[12px] font-semibold text-gray-700">{event.status}</p>

@@ -81,19 +81,14 @@ export default function CheckoutPage() {
 
       <main className="mx-auto max-w-5xl px-4 pb-20 pt-6 sm:px-6">
 
-        {/* ── Page header ── */}
+        {/* Page header */}
         <div className="mb-6 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="h-5 w-0.5 rounded-full" style={{ background: 'linear-gradient(180deg,#7C3D8E,#C4509B)' }} />
-            <h1 className="text-lg font-black uppercase tracking-[0.15em]" style={{ color: '#7C3D8E' }}>
-              Checkout
-            </h1>
+            <h1 className="text-lg font-black uppercase tracking-[0.15em] text-brand">Checkout</h1>
           </div>
-          <div
-            className="flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider"
-            style={{ background: '#faf5ff', color: '#7C3D8E', border: '1px solid #e8d5f5' }}
-          >
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#7C3D8E" strokeWidth="2.5">
+          <div className="flex items-center gap-1.5 rounded-full border border-brand-200 bg-brand-50 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-brand">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
               <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
             </svg>
@@ -108,10 +103,9 @@ export default function CheckoutPage() {
           <form onSubmit={handleSubmit}>
             <div className="grid gap-5 lg:grid-cols-[1fr,360px] lg:items-start">
 
-              {/* ── Left: payment + coupon ── */}
+              {/* Left: payment + coupon */}
               <div className="flex flex-col gap-4">
 
-                {/* Payment method */}
                 <Section label="Forma de pagamento">
                   <div className="flex flex-col gap-2">
                     <PaymentOption
@@ -150,11 +144,8 @@ export default function CheckoutPage() {
                   </div>
 
                   {isCard && (
-                    <div
-                      className="mt-3 flex items-start gap-2 rounded-xl px-3 py-2.5 text-[11px]"
-                      style={{ background: '#faf5ff', border: '1px solid #e8d5f5', color: '#5B2170' }}
-                    >
-                      <svg className="mt-0.5 flex-none" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7C3D8E" strokeWidth="2.2">
+                    <div className="mt-3 flex items-start gap-2 rounded-xl border border-brand-200 bg-brand-50 px-3 py-2.5 text-[11px] text-brand-800">
+                      <svg className="mt-0.5 flex-none" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
                         <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
                       </svg>
                       Você será redirecionado para o ambiente seguro do Stripe para inserir os dados do cartão.
@@ -162,7 +153,6 @@ export default function CheckoutPage() {
                   )}
                 </Section>
 
-                {/* Coupon */}
                 <Section label="Cupom de desconto">
                   <div className="flex gap-2">
                     <input
@@ -185,12 +175,8 @@ export default function CheckoutPage() {
                   </div>
                 </Section>
 
-                {/* Error */}
                 {message && (
-                  <div
-                    className="flex items-center gap-2 rounded-xl px-4 py-3 text-xs font-semibold"
-                    style={{ background: '#fee2e2', color: '#991b1b', border: '1px solid #fecaca' }}
-                  >
+                  <div className="flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-xs font-semibold text-red-700">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
                       <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
                     </svg>
@@ -204,7 +190,7 @@ export default function CheckoutPage() {
                 </div>
               </div>
 
-              {/* ── Right: order summary (sticky) ── */}
+              {/* Right: order summary (sticky) */}
               <div className="flex flex-col gap-4 lg:sticky lg:top-6">
                 <Section label="Resumo do pedido">
                   {cart.length === 0 ? (
@@ -222,10 +208,7 @@ export default function CheckoutPage() {
                               className="h-12 w-12 rounded-xl object-cover"
                               style={{ border: '1px solid var(--c-border)' }}
                             />
-                            <span
-                              className="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full text-[9px] font-black text-white"
-                              style={{ background: '#7C3D8E' }}
-                            >
+                            <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-brand text-[9px] font-black text-white">
                               {item.quantity}
                             </span>
                           </div>
@@ -237,7 +220,7 @@ export default function CheckoutPage() {
                               {item.quantity}× R$ {item.price.toFixed(2).replace('.', ',')}
                             </p>
                           </div>
-                          <p className="flex-none text-xs font-black" style={{ color: '#C4509B' }}>
+                          <p className="flex-none text-xs font-black text-brand-pink">
                             R$ {(item.price * item.quantity).toFixed(2).replace('.', ',')}
                           </p>
                         </div>
@@ -269,7 +252,7 @@ export default function CheckoutPage() {
                       style={{ borderColor: 'var(--c-border)' }}
                     >
                       <span className="text-sm font-bold" style={{ color: 'var(--c-text)' }}>Total</span>
-                      <span className="text-base font-black" style={{ color: '#C4509B' }}>
+                      <span className="text-base font-black text-brand-pink">
                         R$ {total.toFixed(2).replace('.', ',')}
                       </span>
                     </div>
@@ -283,8 +266,8 @@ export default function CheckoutPage() {
 
                 {/* Trust badges */}
                 <div
-                  className="flex items-center justify-center gap-4 rounded-xl px-4 py-3"
-                  style={{ background: 'var(--c-raised)', border: '1px solid var(--c-border)' }}
+                  className="flex items-center justify-center gap-4 rounded-xl border px-4 py-3"
+                  style={{ background: 'var(--c-raised)', borderColor: 'var(--c-border)' }}
                 >
                   {[
                     { icon: '🔒', label: 'SSL seguro' },
@@ -317,7 +300,7 @@ function Section({ label, children }: { label: string; children: React.ReactNode
       className="rounded-2xl border p-4"
       style={{ borderColor: 'var(--c-border)', background: 'var(--c-raised)' }}
     >
-      <p className="mb-3 text-[10px] font-black uppercase tracking-[0.2em]" style={{ color: '#7C3D8E' }}>
+      <p className="mb-3 text-[10px] font-black uppercase tracking-[0.2em] text-brand">
         {label}
       </p>
       {children}
@@ -405,7 +388,7 @@ function SubmitButton({ loading, isCard, paymentMethod }: { loading: boolean; is
 function PixResult({ pixQr, pixCode, copied, onCopy }: { pixQr: string; pixCode: string; copied: boolean; onCopy: () => void }) {
   return (
     <div className="mx-auto max-w-md">
-      <div className="rounded-2xl border p-6 text-center" style={{ borderColor: '#bbf7d0', background: '#f0fdf4' }}>
+      <div className="rounded-2xl border border-green-200 bg-green-50 p-6 text-center">
         <div className="mb-4 flex justify-center">
           <span className="inline-flex items-center gap-2 rounded-full bg-green-100 px-4 py-1.5 text-xs font-bold text-green-700">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
@@ -426,15 +409,14 @@ function PixResult({ pixQr, pixCode, copied, onCopy }: { pixQr: string; pixCode:
           </div>
         )}
 
-        <p className="mb-2 text-left text-[10px] font-bold uppercase tracking-wider" style={{ color: '#4a3a6c' }}>
+        <p className="mb-2 text-left text-[10px] font-bold uppercase tracking-wider text-brand-900">
           Copia e cola
         </p>
         <div className="relative">
           <textarea
             readOnly
             value={pixCode}
-            className="h-16 w-full resize-none rounded-xl border p-3 pr-12 text-[10px] outline-none"
-            style={{ borderColor: '#d1d5db', background: 'white', color: '#4a5568' }}
+            className="h-16 w-full resize-none rounded-xl border border-gray-200 bg-white p-3 pr-12 text-[10px] text-gray-600 outline-none"
           />
           <button
             onClick={onCopy}

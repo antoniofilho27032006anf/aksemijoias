@@ -90,6 +90,17 @@
   --font-mono: var(--font-geist-mono);
 }
 
+/* ─── Brand tokens → use as text-brand, bg-brand-50, border-brand-200 etc. ─── */
+@theme {
+  --color-brand:       #7C3D8E;
+  --color-brand-pink:  #C4509B;
+  --color-brand-50:    #faf5ff;
+  --color-brand-100:   #f3e8ff;
+  --color-brand-200:   #e8d5f5;
+  --color-brand-800:   #5B2170;
+  --color-brand-900:   #4a3a6c;
+}
+
 body {
   min-height: 100vh;
   margin: 0;

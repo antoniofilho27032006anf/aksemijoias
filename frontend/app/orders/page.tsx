@@ -67,16 +67,13 @@ export default function OrdersPage() {
         {/* Page header */}
         <div className="mb-5 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="h-4 w-0.5 rounded-full" style={{ backgroundColor: '#7C3D8E' }} />
-            <h1 className="text-base font-black uppercase tracking-[0.2em]" style={{ color: '#7C3D8E' }}>
+            <div className="h-4 w-0.5 rounded-full bg-brand" />
+            <h1 className="text-base font-black uppercase tracking-[0.2em] text-brand">
               Meus Pedidos
             </h1>
           </div>
           {user && !loading && (
-            <span
-              className="rounded-full px-3 py-1 text-[11px] font-bold"
-              style={{ backgroundColor: '#faf5ff', color: '#7C3D8E', border: '1px solid #e8d5f5' }}
-            >
+            <span className="rounded-full border border-brand-200 bg-brand-50 px-3 py-1 text-[11px] font-bold text-brand">
               {orders.length} {orders.length === 1 ? 'pedido' : 'pedidos'}
             </span>
           )}
@@ -93,7 +90,7 @@ export default function OrdersPage() {
         ) : loading ? (
           <div className="flex flex-col gap-2">
             {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="h-24 animate-pulse rounded-xl border" style={{ borderColor: '#e8d5f5', backgroundColor: '#faf5ff' }} />
+              <div key={i} className="h-24 animate-pulse rounded-xl border border-brand-200 bg-brand-50" />
             ))}
           </div>
         ) : orders.length === 0 ? (
@@ -108,15 +105,12 @@ export default function OrdersPage() {
             {orders.map((order) => {
               const status = STATUS_MAP[order.status] ?? { label: order.status, color: '#555', bg: '#f3f4f6' }
               return (
-                <div
-                  key={order.id}
-                  className="overflow-hidden rounded-xl border bg-white"
-                  style={{ borderColor: '#e8d5f5' }}
-                >
+                <div key={order.id} className="overflow-hidden rounded-xl border border-brand-200 bg-white">
+
                   {/* Order summary row */}
                   <div className="flex items-center justify-between gap-2 px-3 py-2.5">
                     <div className="min-w-0">
-                      <p className="text-[11px] font-bold uppercase tracking-wide" style={{ color: '#7C3D8E' }}>
+                      <p className="text-[11px] font-bold uppercase tracking-wide text-brand">
                         #{order.id.slice(0, 8).toUpperCase()}
                       </p>
                       <p className="text-[11px] text-gray-400">
@@ -131,14 +125,13 @@ export default function OrdersPage() {
                       {status.label}
                     </span>
 
-                    <p className="text-sm font-black" style={{ color: '#C4509B' }}>
+                    <p className="text-sm font-black text-brand-pink">
                       R$ {order.total.toFixed(2).replace('.', ',')}
                     </p>
 
                     <Link
                       href={`/orders/${order.id}`}
-                      className="rounded-lg px-2.5 py-1.5 text-[11px] font-semibold transition hover:bg-gray-50"
-                      style={{ color: '#7C3D8E', border: '1px solid #e8d5f5' }}
+                      className="rounded-lg border border-brand-200 px-2.5 py-1.5 text-[11px] font-semibold text-brand transition hover:bg-brand-50"
                     >
                       Ver
                     </Link>
@@ -146,9 +139,9 @@ export default function OrdersPage() {
 
                   {/* Items */}
                   {order.items.length > 0 && (
-                    <div className="divide-y border-t" style={{ borderColor: '#f3e8ff' }}>
+                    <div className="divide-y divide-brand-100 border-t border-brand-100">
                       {order.items.map((item) => (
-                        <div key={item.id} className="flex items-center gap-2.5 px-3 py-2" style={{ borderColor: '#f3e8ff' }}>
+                        <div key={item.id} className="flex items-center gap-2.5 px-3 py-2">
                           <img
                             src={item.product.image}
                             alt={item.product.name}
@@ -158,7 +151,7 @@ export default function OrdersPage() {
                             <p className="truncate text-[12px] font-semibold text-gray-700">{item.product.name}</p>
                             <p className="text-[11px] text-gray-400">Qtd: {item.quantity}</p>
                           </div>
-                          <p className="flex-none text-[12px] font-bold" style={{ color: '#7C3D8E' }}>
+                          <p className="flex-none text-[12px] font-bold text-brand">
                             R$ {(item.price * item.quantity).toFixed(2).replace('.', ',')}
                           </p>
                         </div>
@@ -179,8 +172,8 @@ export default function OrdersPage() {
 
 function EmptyState({ title, subtitle, cta, href }: { title: string; subtitle: string; cta: string; href: string }) {
   return (
-    <div className="flex flex-col items-center gap-4 rounded-2xl border py-14 text-center" style={{ borderColor: '#e8d5f5', backgroundColor: '#faf5ff' }}>
-      <div className="flex h-14 w-14 items-center justify-center rounded-2xl" style={{ backgroundColor: '#f3e8ff' }}>
+    <div className="flex flex-col items-center gap-4 rounded-2xl border border-brand-200 bg-brand-50 py-14 text-center">
+      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-100">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C4B0D4" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
           <polyline points="14 2 14 8 20 8"/>
