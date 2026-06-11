@@ -2,12 +2,15 @@
 
 import { useEffect, useMemo, useState } from 'react'
 
+import { CreditCard } from 'lucide-react'
+
 import { api } from '../src/services/api'
 import { Navbar } from '../src/components/Navbar'
 import { ProductCard } from '../src/components/ProductCard'
 import { CartSidebar } from '../src/components/CartSidebar'
 import { HeroBanner } from '../src/components/HeroBanner'
 import { ProductSkeleton } from '../src/components/ProductSkeleton'
+import { CategoryCarousel } from '../src/components/CategoryCarousel'
 
 interface Product {
   id: string
@@ -73,11 +76,14 @@ export default function Home() {
   }, [allProducts, searchTerm, sortOption])
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen" style={{ background: 'var(--c-bg)' }}>
 
       {/* Promotional banner */}
-      <div className="bg-[#7C3D8E] px-4 py-2 text-center text-xs font-semibold text-white sm:text-sm">
-        Pague no PIX e ganhe 5% de desconto! Vem!
+      <div
+        className="px-4 py-1.5 text-center text-[11px] font-semibold uppercase tracking-[0.15em] text-white sm:text-xs"
+        style={{ background: 'linear-gradient(to right, var(--color-brand-800), var(--color-brand))' }}
+      >
+        Pague no Pix e ganhe 5% de desconto
       </div>
 
       <Navbar onSearch={setSearchTerm} />
@@ -86,38 +92,33 @@ export default function Home() {
       <HeroBanner />
 
       {/* Installment strip */}
-      <div className="border-b border-gray-100 py-5">
+      <div className="border-b py-4" style={{ borderColor: 'var(--c-border)' }}>
         <div className="flex items-center justify-center gap-3">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#7C3D8E" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
-            <line x1="1" y1="10" x2="23" y2="10"/>
-          </svg>
+          <CreditCard size={24} strokeWidth={1.6} style={{ color: 'var(--color-brand)' }} />
           <div>
-            <p className="text-sm font-black uppercase tracking-wide text-[#7C3D8E]">
-              PARCELAMOS SUA COMPRA
+            <p className="font-heading text-base font-semibold tracking-wide" style={{ color: 'var(--color-brand)' }}>
+              Parcelamos sua compra
             </p>
-            <p className="text-xs text-gray-500">Em até 6X sem juros. APROVEITE!</p>
+            <p className="text-xs" style={{ color: 'var(--c-dim)' }}>Em até 6x sem juros. Aproveite!</p>
           </div>
         </div>
       </div>
 
+      {/* Categories quick nav */}
+      <CategoryCarousel />
+
       {/* Products section */}
-      <main id="produtos" className="px-3 pb-24 pt-5 sm:px-5">
+      <main id="produtos" className="px-3 pb-24 pt-6 sm:px-5">
 
         {/* Category pills */}
         {categories.length > 0 && (
           <div
-            className="flex gap-2 overflow-x-auto pb-3"
+            className="mb-4 flex gap-2 overflow-x-auto pb-1"
             style={{ scrollbarWidth: 'none' } as React.CSSProperties}
           >
             <button
               onClick={() => setSelectedCategory('')}
-              className="flex-none rounded-full border px-4 py-2 text-[11px] font-bold uppercase tracking-wide transition hover:opacity-80"
-              style={
-                selectedCategory === ''
-                  ? { backgroundColor: '#7C3D8E', borderColor: '#7C3D8E', color: '#fff' }
-                  : { borderColor: '#C4B0D4', color: '#7C3D8E', backgroundColor: '#fff' }
-              }
+              className={`chip flex-none ${selectedCategory === '' ? 'chip-active' : ''}`}
             >
               Todos
             </button>
@@ -125,12 +126,7 @@ export default function Home() {
               <button
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.slug)}
-                className="flex-none rounded-full border px-4 py-2 text-[11px] font-bold uppercase tracking-wide transition hover:opacity-80"
-                style={
-                  selectedCategory === cat.slug
-                    ? { backgroundColor: '#7C3D8E', borderColor: '#7C3D8E', color: '#fff' }
-                    : { borderColor: '#C4B0D4', color: '#7C3D8E', backgroundColor: '#fff' }
-                }
+                className={`chip flex-none ${selectedCategory === cat.slug ? 'chip-active' : ''}`}
               >
                 {cat.name}
               </button>
@@ -139,11 +135,12 @@ export default function Home() {
         )}
 
         {/* Sort */}
-        <div className="mb-4 mt-1 flex items-center justify-end">
+        <div className="mb-4 flex items-center justify-end">
           <select
             value={sortOption}
             onChange={(e) => setSortOption(e.target.value as SortOption)}
-            className="rounded-full border border-gray-200 px-4 py-1.5 text-xs text-gray-600 outline-none"
+            className="rounded-full border px-4 py-1.5 text-xs outline-none transition focus:border-[var(--color-brand)]"
+            style={{ borderColor: 'var(--c-border)', background: 'var(--c-bg-soft)', color: 'var(--c-muted)' }}
           >
             <option value="bestseller">Mais vendidos</option>
             <option value="lowest">Menor preço</option>
@@ -153,16 +150,16 @@ export default function Home() {
 
         {/* Grid */}
         {loading ? (
-          <div className="grid grid-cols-2 gap-3">
-            {Array.from({ length: 6 }).map((_, i) => <ProductSkeleton key={i} />)}
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 lg:gap-5 xl:grid-cols-5">
+            {Array.from({ length: 10 }).map((_, i) => <ProductSkeleton key={i} />)}
           </div>
         ) : products.length === 0 ? (
           <div className="py-16 text-center">
-            <p className="font-bold text-gray-400">Nenhum produto encontrado</p>
-            <p className="mt-1 text-sm text-gray-300">Tente outro filtro ou termo de busca.</p>
+            <p className="font-bold" style={{ color: 'var(--c-vdim)' }}>Nenhum produto encontrado</p>
+            <p className="mt-1 text-sm" style={{ color: 'var(--c-vdim)' }}>Tente outro filtro ou termo de busca.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 lg:gap-5 xl:grid-cols-5">
             {products.map((p) => (
               <ProductCard
                 key={p.id}

@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { ChevronRight } from 'lucide-react'
 
 const NAV_LINKS = [
   { href: '/',         label: 'Início' },
@@ -26,26 +27,26 @@ export function Footer() {
       </a>
 
       {/* Footer */}
-      <footer className="border-t" style={{ borderColor: '#e8d5f5', backgroundColor: '#faf5ff' }}>
-        <div className="mx-auto max-w-4xl px-4 py-7 sm:px-6">
+      <footer className="border-t" style={{ borderColor: 'var(--c-border)', backgroundColor: 'var(--c-bg-soft)' }}>
+        <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:py-10">
 
           {/* Accent line */}
-          <div className="mb-5 h-0.5 rounded-full" style={{ background: 'linear-gradient(to right, #7C3D8E, #C4509B, transparent)' }} />
+          <div className="mb-6 h-px w-full" style={{ background: 'linear-gradient(to right, var(--color-brand), var(--gold), transparent)' }} />
 
-          <div className="grid gap-6 sm:grid-cols-2">
+          <div className="grid gap-8 sm:grid-cols-2">
 
             {/* Col 1 — Brand + social */}
             <div className="flex flex-col gap-3">
               <Link href="/">
-                <span className="text-xl font-black tracking-tight" style={{ color: '#7C3D8E' }}>
+                <span className="font-heading text-2xl font-semibold tracking-tight" style={{ color: 'var(--color-brand)' }}>
                   AK Semij&oacute;ias &amp; Tals
                 </span>
               </Link>
 
-              <p className="text-[11px] font-black uppercase tracking-[0.25em]" style={{ color: '#7C3D8E' }}>
+              <p className="text-[11px] font-bold uppercase tracking-[0.25em]" style={{ color: 'var(--color-brand)' }}>
                 Atendimento Exclusivo
               </p>
-              <p className="text-xs leading-relaxed text-gray-500">
+              <p className="text-xs leading-relaxed" style={{ color: 'var(--c-dim)' }}>
                 Entre em contato clicando no ícone do WhatsApp no canto inferior direito.
               </p>
 
@@ -84,7 +85,7 @@ export function Footer() {
 
             {/* Col 2 — Navigation */}
             <div>
-              <p className="mb-3 text-[10px] font-black uppercase tracking-[0.3em]" style={{ color: '#7C3D8E' }}>
+              <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.3em]" style={{ color: 'var(--color-brand)' }}>
                 Navegação
               </p>
               <ul className="space-y-2">
@@ -92,11 +93,10 @@ export function Footer() {
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="flex items-center gap-1.5 text-sm text-gray-600 transition hover:text-[#7C3D8E]"
+                      className="flex items-center gap-1.5 text-sm transition hover:text-[var(--color-brand)]"
+                      style={{ color: 'var(--c-muted)' }}
                     >
-                      <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#C4509B" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M9 18l6-6-6-6"/>
-                      </svg>
+                      <ChevronRight size={12} strokeWidth={2.5} style={{ color: 'var(--color-brand-pink)' }} />
                       {link.label}
                     </Link>
                   </li>
@@ -106,8 +106,8 @@ export function Footer() {
           </div>
 
           {/* Bottom */}
-          <div className="mt-5 border-t pt-4" style={{ borderColor: '#e8d5f5' }}>
-            <p className="text-[11px] text-gray-400">
+          <div className="mt-6 border-t pt-4" style={{ borderColor: 'var(--c-border)' }}>
+            <p className="text-[11px]" style={{ color: 'var(--c-vdim)' }}>
               © {new Date().getFullYear()} AK Semijóias &amp; Tals · Todos os direitos reservados.
             </p>
           </div>

@@ -2,6 +2,8 @@
 
 import { useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
+
 import { CATEGORIES } from '../data/categories'
 
 const CATEGORY_ICONS: Record<string, React.ReactNode> = {
@@ -92,8 +94,8 @@ export function CategoryCarousel({ onCategorySelect }: Props) {
       {/* Header */}
       <div className="mb-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="h-3.5 w-0.5 rounded-full" style={{ backgroundColor: '#7C3D8E' }} />
-          <span className="text-[10px] font-black uppercase tracking-[0.3em]" style={{ color: '#7C3D8E' }}>
+          <div className="h-3.5 w-0.5 rounded-full" style={{ backgroundColor: 'var(--color-brand)' }} />
+          <span className="font-heading text-base font-semibold tracking-wide" style={{ color: 'var(--color-brand)' }}>
             Categorias
           </span>
         </div>
@@ -101,24 +103,20 @@ export function CategoryCarousel({ onCategorySelect }: Props) {
           <button
             onClick={() => scroll('left')}
             disabled={!canScrollLeft}
-            className="flex h-6 w-6 items-center justify-center rounded-md border transition disabled:opacity-30"
-            style={{ borderColor: '#d4b8e8', backgroundColor: '#faf5ff', color: '#7C3D8E' }}
+            className="flex h-7 w-7 items-center justify-center rounded-full border transition hover:border-[var(--color-brand)] hover:bg-[var(--c-hover-soft)] disabled:opacity-30"
+            style={{ borderColor: 'var(--c-border)', color: 'var(--color-brand)' }}
             aria-label="Anterior"
           >
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M15 18l-6-6 6-6"/>
-            </svg>
+            <ChevronLeft size={14} strokeWidth={2.5} />
           </button>
           <button
             onClick={() => scroll('right')}
             disabled={!canScrollRight}
-            className="flex h-6 w-6 items-center justify-center rounded-md border transition disabled:opacity-30"
-            style={{ borderColor: '#d4b8e8', backgroundColor: '#faf5ff', color: '#7C3D8E' }}
+            className="flex h-7 w-7 items-center justify-center rounded-full border transition hover:border-[var(--color-brand)] hover:bg-[var(--c-hover-soft)] disabled:opacity-30"
+            style={{ borderColor: 'var(--c-border)', color: 'var(--color-brand)' }}
             aria-label="Próximo"
           >
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M9 18l6-6-6-6"/>
-            </svg>
+            <ChevronRight size={14} strokeWidth={2.5} />
           </button>
         </div>
       </div>
@@ -134,31 +132,12 @@ export function CategoryCarousel({ onCategorySelect }: Props) {
           <button
             key={cat.name}
             onClick={() => navigate(cat.name)}
-            className="group flex-none flex flex-col items-center justify-center rounded-xl border text-center transition-all duration-150 active:scale-95"
-            style={{
-              width: '76px',
-              height: '76px',
-              scrollSnapAlign: 'start',
-              borderColor: '#e8d5f5',
-              backgroundColor: '#faf5ff',
-              boxShadow: '0 1px 4px rgba(124,61,142,0.06)',
-            }}
-            onMouseEnter={(e) => {
-              const el = e.currentTarget
-              el.style.background = 'linear-gradient(145deg, #7C3D8E18, #C4509B12)'
-              el.style.borderColor = '#C4509B'
-              el.style.boxShadow = '0 4px 12px rgba(196,80,155,0.18)'
-            }}
-            onMouseLeave={(e) => {
-              const el = e.currentTarget
-              el.style.background = '#faf5ff'
-              el.style.borderColor = '#e8d5f5'
-              el.style.boxShadow = '0 1px 4px rgba(124,61,142,0.06)'
-            }}
+            className="group flex w-[72px] flex-none flex-col items-center justify-center gap-1.5 rounded-xl border bg-[var(--c-bg-soft)] py-3 text-center transition-all duration-200 hover:border-[var(--color-brand)] hover:shadow-md active:scale-95"
+            style={{ scrollSnapAlign: 'start', borderColor: 'var(--c-border)' }}
           >
             <div
-              className="mb-1.5 flex h-9 w-9 items-center justify-center rounded-lg transition-transform duration-150 group-hover:scale-110"
-              style={{ backgroundColor: 'rgba(124,61,142,0.10)', color: '#7C3D8E' }}
+              className="flex h-9 w-9 items-center justify-center rounded-lg transition-transform duration-200 group-hover:scale-110"
+              style={{ backgroundColor: 'var(--c-hover-soft)', color: 'var(--color-brand)' }}
             >
               {CATEGORY_ICONS[cat.name] ?? (
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
@@ -166,10 +145,7 @@ export function CategoryCarousel({ onCategorySelect }: Props) {
                 </svg>
               )}
             </div>
-            <p
-              className="text-[9px] font-bold leading-tight px-1"
-              style={{ color: '#5B2170' }}
-            >
+            <p className="px-1 text-[9px] font-semibold uppercase leading-tight tracking-wide" style={{ color: 'var(--color-brand)' }}>
               {cat.name}
             </p>
           </button>

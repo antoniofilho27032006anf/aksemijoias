@@ -11,6 +11,7 @@
 /* ─── White theme (default) ─── */
 :root {
   --c-bg:           #ffffff;
+  --c-bg-soft:      #fbf8fc;
   --c-card:         #fafaf8;
   --c-raised:       #f8f5ff;
   --c-footer:       #f3eefc;
@@ -20,17 +21,17 @@
   --c-glass-deep:   rgba(242, 236, 255, 0.98);
   --c-cart:         #ffffff;
   --c-input:        rgba(248, 245, 255, 0.92);
-  --c-text:         #1a0a3c;
-  --c-muted:        #4a3a6c;
-  --c-dim:          #6050a0;
-  --c-vdim:         #9080c8;
-  --c-border:       rgba(120, 60, 220, 0.22);
-  --c-border-mid:   rgba(120, 60, 220, 0.40);
+  --c-text:         #2b2b2b;
+  --c-muted:        #6f6478;
+  --c-dim:          #8a7f96;
+  --c-vdim:         #b3a8c0;
+  --c-border:       rgba(124, 61, 142, 0.12);
+  --c-border-mid:   rgba(124, 61, 142, 0.30);
   --c-border-gold:  rgba(201, 162, 39, 0.30);
-  --c-hover:        rgba(120, 60, 220, 0.08);
-  --c-hover-soft:   rgba(120, 60, 220, 0.06);
-  --c-skeleton-a:   rgba(200, 180, 240, 0.50);
-  --c-skeleton-b:   rgba(220, 200, 255, 0.40);
+  --c-hover:        rgba(124, 61, 142, 0.08);
+  --c-hover-soft:   rgba(124, 61, 142, 0.05);
+  --c-skeleton-a:   rgba(124, 61, 142, 0.07);
+  --c-skeleton-b:   rgba(124, 61, 142, 0.14);
 }
 
 /* ─── Dark theme ─── */
@@ -61,6 +62,7 @@
 /* ─── Light / White theme (applied by ThemeContext default) ─── */
 [data-theme="light"] {
   --c-bg:           #ffffff;
+  --c-bg-soft:      #fbf8fc;
   --c-card:         #fafaf8;
   --c-raised:       #f8f5ff;
   --c-footer:       #f3eefc;
@@ -70,24 +72,24 @@
   --c-glass-deep:   rgba(242, 236, 255, 0.98);
   --c-cart:         #ffffff;
   --c-input:        rgba(248, 245, 255, 0.92);
-  --c-text:         #1a0a3c;
-  --c-muted:        #4a3a6c;
-  --c-dim:          #6050a0;
-  --c-vdim:         #9080c8;
-  --c-border:       rgba(120, 60, 220, 0.22);
-  --c-border-mid:   rgba(120, 60, 220, 0.40);
+  --c-text:         #2b2b2b;
+  --c-muted:        #6f6478;
+  --c-dim:          #8a7f96;
+  --c-vdim:         #b3a8c0;
+  --c-border:       rgba(124, 61, 142, 0.12);
+  --c-border-mid:   rgba(124, 61, 142, 0.30);
   --c-border-gold:  rgba(201, 162, 39, 0.30);
-  --c-hover:        rgba(120, 60, 220, 0.08);
-  --c-hover-soft:   rgba(120, 60, 220, 0.06);
-  --c-skeleton-a:   rgba(200, 180, 240, 0.50);
-  --c-skeleton-b:   rgba(220, 200, 255, 0.40);
+  --c-hover:        rgba(124, 61, 142, 0.08);
+  --c-hover-soft:   rgba(124, 61, 142, 0.05);
+  --c-skeleton-a:   rgba(124, 61, 142, 0.07);
+  --c-skeleton-b:   rgba(124, 61, 142, 0.14);
 }
 
 @theme inline {
   --color-background: var(--c-bg);
   --color-foreground: var(--c-text);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-sans);
+  --font-heading: var(--font-heading);
 }
 
 /* ─── Brand tokens → use as text-brand, bg-brand-50, border-brand-200 etc. ─── */
@@ -217,6 +219,89 @@ button, input, textarea { font: inherit; }
 }
 .animate-slide-in {
   animation: slide-in 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Mobile drawer slides in from the left (mirrors .animate-slide-in) */
+@keyframes slide-in-left {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(0); }
+}
+.animate-slide-in-left {
+  animation: slide-in-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out;
+}
+
+/* ─── Premium design system helpers ─── */
+
+.font-heading {
+  font-family: var(--font-heading), serif;
+}
+
+/* Small uppercase pill used for category filters / chips */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  white-space: nowrap;
+  border-radius: 9999px;
+  border: 1px solid var(--c-border);
+  background: var(--c-bg);
+  color: var(--color-brand);
+  padding: 0.4rem 0.9rem;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.chip:hover {
+  border-color: var(--color-brand);
+  background: var(--c-hover-soft);
+}
+.chip-active {
+  background: var(--color-brand);
+  border-color: var(--color-brand);
+  color: #fff;
+}
+.chip-active:hover {
+  background: var(--color-brand);
+  color: #fff;
+}
+
+/* Primary call-to-action button with subtle elevation on hover */
+.btn-premium {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  border-radius: 0.5rem;
+  background: var(--color-brand);
+  color: #fff;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 0.6rem 1rem;
+  transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+.btn-premium:hover:not(:disabled) {
+  background: var(--color-brand-800);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(124, 61, 142, 0.25);
+}
+.btn-premium:active:not(:disabled) {
+  transform: translateY(0);
+}
+.btn-premium:disabled {
+  background: var(--c-vdim);
+  cursor: not-allowed;
 }
 
 @keyframes skeleton-shimmer {

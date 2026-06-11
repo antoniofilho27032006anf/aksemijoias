@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
+import { Cormorant_Garamond, Montserrat } from 'next/font/google'
 
 import { AuthProvider } from '../src/contexts/AuthContext'
 import { FavoritesProvider } from '../src/contexts/FavoritesContext'
@@ -11,14 +11,16 @@ import './globals.css'
 
 import { Toaster } from 'sonner'
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+const montserrat = Montserrat({
+  variable: '--font-sans',
   subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800'],
 })
 
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
+const cormorant = Cormorant_Garamond({
+  variable: '--font-heading',
   subsets: ['latin'],
+  weight: ['500', '600', '700'],
 })
 
 export const metadata: Metadata = {
@@ -37,7 +39,7 @@ export default function RootLayout({
     <html
       lang="pt-BR"
       data-theme="light"
-      className={`${geistSans.variable} ${geistMono.variable}`}
+      className={`${montserrat.variable} ${cormorant.variable}`}
     >
 
       <body>

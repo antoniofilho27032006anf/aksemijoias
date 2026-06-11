@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { api } from '../services/api'
 
 interface Slide {
@@ -41,59 +42,57 @@ export function HeroBanner() {
   const slide = slides[active]
 
   return (
-    <div className="relative w-full overflow-hidden bg-gray-100" style={{ aspectRatio: '16/6', minHeight: '160px' }}>
+    <div className="mx-3 mt-3 overflow-hidden rounded-2xl bg-gray-100 sm:mx-5 sm:mt-4" style={{ aspectRatio: '16/6', minHeight: '160px' }}>
+      <div className="relative h-full w-full">
 
-      {/* Image or gradient */}
-      {slide.imageUrl ? (
-        <img
-          src={slide.imageUrl}
-          alt={`Banner ${active + 1}`}
-          className="absolute inset-0 h-full w-full object-cover transition-opacity duration-500"
-        />
-      ) : (
-        <div
-          className="absolute inset-0 transition-all duration-700"
-          style={{ background: `linear-gradient(135deg, ${slide.color}22 0%, ${slide.color}44 50%, ${slide.color}22 100%)` }}
-        />
-      )}
-
-      {/* Left arrow */}
-      <button
-        onClick={prev}
-        aria-label="Anterior"
-        className="absolute left-3 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/75 shadow-md transition hover:bg-white active:scale-95 sm:h-10 sm:w-10"
-      >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#333" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M15 18l-6-6 6-6"/>
-        </svg>
-      </button>
-
-      {/* Right arrow */}
-      <button
-        onClick={next}
-        aria-label="Próximo"
-        className="absolute right-3 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/75 shadow-md transition hover:bg-white active:scale-95 sm:h-10 sm:w-10"
-      >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#333" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M9 18l6-6-6-6"/>
-        </svg>
-      </button>
-
-      {/* Dots */}
-      <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-2">
-        {slides.map((s, i) => (
-          <button
-            key={s.id}
-            onClick={() => setActive(i)}
-            aria-label={`Slide ${i + 1}`}
-            className="rounded-full transition-all duration-300"
-            style={{
-              height: '8px',
-              width: active === i ? '20px' : '8px',
-              backgroundColor: active === i ? '#333' : 'rgba(0,0,0,0.35)',
-            }}
+        {/* Image or gradient */}
+        {slide.imageUrl ? (
+          <img
+            src={slide.imageUrl}
+            alt={`Banner ${active + 1}`}
+            className="absolute inset-0 h-full w-full object-cover transition-opacity duration-500"
           />
-        ))}
+        ) : (
+          <div
+            className="absolute inset-0 transition-all duration-700"
+            style={{ background: `linear-gradient(135deg, ${slide.color}22 0%, ${slide.color}44 50%, ${slide.color}22 100%)` }}
+          />
+        )}
+
+        {/* Left arrow */}
+        <button
+          onClick={prev}
+          aria-label="Anterior"
+          className="absolute left-3 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 shadow-sm backdrop-blur transition hover:bg-white active:scale-95 sm:h-9 sm:w-9"
+        >
+          <ChevronLeft size={16} strokeWidth={2.5} style={{ color: 'var(--color-brand)' }} />
+        </button>
+
+        {/* Right arrow */}
+        <button
+          onClick={next}
+          aria-label="Próximo"
+          className="absolute right-3 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 shadow-sm backdrop-blur transition hover:bg-white active:scale-95 sm:h-9 sm:w-9"
+        >
+          <ChevronRight size={16} strokeWidth={2.5} style={{ color: 'var(--color-brand)' }} />
+        </button>
+
+        {/* Dots */}
+        <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-2">
+          {slides.map((s, i) => (
+            <button
+              key={s.id}
+              onClick={() => setActive(i)}
+              aria-label={`Slide ${i + 1}`}
+              className="rounded-full transition-all duration-300"
+              style={{
+                height: '6px',
+                width: active === i ? '20px' : '6px',
+                backgroundColor: active === i ? 'var(--color-brand)' : 'rgba(255,255,255,0.7)',
+              }}
+            />
+          ))}
+        </div>
       </div>
     </div>
   )

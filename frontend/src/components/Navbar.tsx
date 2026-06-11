@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { Menu, X, Search, User, ShoppingBag, ChevronDown } from 'lucide-react'
 
 import { useCart } from '../contexts/CartContext'
 import { useAuth } from '../contexts/AuthContext'
@@ -19,7 +20,7 @@ export function Navbar({ onSearch }: NavbarProps) {
   const router = useRouter()
 
   const [searchTerm, setSearchTerm] = useState('')
-  const [menuOpen, setMenuOpen] = useState(false)
+  const [drawerOpen, setDrawerOpen] = useState(false)
   const [expandedCat, setExpandedCat] = useState<string | null>(null)
 
   const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0)
@@ -33,125 +34,165 @@ export function Navbar({ onSearch }: NavbarProps) {
     } else {
       router.push(`/search?term=${encodeURIComponent(q)}&sort=bestseller`)
     }
-    setMenuOpen(false)
+    setDrawerOpen(false)
   }
 
   function navigateTo(term: string) {
-    setMenuOpen(false)
+    setDrawerOpen(false)
     setExpandedCat(null)
     router.push(`/search?term=${encodeURIComponent(term)}&sort=bestseller`)
   }
 
   return (
-    <header className="sticky top-0 z-30 shadow-sm" style={{ background: 'var(--c-nav-bg)' }}>
+    <header className="sticky top-0 z-30 backdrop-blur" style={{ background: 'var(--c-nav-bg)', borderBottom: '1px solid var(--c-border)' }}>
 
-      {/* Main nav row — 3-column grid keeps logo perfectly centered on all sizes */}
-      <div className="grid grid-cols-3 items-center px-4 py-2.5 sm:px-6">
+      {/* Main row */}
+      <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3 sm:px-6 lg:gap-6 lg:py-3.5">
 
-        {/* Left: hamburger + MENU */}
+        {/* Mobile: hamburger */}
         <button
           type="button"
-          onClick={() => setMenuOpen((v) => !v)}
-          className="flex items-center gap-2 text-[#7C3D8E]"
-          aria-label="Menu"
+          onClick={() => setDrawerOpen(true)}
+          className="-ml-1 flex items-center justify-center rounded-full p-1.5 transition hover:bg-[var(--c-hover-soft)] lg:hidden"
+          style={{ color: 'var(--color-brand)' }}
+          aria-label="Abrir menu"
         >
-          <svg width="22" height="18" viewBox="0 0 22 18" fill="none">
-            <rect width="22" height="2.5" rx="1.25" fill="currentColor"/>
-            <rect y="7.5" width="15" height="2.5" rx="1.25" fill="currentColor"/>
-            <rect y="15" width="22" height="2.5" rx="1.25" fill="currentColor"/>
-          </svg>
-          <span className="text-xs font-bold uppercase tracking-widest">MENU</span>
+          <Menu size={22} strokeWidth={1.6} />
         </button>
 
-        {/* Center: Logo */}
-        <Link href="/" className="flex justify-center">
+        {/* Logo */}
+        <Link href="/" className="flex items-center">
           <img
             src="/logo.png"
             alt="AK Semijóias"
-            className="h-9 w-auto object-contain"
-            style={{ maxWidth: '120px' }}
+            className="h-8 w-auto object-contain lg:h-10"
+            style={{ maxWidth: '140px' }}
           />
         </Link>
 
-        {/* Right: conta + carrinho */}
-        <div className="flex items-center justify-end gap-3">
+        {/* Desktop search */}
+        <form onSubmit={handleSearch} className="relative ml-4 hidden max-w-md flex-1 lg:block">
+          <Search
+            size={16}
+            strokeWidth={2}
+            className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2"
+            style={{ color: 'var(--c-vdim)' }}
+          />
+          <input
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Buscar joias, coleções..."
+            className="w-full rounded-full border py-2 pl-10 pr-4 text-sm outline-none transition focus:border-[var(--color-brand)]"
+            style={{ borderColor: 'var(--c-border)', background: 'var(--c-bg-soft)', color: 'var(--c-text)' }}
+          />
+        </form>
 
+        {/* Right icons */}
+        <div className="ml-auto flex items-center gap-4 lg:gap-6">
           <Link
             href={user ? '/account' : '/login'}
-            className="flex flex-col items-center text-[#7C3D8E] transition hover:text-[#C4509B]"
+            className="flex flex-col items-center gap-0.5 transition hover:text-[var(--color-brand-pink)]"
+            style={{ color: 'var(--color-brand)' }}
             aria-label={user ? 'Minha conta' : 'Entrar'}
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="8" r="4"/>
-              <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
-            </svg>
-            <span className="text-[8px] font-bold uppercase tracking-wide leading-none mt-0.5">
+            <User size={20} strokeWidth={1.6} />
+            <span className="hidden text-[9px] font-bold uppercase tracking-widest leading-none lg:block">
               {user ? 'Conta' : 'Entrar'}
             </span>
           </Link>
 
           <button
             onClick={openCart}
-            className="relative flex items-center gap-1 text-[#7C3D8E]"
+            className="relative flex flex-col items-center gap-0.5 transition hover:text-[var(--color-brand-pink)]"
+            style={{ color: 'var(--color-brand)' }}
             aria-label="Carrinho"
           >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-              <line x1="3" y1="6" x2="21" y2="6"/>
-              <path d="M16 10a4 4 0 0 1-8 0"/>
-            </svg>
-            <span
-              className="flex h-5 min-w-[20px] items-center justify-center rounded-full text-[11px] font-black text-white"
-              style={{ backgroundColor: '#C4509B' }}
-            >
-              {totalItems}
+            <span className="relative">
+              <ShoppingBag size={20} strokeWidth={1.6} />
+              <span
+                className="absolute -right-2 -top-2 flex h-4 min-w-[16px] items-center justify-center rounded-full px-1 text-[9px] font-black text-white"
+                style={{ backgroundColor: 'var(--color-brand-pink)' }}
+              >
+                {totalItems}
+              </span>
+            </span>
+            <span className="hidden text-[9px] font-bold uppercase tracking-widest leading-none lg:block">
+              Sacola
             </span>
           </button>
         </div>
       </div>
 
-      {/* Search row */}
-      <form onSubmit={handleSearch} className="flex border-t" style={{ borderColor: 'var(--c-border)' }}>
-        <div className="relative flex flex-1 items-center">
-          <svg
-            className="absolute left-4"
+      {/* Mobile search row */}
+      <form onSubmit={handleSearch} className="px-4 pb-3 lg:hidden">
+        <div className="relative">
+          <Search
+            size={16}
+            strokeWidth={2}
+            className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2"
             style={{ color: 'var(--c-vdim)' }}
-            width="16" height="16" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-          >
-            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-          </svg>
+          />
           <input
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Buscar..."
-            className="w-full py-3 pl-10 pr-4 text-sm outline-none"
-            style={{ background: 'var(--c-input)', color: 'var(--c-text)' }}
+            className="w-full rounded-full border py-2.5 pl-10 pr-4 text-sm outline-none transition focus:border-[var(--color-brand)]"
+            style={{ borderColor: 'var(--c-border)', background: 'var(--c-bg-soft)', color: 'var(--c-text)' }}
           />
         </div>
-        <button
-          type="submit"
-          className="flex items-center justify-center border-l px-4"
-          style={{ borderColor: 'var(--c-border)', background: 'var(--c-input)' }}
-          aria-label="Buscar"
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7C3D8E" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-          </svg>
-        </button>
       </form>
 
-      {/* Category bar strip */}
+      {/* Category nav / subcategory dropdown — shared desktop + mobile */}
       <CategoryBar />
 
-      {/* Mobile slide-down menu */}
-      {menuOpen && (
-        <div className="absolute left-0 right-0 top-full z-40 max-h-[80vh] overflow-y-auto border-t shadow-xl" style={{ background: 'var(--c-nav-bg)', borderColor: 'var(--c-border)' }}>
+      {/* Mobile drawer overlay */}
+      {drawerOpen && (
+        <div
+          className="animate-fade-in fixed inset-0 z-40 bg-black/40 lg:hidden"
+          onClick={() => setDrawerOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      {/* Mobile drawer */}
+      {drawerOpen && (
+        <div
+          className="animate-slide-in-left fixed inset-y-0 left-0 z-50 flex w-[82%] max-w-xs flex-col overflow-y-auto shadow-2xl lg:hidden"
+          style={{ background: 'var(--c-bg)' }}
+        >
+          {/* Drawer header */}
+          <div className="flex items-center justify-between border-b px-4 py-3.5" style={{ borderColor: 'var(--c-border)' }}>
+            <Link href="/" onClick={() => setDrawerOpen(false)}>
+              <img src="/logo.png" alt="AK Semijóias" className="h-8 w-auto object-contain" style={{ maxWidth: '120px' }} />
+            </Link>
+            <button
+              onClick={() => setDrawerOpen(false)}
+              className="flex h-8 w-8 items-center justify-center rounded-full transition hover:bg-[var(--c-hover-soft)]"
+              style={{ color: 'var(--color-brand)' }}
+              aria-label="Fechar menu"
+            >
+              <X size={20} strokeWidth={1.8} />
+            </button>
+          </div>
+
+          {/* Search */}
+          <form onSubmit={handleSearch} className="px-4 py-3.5">
+            <div className="relative">
+              <Search size={16} strokeWidth={2} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2" style={{ color: 'var(--c-vdim)' }} />
+              <input
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Buscar..."
+                className="w-full rounded-full border py-2.5 pl-10 pr-4 text-sm outline-none transition focus:border-[var(--color-brand)]"
+                style={{ borderColor: 'var(--c-border)', background: 'var(--c-bg-soft)', color: 'var(--c-text)' }}
+              />
+            </div>
+          </form>
 
           {/* Nav links */}
-          <nav className="divide-y px-2" style={{ borderColor: 'var(--c-border)' }}>
+          <nav className="flex flex-col border-b px-4 pb-2" style={{ borderColor: 'var(--c-border)' }}>
             {[
-              { href: '/', label: 'Loja' },
+              { href: '/', label: 'Início' },
               { href: '/favorites', label: 'Favoritas' },
               { href: '/orders', label: 'Meus pedidos' },
               ...(user
@@ -161,8 +202,8 @@ export function Navbar({ onSearch }: NavbarProps) {
               <Link
                 key={link.href}
                 href={link.href}
-                onClick={() => setMenuOpen(false)}
-                className="block px-4 py-3.5 text-sm font-medium transition hover:text-[#7C3D8E]"
+                onClick={() => setDrawerOpen(false)}
+                className="py-2.5 text-sm font-medium transition hover:text-[var(--color-brand)]"
                 style={{ color: 'var(--c-text)' }}
               >
                 {link.label}
@@ -170,15 +211,13 @@ export function Navbar({ onSearch }: NavbarProps) {
             ))}
           </nav>
 
-          {/* Categories section */}
-          <div className="border-t px-4 pt-3 pb-1" style={{ borderColor: 'var(--c-border)' }}>
-            <p className="mb-1 text-[10px] font-bold uppercase tracking-widest" style={{ color: 'var(--c-vdim)' }}>
+          {/* Categories accordion */}
+          <div className="flex-1 px-4 pt-3 pb-1">
+            <p className="mb-1 font-heading text-sm font-semibold tracking-wide" style={{ color: 'var(--color-brand)' }}>
               Categorias
             </p>
             {CATEGORIES.map((cat) => (
               <div key={cat.name} className="border-b last:border-0" style={{ borderColor: 'var(--c-border)' }}>
-
-                {/* Category header */}
                 <button
                   onClick={() => {
                     if (cat.sub.length === 0) {
@@ -187,37 +226,28 @@ export function Navbar({ onSearch }: NavbarProps) {
                       setExpandedCat(expandedCat === cat.name ? null : cat.name)
                     }
                   }}
-                  className="flex w-full items-center justify-between py-3.5 text-sm font-semibold transition hover:text-[#7C3D8E]"
+                  className="flex w-full items-center justify-between py-3 text-sm font-medium transition hover:text-[var(--color-brand)]"
                   style={{ color: 'var(--c-text)' }}
                 >
                   {cat.name}
                   {cat.sub.length > 0 && (
-                    <svg
-                      width="12" height="12" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" strokeWidth="2.5"
-                      strokeLinecap="round" strokeLinejoin="round"
+                    <ChevronDown
+                      size={14}
+                      strokeWidth={2.5}
+                      className="transition-transform duration-200"
                       style={{
                         transform: expandedCat === cat.name ? 'rotate(180deg)' : 'rotate(0deg)',
-                        transition: 'transform 0.2s',
-                        color: '#7C3D8E',
+                        color: 'var(--color-brand)',
                       }}
-                    >
-                      <path d="M6 9l6 6 6-6"/>
-                    </svg>
+                    />
                   )}
                 </button>
 
-                {/* Subcategories */}
                 {expandedCat === cat.name && cat.sub.length > 0 && (
-                  <div className="mb-2 flex flex-col gap-0.5 pl-3">
+                  <div className="mb-2 flex flex-wrap gap-1.5 pl-1 pb-2">
                     {cat.sub.map((sub) => (
-                      <button
-                        key={sub.name}
-                        onClick={() => navigateTo(sub.name)}
-                        className="py-2 text-left text-xs font-medium transition hover:text-[#C4509B]"
-                        style={{ color: 'var(--c-dim)' }}
-                      >
-                        — {sub.name}
+                      <button key={sub.name} onClick={() => navigateTo(sub.name)} className="chip">
+                        {sub.name}
                       </button>
                     ))}
                   </div>
@@ -228,21 +258,22 @@ export function Navbar({ onSearch }: NavbarProps) {
 
           {/* Admin + logout */}
           {(user as any)?.role === 'ADMIN' && (
-            <div className="border-t px-2 py-2" style={{ borderColor: 'var(--c-border)' }}>
+            <div className="border-t px-4 py-2" style={{ borderColor: 'var(--c-border)' }}>
               <Link
                 href="/admin"
-                onClick={() => setMenuOpen(false)}
-                className="block px-4 py-3 text-sm font-bold text-[#7C3D8E]"
+                onClick={() => setDrawerOpen(false)}
+                className="block py-2.5 text-sm font-bold"
+                style={{ color: 'var(--color-brand)' }}
               >
                 Painel Admin
               </Link>
             </div>
           )}
           {user && (
-            <div className="border-t px-2 py-2" style={{ borderColor: 'var(--c-border)' }}>
+            <div className="border-t px-4 py-2" style={{ borderColor: 'var(--c-border)' }}>
               <button
-                onClick={() => { logout(); setMenuOpen(false) }}
-                className="block w-full px-4 py-3 text-left text-sm font-medium text-red-400 transition hover:text-red-600"
+                onClick={() => { logout(); setDrawerOpen(false) }}
+                className="block w-full py-2.5 text-left text-sm font-medium text-red-400 transition hover:text-red-600"
               >
                 Sair
               </button>
